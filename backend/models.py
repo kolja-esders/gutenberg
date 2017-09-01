@@ -1,12 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-class User(AbstractUser):
-    books = models.ManyToManyField('self', through='UserBookJoin', symmetrical=False)
-
 class Book(models.Model):
     name = models.CharField(max_length=255)
     author = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name + ' (' + self.author + ')'
+
+class User(AbstractUser):
+    books = models.ManyToManyField(Book, through='UserBookJoin', symmetrical=False)
 
 class UserBookJoin(models.Model):
     user = models.ForeignKey(User)
