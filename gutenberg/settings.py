@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'backend.apps.BackendConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -125,3 +126,7 @@ STATIC_URL = '/static/'
 GRAPHENE = {
     'SCHEMA': 'app.schema.schema'
 }
+
+# Custom user
+
+AUTH_USER_MODEL = 'backend.User'
