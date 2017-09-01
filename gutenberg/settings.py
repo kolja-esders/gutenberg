@@ -51,7 +51,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'gutenberg.urls'
+ROOT_URLCONF = 'backend.urls'
 
 TEMPLATES = [
     {
@@ -124,7 +124,7 @@ STATIC_URL = '/static/'
 # GraphQL with Graphene
 
 GRAPHENE = {
-    'SCHEMA': 'app.schema.schema'
+    'SCHEMA': 'backend.schema.schema'
 }
 
 # Custom user
