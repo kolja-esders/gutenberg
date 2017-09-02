@@ -124,7 +124,7 @@ STATIC_URL = '/static/'
 # GraphQL with Graphene
 
 GRAPHENE = {
-    'SCHEMA': 'backend.schema.schema'
+    'SCHEMA': 'backend.graphql.schema.schema'
 }
 
 # Custom user
