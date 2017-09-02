@@ -12,6 +12,7 @@ class UserInput(graphene.InputObjectType):
 class BookInput(graphene.InputObjectType):
     name = graphene.String(required=True)
     author = graphene.String(required=True)
+    publishing_year = graphene.Int(required=True)
 
 class CreateUser(graphene.Mutation):
     class Input:
@@ -41,7 +42,8 @@ class CreateBook(graphene.Mutation):
         book_data = args['book_data']
         book = Book(
                 name = book_data['name'],
-                author = book_data['author']
+                author = book_data['author'],
+                publishing_year = book_data['publishing_year']
             )
         book.save()
         return CreateBook(book=book)

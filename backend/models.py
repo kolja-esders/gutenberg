@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractUser
 class Book(models.Model):
     name = models.CharField(max_length=255)
     author = models.CharField(max_length=255)
+    publishing_year = models.IntegerField(null=True)
 
     class Meta:
         unique_together = ('name', 'author')
