@@ -22,16 +22,10 @@ module.exports = {
         test: /\.js$/,
         loader: 'babel-loader',
         exclude: /node_modules/,
-        query: {
-          presets: ['stage-2', 'react']
-        }
       }, {
         test: /\.jsx$/,
         loader: 'babel-loader',
         exclude: /node_modules/,
-        query: {
-          presets: ['stage-2', 'react']
-        }
       }, {
         test: /\.css$/,
         use: ['style-loader', 'css-loader']
