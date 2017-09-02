@@ -18,21 +18,20 @@ class UserBookJoin(DjangoObjectType):
 
 
 class CoreQueries(graphene.AbstractType):
-    books = graphene.Node.Field(Book)
-    #books = DjangoFilterConnectionField(Book)
-    # users = graphene.List(GrapheneUser)
-    # books = graphene.List(GrapheneBook)
-    # user_book_joins = graphene.List(GrapheneUserBookJoin)
+    book = graphene.Node.Field(Book)
+    books = graphene.List(Book)
+    all_books = DjangoFilterConnectionField(Book)
 
-    user_book_joins = graphene.Node.Field(UserBookJoin)
-    #user_book_joins = DjangoFilterConnectionField(UserBookJoin)
+    user_book_join = graphene.Node.Field(UserBookJoin)
+    user_book_joins = graphene.List(UserBookJoin)
+    all_user_book_joins = DjangoFilterConnectionField(UserBookJoin)
 
     def resolve_books(self, args, context, info):
-        books = BookModal.objects
+        books = BookModal.objects.all()
         return books
 
     def resolve_user_book_joins(self, args, context, info):
-        user_book_joins = UserbookJoinModal.objects
+        user_book_joins = UserbookJoinModal.objects.all()
         return user_book_joins
 
 class BookInput(graphene.InputObjectType):
