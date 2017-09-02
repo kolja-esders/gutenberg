@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "semantic-ui-css": "^2.2.12",
+    "semantic-ui-table": "^2.2.12"
+  }
+}
