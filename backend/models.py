@@ -19,4 +19,7 @@ class UserBookJoin(models.Model):
     user = models.ForeignKey(User)
     book = models.ForeignKey(Book)
     state = models.CharField(max_length = 31) # to-read, read, ...
-    rating = models.PositiveSmallIntegerField
+    rating = models.PositiveSmallIntegerField(null=True)
+
+    class Meta:
+        unique_together = ('user', 'book')
