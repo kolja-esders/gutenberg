@@ -4,8 +4,7 @@ import Link from 'react-router-dom/es/Link';
 
 const Landing = () =>
   <Page heading='Landing' >
-    <p>This is the landing page</p>
-    <Link to='/polls'>Polls</Link>
+    <p>Hi there</p>
   </Page>;
 
 export default Landing;
