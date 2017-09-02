@@ -9,15 +9,20 @@ from .models import Book as BookModal, UserBookJoin as UserBookJoinModal
 class Book(DjangoObjectType):
     class Meta:
         model = BookModal
+        interfaces = (graphene.Node, )
 
 class UserBookJoin(DjangoObjectType):
     class Meta:
         model = UserBookJoinModal
+        interfaces = (graphene.Node, )
 
 
 class CoreQueries(graphene.AbstractType):
     books = graphene.Node.Field(Book)
     #books = DjangoFilterConnectionField(Book)
+    # users = graphene.List(GrapheneUser)
+    # books = graphene.List(GrapheneBook)
+    # user_book_joins = graphene.List(GrapheneUserBookJoin)
 
     user_book_joins = graphene.Node.Field(UserBookJoin)
     #user_book_joins = DjangoFilterConnectionField(UserBookJoin)
@@ -33,7 +38,6 @@ class CoreQueries(graphene.AbstractType):
 class BookInput(graphene.InputObjectType):
     name = graphene.String(required=True)
     author = graphene.String(required=True)
-    publishing_year = graphene.Int(required=True)
 
 
 class CreateBook(graphene.Mutation):
@@ -44,7 +48,7 @@ class CreateBook(graphene.Mutation):
 
     def mutate(self, args, ctx, info):
         book_data = args['book_data']
-        book = Book(
+        book = BookModal(
                 name = book_data['name'],
                 author = book_data['author']
             )
@@ -68,7 +72,7 @@ class ConnectUserToBook(graphene.Mutation):
         rating = args['rating']
         user = User.objects.get(pk=user_id)
         book = Book.objects.get(pk=book_id)
-        user_book_join = UserBookJoin(
+        user_book_join = UserBookJoinModal(
                 user = user,
                 book= book,
                 state = state,
