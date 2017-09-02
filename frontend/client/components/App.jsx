@@ -2,16 +2,15 @@
     ./client/components/App.jsx
 */
 import React from 'react'
-import BookTable from './BookTable.jsx'
+import Main from './Main.jsx'
+import Header from './Header.jsx'
 
 export default class App extends React.Component {
   render() {
     return (
       <div>
-        <BookTable/>
-        <div style={{textAlign: 'center'}}>
-          <h1>Hello World</h1>
-        </div>
+        <Header/>
+        <Main/>
       </div>);
   }
 }
