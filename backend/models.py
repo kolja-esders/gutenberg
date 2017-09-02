@@ -5,8 +5,12 @@ class Book(models.Model):
     name = models.CharField(max_length=255)
     author = models.CharField(max_length=255)
 
+    class Meta:
+        unique_together = ('name', 'author')
+
     def __str__(self):
         return self.name + ' (' + self.author + ')'
+
 
 class User(AbstractUser):
     books = models.ManyToManyField(Book, through='UserBookJoin', symmetrical=False)
