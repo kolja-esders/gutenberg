@@ -4,16 +4,19 @@ from graphene_django.types import DjangoObjectType
 
 from users.jwt_util import get_token_user_id
 from .models import Book as BookModal, UserBookJoin as UserBookJoinModal
+from users.schema.definitions import UserNode as User
 
 
 class Book(DjangoObjectType):
     class Meta:
         model = BookModal
+        filter_fields = ['author', 'name']
         interfaces = (graphene.Node, )
 
 class UserBookJoin(DjangoObjectType):
     class Meta:
         model = UserBookJoinModal
+        filter_fields = ['state', 'rating']
         interfaces = (graphene.Node, )
 
 
@@ -31,7 +34,7 @@ class CoreQueries(graphene.AbstractType):
         return books
 
     def resolve_user_book_joins(self, args, context, info):
-        user_book_joins = UserbookJoinModal.objects.all()
+        user_book_joins = UserBookJoinModal.objects.all()
         return user_book_joins
 
 class BookInput(graphene.InputObjectType):
