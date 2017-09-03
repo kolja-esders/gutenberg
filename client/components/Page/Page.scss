@@ -1,14 +1,10 @@
 .root {
-  padding: 0 10vh;
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
 
-  .heading {
-    font-size: 2em;
-    font-weight: normal;
-    padding-left: 10px;
-  }
-
-  .body {
-    max-width: 80%;
-    margin: auto;
+  .content {
+    display: flex;
+    flex: 1;
   }
 }

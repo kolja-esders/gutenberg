@@ -1,0 +1,19 @@
+.root {
+  height: 100px;
+
+  .brand_name {
+    font-size: 2.9rem;
+    text-align: center;
+    font-weight: 800;
+    line-height: 100px;
+  }
+
+  .brand_name_link {
+    color: rgba(0, 0, 0, 0.4);
+
+    &:hover {
+      color: rgba(0, 0, 0, 0.7);
+    }
+  }
+
+}

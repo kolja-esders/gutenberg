@@ -1,25 +1,16 @@
-.form {
-  max-width: 500px;
-  margin: 0 auto;
-}
+.container {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  margin-top: 200px;
 
-.formFields {
-  max-width: 500px
-}
+  .form {
+    width: 350px;
+    text-align: center;   
+  }
 
-.formActions {
-  float: right;
-  margin-top: 10px;
-  height: 50px
-
-}
-
-.textFields {
-  width: 100%;
-  margin: auto;
-  margin-bottom: 15px;
-  input {
+  .textFields {
     width: 100%;
-    border-bottom: 1px solid rgba(0, 0, 0, .12);
+    margin-bottom: 10px;
   }
 }

@@ -1,15 +1,13 @@
 import React from 'react'
-import { Helmet } from 'react-helmet';
 import Textfield from 'react-mdc-web/lib/Textfield/Textfield'
+import Button from 'react-mdc-web/lib/Button'
+import Checkbox from 'react-mdc-web/lib/Checkbox'
 import LoginUserMutation from './mutations/Login'
 import SignupUserMutation from './mutations/Signup'
 import { authenticatedRoute } from './utils'
 import FormMessageList from 'components/FormMessageList/FormMessageList'
 import styles from './Auth.scss'
 import Page from 'components/Page/Page'
-
-import { Input, Button, Checkbox } from 'semantic-ui-react';
-
 
 function isLoginCheck() {
   return window.location.pathname === '/login'
@@ -117,15 +115,13 @@ class Auth extends React.Component {
   render() {
     const { input, errors } = this.state
     const isLogin = isLoginCheck(this.props)
-    const title = isLogin ? 'Login' : 'Sign up'
     //const formErrors = this.getErrors('')
 
     return (
-      <Page heading={title}>
-        <Helmet>
-            <title>{title}</title>
-        </Helmet>
-      <div className={styles.container}>
+      <Page
+        heading={isLogin ? 'Login' : ' Sign up'}
+
+      >
         <form
           id={isLogin ? 'Login' : ' Sign up'}
           onSubmit={this.submitForm}
@@ -133,51 +129,49 @@ class Auth extends React.Component {
         >
           <FormMessageList messages={errors} />
 
-          <Input
+
+          <Textfield
             id='email'
             className={`${styles.textFields} email_input`}
             onChange={this.handleFieldChange.bind(this)}
             value={input.email}
+            floatingLabel='Email'
             type='email'
-            size="large"
             required
-            placeholder='Email' />
-
+          />
           <br />
 
-
-          <Input
+          <Textfield
             id='password'
             className={styles.textFields}
             onChange={this.handleFieldChange.bind(this)}
             value={input.password}
-            placeholder='Password'
+            floatingLabel='Password'
             type='password'
-            size="large"
             minLength={8}
+            helptext='Your password must be at least 8 characters'
+            helptextValidation
             required
           />
-
           {!isLogin ?
-            <Input
+            <Textfield
               id='passwordConfirmation'
               onChange={this.handleFieldChange.bind(this)}
               value={input.passwordConfirmation}
               className={styles.textFields}
-              placeholder='Password confirmation'
+              floatingLabel='Password Confirmation'
               type='password'
-              size="large"
               required
             />
             : null}
 
+          <div style={{ textAlign: 'right' }} >
 
+            <a href='#' >Forgot password</a>
             {isLogin ?
               <Button
                 primary
-                fluid
                 type="submit"
-                size="large"
                 className='button_submit-login-form'
               >
                 Login
@@ -185,9 +179,7 @@ class Auth extends React.Component {
               :
               <Button
                 primary
-                fluid
                 type="submit"
-                size="large"
                 className='button_submit-signup-form'
               >
                 Sign up
@@ -199,10 +191,10 @@ class Auth extends React.Component {
                 <Checkbox
                   label='Remember me'
                   style={{ textAlign: 'right' }}
-                />
+                /> <label>Remember Me</label>
               </div> : null }
+          </div>
         </form>
-        </div>
       </Page>
     )
   }

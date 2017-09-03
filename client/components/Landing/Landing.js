@@ -5,10 +5,7 @@ import { Button } from 'semantic-ui-react';
 
 const Landing = () =>
   <Page heading='Landing' >
-    <p>Hi there</p>
-
-    <Button>test</Button>
-
+    <p>Wooohoooo</p>
   </Page>;
 
 export default Landing;
