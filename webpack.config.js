@@ -118,7 +118,7 @@ module.exports = {
             modules: true
           }
         }
-      })
+      }),
     }, {
       test: /\.scss$/,
       include: [path.join(__dirname, 'node_modules'), path.join(__dirname, 'client', 'styles')],
@@ -161,7 +161,18 @@ module.exports = {
           ]
         })
       }, {
-        test: /\.(png|jpg|jpeg|gif|svg|woff|woff2)$/,
+        test: /\.(ico|jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2)(\?.*)?$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              limit: 1000,
+              name: "assets/[hash].[ext]"
+            }
+          }
+        ]
+      }, {
+        test: /\.(mp4|webm|wav|mp3|m4a|aac|oga)(\?.*)?$/,
         use: [
           {
             loader: 'url-loader',
