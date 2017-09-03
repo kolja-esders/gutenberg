@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import Root from './root';
-import '../semantic/dist/semantic.min.css';
+import 'semantic-ui-less/semantic.less'
 
 const root = document.createElement('div');
 document.body.appendChild(root);

@@ -8,8 +8,8 @@ powered-test
 docs
 doc
 website
-images
-assets
+# images # Breaks semantic-ui
+# assets # Breaks semantic-ui
 
 # examples
 example

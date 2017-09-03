@@ -1,5 +1,4 @@
 import React from 'react'
-import 'normalize.css/normalize.css'
 import styles from './App.scss'
 import { isAuthenticated } from 'modules/auth/utils'
 import '../../styles/global.scss'

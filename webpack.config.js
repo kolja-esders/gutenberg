@@ -110,6 +110,9 @@ module.exports = {
             exclude: /node_modules/
         }, {
       test: /\.css$/,
+      exclude: [
+        __dirname + '/node_modules/semantic-ui-css'
+      ],
       use: ExtractTextPlugin.extract({
         fallback: "style-loader",
         use: {
@@ -161,6 +164,17 @@ module.exports = {
           ]
         })
       }, {
+        test: /\.less$/,
+        use: ExtractTextPlugin.extract({
+          fallback: "style-loader",
+          use: [
+            'css-loader',
+            {
+              loader: 'less-loader',
+            },
+          ]
+        })
+      }, {
         test: /\.(ico|jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2)(\?.*)?$/,
         use: [
           {
@@ -188,6 +202,7 @@ module.exports = {
     alias: {
       components: path.resolve(__dirname, 'client/components'),
       modules: path.resolve(__dirname, 'client/modules'),
+      '../../theme.config$': path.join(__dirname, 'client/semantic/theme.config') 
     }
   },
   plugins
