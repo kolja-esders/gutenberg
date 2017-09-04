@@ -10,8 +10,10 @@ class Landing extends React.Component {
     console.log(this.props.viewer)
     return (
       <Page heading='Landing' >
-        <p>Welcome, {this.props.viewer.user.email}!</p>
-        <MyBookList books={this.props.viewer.user.books}/>
+      {
+        //<p>Welcome, {this.props.viewer.user.email}!</p>
+      }
+        <MyBookList book_entries={this.props.viewer.user.books}/>
       </Page>
     );
   }
@@ -28,9 +30,7 @@ export default createFragmentContainer(
         email
         username
         books {
-          name
-          author
-          ...MyBookList_books
+          ...MyBookList_book_entries
         }
       }
     }

@@ -3,8 +3,8 @@
  *   relay-compiler
  *
  * @providesModule rootViewerQuery.graphql
- * @generated SignedSource<<b9130e68c87890138fb6bc2ff771436a>>
- * @relayHash b57af0996f809c629db816d46e38a8a1
+ * @generated SignedSource<<5a5d0d7ef3f73a02b5610c799afbbd11>>
+ * @relayHash 307724fc1c3cd104d3a7171300567d98
  * @flow
  * @nogrep
  */
@@ -38,19 +38,21 @@ fragment Landing_viewer on Viewer {
     email
     username
     books {
-      name
-      author
-      ...MyBookList_books
+      ...MyBookList_book_entries
       id
     }
     id
   }
 }
 
-fragment MyBookList_books on Book {
+fragment MyBookList_book_entries on UserBookJoin {
   id
-  name
-  author
+  book {
+    author
+    name
+    id
+  }
+  rating
 }
 */
 
@@ -136,7 +138,7 @@ const batch /*: ConcreteBatch*/ = {
                 "kind": "LinkedField",
                 "alias": null,
                 "args": null,
-                "concreteType": "Book",
+                "concreteType": "UserBookJoin",
                 "name": "books",
                 "plural": true,
                 "selections": [
@@ -144,22 +146,53 @@ const batch /*: ConcreteBatch*/ = {
                     "kind": "ScalarField",
                     "alias": null,
                     "args": null,
-                    "name": "name",
-                    "storageKey": null
-                  },
-                  {
-                    "kind": "ScalarField",
-                    "alias": null,
-                    "args": null,
-                    "name": "author",
-                    "storageKey": null
-                  },
-                  {
-                    "kind": "ScalarField",
-                    "alias": null,
-                    "args": null,
                     "name": "id",
                     "storageKey": null
+                  },
+                  {
+                    "kind": "InlineFragment",
+                    "type": "UserBookJoin",
+                    "selections": [
+                      {
+                        "kind": "LinkedField",
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "Book",
+                        "name": "book",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "kind": "ScalarField",
+                            "alias": null,
+                            "args": null,
+                            "name": "author",
+                            "storageKey": null
+                          },
+                          {
+                            "kind": "ScalarField",
+                            "alias": null,
+                            "args": null,
+                            "name": "name",
+                            "storageKey": null
+                          },
+                          {
+                            "kind": "ScalarField",
+                            "alias": null,
+                            "args": null,
+                            "name": "id",
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      },
+                      {
+                        "kind": "ScalarField",
+                        "alias": null,
+                        "args": null,
+                        "name": "rating",
+                        "storageKey": null
+                      }
+                    ]
                   }
                 ],
                 "storageKey": null
@@ -188,7 +221,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "query rootViewerQuery {\n  viewer {\n    ...Account_viewer\n    ...Landing_viewer\n    id\n  }\n}\n\nfragment Account_viewer on Viewer {\n  id\n}\n\nfragment Landing_viewer on Viewer {\n  id\n  user {\n    email\n    username\n    books {\n      name\n      author\n      ...MyBookList_books\n      id\n    }\n    id\n  }\n}\n\nfragment MyBookList_books on Book {\n  id\n  name\n  author\n}\n"
+  "text": "query rootViewerQuery {\n  viewer {\n    ...Account_viewer\n    ...Landing_viewer\n    id\n  }\n}\n\nfragment Account_viewer on Viewer {\n  id\n}\n\nfragment Landing_viewer on Viewer {\n  id\n  user {\n    email\n    username\n    books {\n      ...MyBookList_book_entries\n      id\n    }\n    id\n  }\n}\n\nfragment MyBookList_book_entries on UserBookJoin {\n  id\n  book {\n    author\n    name\n    id\n  }\n  rating\n}\n"
 };
 
 module.exports = batch;

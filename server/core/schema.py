@@ -12,6 +12,12 @@ class Book(DjangoObjectType):
         filter_fields = ['author', 'name']
         interfaces = (graphene.Node, )
 
+class UserBookJoin(DjangoObjectType):
+    class Meta:
+        model = UserBookJoinModal
+        filter_fields = ['state', 'rating']
+        interfaces = (graphene.Node, )
+
 class User(DjangoObjectType):
     class Meta:
         model = get_user_model()
@@ -30,17 +36,11 @@ class User(DjangoObjectType):
         )
         interfaces = (graphene.Node, TokensInterface)
 
-    books = graphene.List(Book)
+    books = graphene.List(UserBookJoin)
 
     @graphene.resolve_only_args
     def resolve_books(self):
-        return self.books.all()
-
-class UserBookJoin(DjangoObjectType):
-    class Meta:
-        model = UserBookJoinModal
-        filter_fields = ['state', 'rating']
-        interfaces = (graphene.Node, )
+        return self.userbookjoin_set.all()
 
 class CoreQueries(graphene.AbstractType):
     book = graphene.Node.Field(Book)
