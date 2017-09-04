@@ -6,6 +6,12 @@ from core.user_helper.jwt_util import get_token_user_id
 from core.user_helper.jwt_schema import TokensInterface
 from .models import Book as BookModal, UserBookJoin as UserBookJoinModal
 
+class Book(DjangoObjectType):
+    class Meta:
+        model = BookModal
+        filter_fields = ['author', 'name']
+        interfaces = (graphene.Node, )
+
 class User(DjangoObjectType):
     class Meta:
         model = get_user_model()
@@ -20,14 +26,15 @@ class User(DjangoObjectType):
             'is_staff',
             'is_active',
             'date_joined',
+            'books'
         )
         interfaces = (graphene.Node, TokensInterface)
 
-class Book(DjangoObjectType):
-    class Meta:
-        model = BookModal
-        filter_fields = ['author', 'name']
-        interfaces = (graphene.Node, )
+    books = graphene.List(Book)
+
+    @graphene.resolve_only_args
+    def resolve_books(self):
+        return self.books.all()
 
 class UserBookJoin(DjangoObjectType):
     class Meta:

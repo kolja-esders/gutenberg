@@ -3,8 +3,8 @@
  *   relay-compiler
  *
  * @providesModule rootViewerQuery.graphql
- * @generated SignedSource<<871158ab0e9cabe1a57b607aa86f07b0>>
- * @relayHash 9c4012052d1aa22aa7c670116fc36833
+ * @generated SignedSource<<b9130e68c87890138fb6bc2ff771436a>>
+ * @relayHash b57af0996f809c629db816d46e38a8a1
  * @flow
  * @nogrep
  */
@@ -37,8 +37,20 @@ fragment Landing_viewer on Viewer {
   user {
     email
     username
+    books {
+      name
+      author
+      ...MyBookList_books
+      id
+    }
     id
   }
+}
+
+fragment MyBookList_books on Book {
+  id
+  name
+  author
 }
 */
 
@@ -102,7 +114,7 @@ const batch /*: ConcreteBatch*/ = {
             "kind": "LinkedField",
             "alias": null,
             "args": null,
-            "concreteType": "UserNode",
+            "concreteType": "User",
             "name": "user",
             "plural": false,
             "selections": [
@@ -118,6 +130,38 @@ const batch /*: ConcreteBatch*/ = {
                 "alias": null,
                 "args": null,
                 "name": "username",
+                "storageKey": null
+              },
+              {
+                "kind": "LinkedField",
+                "alias": null,
+                "args": null,
+                "concreteType": "Book",
+                "name": "books",
+                "plural": true,
+                "selections": [
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
+                    "name": "name",
+                    "storageKey": null
+                  },
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
+                    "name": "author",
+                    "storageKey": null
+                  },
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
+                    "name": "id",
+                    "storageKey": null
+                  }
+                ],
                 "storageKey": null
               },
               {
@@ -144,7 +188,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "query rootViewerQuery {\n  viewer {\n    ...Account_viewer\n    ...Landing_viewer\n    id\n  }\n}\n\nfragment Account_viewer on Viewer {\n  id\n}\n\nfragment Landing_viewer on Viewer {\n  id\n  user {\n    email\n    username\n    id\n  }\n}\n"
+  "text": "query rootViewerQuery {\n  viewer {\n    ...Account_viewer\n    ...Landing_viewer\n    id\n  }\n}\n\nfragment Account_viewer on Viewer {\n  id\n}\n\nfragment Landing_viewer on Viewer {\n  id\n  user {\n    email\n    username\n    books {\n      name\n      author\n      ...MyBookList_books\n      id\n    }\n    id\n  }\n}\n\nfragment MyBookList_books on Book {\n  id\n  name\n  author\n}\n"
 };
 
 module.exports = batch;

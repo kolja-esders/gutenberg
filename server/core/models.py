@@ -17,7 +17,7 @@ class CustomUser(AbstractEmailUser):
     username = models.CharField(max_length=31, blank=True)
     first_name = models.CharField(max_length=31, blank=True)
     last_name = models.CharField(max_length=31, blank=True)
-    books = models.ManyToManyField(Book, through='UserBookJoin', symmetrical=False)
+    books = models.ManyToManyField(Book, through='UserBookJoin', symmetrical=False, related_name='users')
 
 class UserBookJoin(models.Model):
     user = models.ForeignKey(CustomUser)

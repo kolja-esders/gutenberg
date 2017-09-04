@@ -3,7 +3,7 @@ from graphene import AbstractType, relay, Field, String, ObjectType, Union, List
 
 from core.user_helper.jwt_schema import TokensSuccess
 from core.user_helper.jwt_util import get_jwt_token
-from .definitions import Viewer
+from core.schema import Viewer
 
 
 class Error(ObjectType):

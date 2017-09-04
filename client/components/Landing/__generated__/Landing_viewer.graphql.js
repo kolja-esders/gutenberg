@@ -3,7 +3,7 @@
  *   relay-compiler
  *
  * @providesModule Landing_viewer.graphql
- * @generated SignedSource<<eddc0491b80328e8c7c5e04db25c3762>>
+ * @generated SignedSource<<844b34efef0e712e8c5f984edc0557bb>>
  * @flow
  * @nogrep
  */
@@ -19,6 +19,10 @@ export type Landing_viewer = {|
   +user: ?{|
     +email: string;
     +username: string;
+    +books: ?$ReadOnlyArray<?{|
+      +name: string;
+      +author: string;
+    |}>;
   |};
 |};
 */
@@ -41,7 +45,7 @@ const fragment /*: ConcreteFragment*/ = {
       "kind": "LinkedField",
       "alias": null,
       "args": null,
-      "concreteType": "UserNode",
+      "concreteType": "User",
       "name": "user",
       "plural": false,
       "selections": [
@@ -57,6 +61,36 @@ const fragment /*: ConcreteFragment*/ = {
           "alias": null,
           "args": null,
           "name": "username",
+          "storageKey": null
+        },
+        {
+          "kind": "LinkedField",
+          "alias": null,
+          "args": null,
+          "concreteType": "Book",
+          "name": "books",
+          "plural": true,
+          "selections": [
+            {
+              "kind": "ScalarField",
+              "alias": null,
+              "args": null,
+              "name": "name",
+              "storageKey": null
+            },
+            {
+              "kind": "ScalarField",
+              "alias": null,
+              "args": null,
+              "name": "author",
+              "storageKey": null
+            },
+            {
+              "kind": "FragmentSpread",
+              "name": "MyBookList_books",
+              "args": null
+            }
+          ],
           "storageKey": null
         }
       ],
