@@ -3,8 +3,8 @@
  *   relay-compiler
  *
  * @providesModule rootViewerQuery.graphql
- * @generated SignedSource<<5d3bff4ef3eee989af18f17666d03148>>
- * @relayHash 00bddd1f3e0979faee55020f91101c12
+ * @generated SignedSource<<871158ab0e9cabe1a57b607aa86f07b0>>
+ * @relayHash 9c4012052d1aa22aa7c670116fc36833
  * @flow
  * @nogrep
  */
@@ -23,10 +23,7 @@ import type {ConcreteBatch} from 'relay-runtime';
 query rootViewerQuery {
   viewer {
     ...Account_viewer
-    user {
-      ...UserDropDown_user
-      id
-    }
+    ...Landing_viewer
     id
   }
 }
@@ -35,9 +32,13 @@ fragment Account_viewer on Viewer {
   id
 }
 
-fragment UserDropDown_user on UserNode {
-  username
-  email
+fragment Landing_viewer on Viewer {
+  id
+  user {
+    email
+    username
+    id
+  }
 }
 */
 
@@ -62,20 +63,9 @@ const batch /*: ConcreteBatch*/ = {
             "args": null
           },
           {
-            "kind": "LinkedField",
-            "alias": null,
-            "args": null,
-            "concreteType": "UserNode",
-            "name": "user",
-            "plural": false,
-            "selections": [
-              {
-                "kind": "FragmentSpread",
-                "name": "UserDropDown_user",
-                "args": null
-              }
-            ],
-            "storageKey": null
+            "kind": "FragmentSpread",
+            "name": "Landing_viewer",
+            "args": null
           }
         ],
         "storageKey": null
@@ -120,14 +110,14 @@ const batch /*: ConcreteBatch*/ = {
                 "kind": "ScalarField",
                 "alias": null,
                 "args": null,
-                "name": "username",
+                "name": "email",
                 "storageKey": null
               },
               {
                 "kind": "ScalarField",
                 "alias": null,
                 "args": null,
-                "name": "email",
+                "name": "username",
                 "storageKey": null
               },
               {
@@ -154,7 +144,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "query rootViewerQuery {\n  viewer {\n    ...Account_viewer\n    user {\n      ...UserDropDown_user\n      id\n    }\n    id\n  }\n}\n\nfragment Account_viewer on Viewer {\n  id\n}\n\nfragment UserDropDown_user on UserNode {\n  username\n  email\n}\n"
+  "text": "query rootViewerQuery {\n  viewer {\n    ...Account_viewer\n    ...Landing_viewer\n    id\n  }\n}\n\nfragment Account_viewer on Viewer {\n  id\n}\n\nfragment Landing_viewer on Viewer {\n  id\n  user {\n    email\n    username\n    id\n  }\n}\n"
 };
 
 module.exports = batch;

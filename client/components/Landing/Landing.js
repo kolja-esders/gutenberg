@@ -1,11 +1,25 @@
 import React from 'react';
+import { graphql, createFragmentContainer }from 'react-relay';
 import Page from 'components/Page/Page';
-import Link from 'react-router-dom/es/Link';
-import { Button } from 'semantic-ui-react';
+import { authenticatedRoute } from 'modules/auth/utils'
 
-const Landing = () =>
+
+const Landing = ({ viewer }) =>
   <Page heading='Landing' >
-    <p>Wooohoooo</p>
+    <p>Welcome, {viewer.user.email}!</p>
   </Page>;
 
-export default Landing;
+const AuthenticatedLanding = authenticatedRoute(Landing);
+
+export default createFragmentContainer(
+  AuthenticatedLanding,
+  graphql`
+    fragment Landing_viewer on Viewer {
+      id
+      user {
+        email
+        username
+      }
+    }
+  `,
+)

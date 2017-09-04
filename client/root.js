@@ -10,10 +10,7 @@ const rootQuery = graphql`
     query rootViewerQuery {
         viewer {
             ...Account_viewer
-            user {
-                ...UserDropDown_user
-                }
-            
+            ...Landing_viewer
         }
     }
 `;
