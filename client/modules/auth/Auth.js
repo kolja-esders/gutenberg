@@ -8,7 +8,7 @@ import FormMessageList from 'components/FormMessageList/FormMessageList'
 import styles from './Auth.scss'
 import Page from 'components/Page/Page'
 
-import { Input, Button, Checkbox } from 'semantic-ui-react';
+import { Input, Button, Checkbox, Grid } from 'semantic-ui-react';
 
 
 function isLoginCheck() {
@@ -22,17 +22,17 @@ function passwordMatchValidation(input) {
 function validateInput(input) {
   let errors = []
   let id = 0
-  const passwordsMatch = passwordMatchValidation(input)
+  //const passwordsMatch = passwordMatchValidation(input)
   // So we don't delete the original state values
   input = { ...input }
-  if (!passwordsMatch && !isLoginCheck()) {
-    id++
-    errors.push({
-      id,
-      key: '',
-      message: 'The password confirmation field did not match the password you entered below'
-    })
-  }
+  //if (!passwordsMatch && !isLoginCheck()) {
+    //id++
+    //errors.push({
+      //id,
+      //key: '',
+      //message: 'The password confirmation field did not match the password you entered below'
+    //})
+  //}
   if (!input.email) {
     id++
     errors.push({
@@ -40,6 +40,24 @@ function validateInput(input) {
       key: '',
       message: 'Please fill out the email field'
     })
+  }
+  if (!isLoginCheck()) {
+    if (!input.firstName) {
+      id++
+      errors.push({
+        id,
+        key: '',
+        message: 'Please enter your first name'
+      })
+    }
+    if (!input.lastName) {
+      id++
+      errors.push({
+        id,
+        key: '',
+        message: 'Please enter your last name'
+      })
+    }
   }
   if (!input.password) {
     id++
@@ -53,7 +71,7 @@ function validateInput(input) {
     // Empty array will still return true
     errors = false
     // Passwords remove mutation doesn't require password confirmation field.
-    delete input.passwordConfirmation
+    //delete input.passwordConfirmation
   }
   return { input, errors }
 }
@@ -63,10 +81,9 @@ class Auth extends React.Component {
     super(props)
     const initialInput = {
       email: '',
-      password: ''
-    }
-    if (!isLoginCheck(props)) {
-      initialInput.passwordConfirmation = ''
+      password: '',
+      firstName: '',
+      lastName: ''
     }
 
     this.state = {
@@ -98,6 +115,7 @@ class Auth extends React.Component {
       LoginUserMutation(environment, this.setErrors.bind(this), input)
     }
     else if (!errors) {
+      console.log(input)
       SignupUserMutation(environment, this.setErrors.bind(this), input)
     }
     else {
@@ -130,8 +148,41 @@ class Auth extends React.Component {
           id={isLogin ? 'Login' : ' Sign up'}
           onSubmit={this.submitForm}
           className={styles.form}
+          autoComplete={"off"}
         >
+          <input type="password" name="password" className={styles.dummyInput}/>
           <FormMessageList messages={errors} />
+
+          { !isLogin &&
+            <Grid className={styles.nameFields}>
+              <Grid.Row columns={2} className={styles.row}>
+                <Grid.Column className={styles.column}>
+                  <Input
+                    id='firstName'
+                    className={styles.nameField}
+                    onChange={this.handleFieldChange.bind(this)}
+                    value={input.firstName}
+                    type='test'
+                    size="large"
+                    fluid
+                    required
+                    placeholder='First name' />
+                </Grid.Column>
+                <Grid.Column className={styles.column}>
+                  <Input
+                    id='lastName'
+                    className={styles.nameField}
+                    onChange={this.handleFieldChange.bind(this)}
+                    value={input.lastName}
+                    type='text'
+                    size="large"
+                    fluid
+                    required
+                    placeholder='Last name' />
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
+          }
 
           <Input
             id='email'
@@ -158,20 +209,6 @@ class Auth extends React.Component {
             required
           />
 
-          {!isLogin ?
-            <Input
-              id='passwordConfirmation'
-              onChange={this.handleFieldChange.bind(this)}
-              value={input.passwordConfirmation}
-              className={styles.textFields}
-              placeholder='Password confirmation'
-              type='password'
-              size="large"
-              required
-            />
-            : null}
-
-
             {isLogin ?
               <Button
                 primary
@@ -194,13 +231,9 @@ class Auth extends React.Component {
               </Button>
             }
             <br />
-            { isLogin ?
-              <div>
-                <Checkbox
-                  label='Remember me'
-                  style={{ textAlign: 'right' }}
-                />
-              </div> : null }
+            { isLogin &&
+              <Checkbox className={styles.rememberMe} label='Remember me' />
+            }
         </form>
         </div>
       </Page>

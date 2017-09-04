@@ -71,6 +71,8 @@ class SignupUserMutation(relay.ClientIDMutation):
     class Input:
         email = String(required=True)
         password = String(required=True)
+        first_name = String(required=True)
+        last_name = String(required=True)
 
     auth_form_payload = Field(AuthFormUnion)
 
@@ -78,10 +80,12 @@ class SignupUserMutation(relay.ClientIDMutation):
     def mutate_and_get_payload(cls, input, context, info):
         email = input.get('email')
         password = input.get('password')
+        first_name = input.get('first_name')
+        last_name = input.get('last_name')
         user = get_user_model().objects.filter(email=email)
         errors = []
         if not user:
-            user = get_user_model().objects.create_user(email=email, password=password)
+            user = get_user_model().objects.create_user(email=email, password=password, first_name=first_name, last_name=last_name)
             jwt_token = get_jwt_token(user)
             token = TokensSuccess(
                 token=jwt_token
