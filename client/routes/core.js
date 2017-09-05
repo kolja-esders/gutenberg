@@ -1,13 +1,13 @@
 //import Polls from 'modules/polls/Polls';
 //import PollsDetail from 'modules/polls/PollsDetail';
 //import PollsResults from 'modules/polls/PollsResults';
-//import PollsVote from 'modules/polls/PollsVote';
+import SharedBooks from 'modules/core/SharedBooks/SharedBooks';
 
-//const pollRoutes = [
-  //{
-    //path: '/polls',
-    //component: Polls,
-  //},
+const coreRoutes = [
+  {
+    path: '/shared-books',
+    component: SharedBooks,
+  },
   //{
     //path: '/polls/:id/detail',
     //component: PollsDetail,
@@ -20,6 +20,6 @@
     //path: '/polls/:id/vote',
     //component: PollsVote,
   //}
-//];
+];
 
-//export default pollRoutes;
+export default coreRoutes;

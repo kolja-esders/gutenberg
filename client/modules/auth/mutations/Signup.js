@@ -46,7 +46,7 @@ const mutation = graphql`
     }
 `
 
-function Signup(environment, setErrors, input: { email: string, password: string }) {
+function Signup(environment, setErrors, input: { email: string, password: string, firstName: string, lastName: string }) {
   commitMutation(
     environment,
     {

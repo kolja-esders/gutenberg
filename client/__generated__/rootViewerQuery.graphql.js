@@ -3,8 +3,8 @@
  *   relay-compiler
  *
  * @providesModule rootViewerQuery.graphql
- * @generated SignedSource<<5a5d0d7ef3f73a02b5610c799afbbd11>>
- * @relayHash 307724fc1c3cd104d3a7171300567d98
+ * @generated SignedSource<<b2902cdbefdebd05190696422d35cf8d>>
+ * @relayHash 014d64d8a01cdcb3f3a2028f0dade993
  * @flow
  * @nogrep
  */
@@ -22,17 +22,19 @@ import type {ConcreteBatch} from 'relay-runtime';
 /*
 query rootViewerQuery {
   viewer {
-    ...Account_viewer
+    ...Page_viewer
     ...Landing_viewer
+    ...SharedBooks_viewer
     id
   }
 }
 
-fragment Account_viewer on Viewer {
-  id
+fragment Page_viewer on Viewer {
+  ...Header_viewer
 }
 
 fragment Landing_viewer on Viewer {
+  ...Page_viewer
   id
   user {
     email
@@ -45,6 +47,30 @@ fragment Landing_viewer on Viewer {
   }
 }
 
+fragment SharedBooks_viewer on Viewer {
+  ...Page_viewer
+  id
+  user {
+    email
+    username
+    books {
+      ...SharedBooksList_book_entries
+      id
+    }
+    id
+  }
+}
+
+fragment SharedBooksList_book_entries on UserBookJoin {
+  id
+  book {
+    author
+    name
+    id
+  }
+  rating
+}
+
 fragment MyBookList_book_entries on UserBookJoin {
   id
   book {
@@ -53,6 +79,14 @@ fragment MyBookList_book_entries on UserBookJoin {
     id
   }
   rating
+}
+
+fragment Header_viewer on Viewer {
+  id
+  user {
+    email
+    id
+  }
 }
 */
 
@@ -73,12 +107,17 @@ const batch /*: ConcreteBatch*/ = {
         "selections": [
           {
             "kind": "FragmentSpread",
-            "name": "Account_viewer",
+            "name": "Page_viewer",
             "args": null
           },
           {
             "kind": "FragmentSpread",
             "name": "Landing_viewer",
+            "args": null
+          },
+          {
+            "kind": "FragmentSpread",
+            "name": "SharedBooks_viewer",
             "args": null
           }
         ],
@@ -125,6 +164,13 @@ const batch /*: ConcreteBatch*/ = {
                 "alias": null,
                 "args": null,
                 "name": "email",
+                "storageKey": null
+              },
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "args": null,
+                "name": "id",
                 "storageKey": null
               },
               {
@@ -196,13 +242,6 @@ const batch /*: ConcreteBatch*/ = {
                   }
                 ],
                 "storageKey": null
-              },
-              {
-                "kind": "ScalarField",
-                "alias": null,
-                "args": null,
-                "name": "id",
-                "storageKey": null
               }
             ],
             "storageKey": null
@@ -221,7 +260,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "query rootViewerQuery {\n  viewer {\n    ...Account_viewer\n    ...Landing_viewer\n    id\n  }\n}\n\nfragment Account_viewer on Viewer {\n  id\n}\n\nfragment Landing_viewer on Viewer {\n  id\n  user {\n    email\n    username\n    books {\n      ...MyBookList_book_entries\n      id\n    }\n    id\n  }\n}\n\nfragment MyBookList_book_entries on UserBookJoin {\n  id\n  book {\n    author\n    name\n    id\n  }\n  rating\n}\n"
+  "text": "query rootViewerQuery {\n  viewer {\n    ...Page_viewer\n    ...Landing_viewer\n    ...SharedBooks_viewer\n    id\n  }\n}\n\nfragment Page_viewer on Viewer {\n  ...Header_viewer\n}\n\nfragment Landing_viewer on Viewer {\n  ...Page_viewer\n  id\n  user {\n    email\n    username\n    books {\n      ...MyBookList_book_entries\n      id\n    }\n    id\n  }\n}\n\nfragment SharedBooks_viewer on Viewer {\n  ...Page_viewer\n  id\n  user {\n    email\n    username\n    books {\n      ...SharedBooksList_book_entries\n      id\n    }\n    id\n  }\n}\n\nfragment SharedBooksList_book_entries on UserBookJoin {\n  id\n  book {\n    author\n    name\n    id\n  }\n  rating\n}\n\nfragment MyBookList_book_entries on UserBookJoin {\n  id\n  book {\n    author\n    name\n    id\n  }\n  rating\n}\n\nfragment Header_viewer on Viewer {\n  id\n  user {\n    email\n    id\n  }\n}\n"
 };
 
 module.exports = batch;
