@@ -111,10 +111,11 @@ class Auth extends React.Component {
     const { input, errors } = validateInput(this.state.input)
     const { environment, router } = this.props
     if (!errors && isLogin) {
+      delete input['firstName']
+      delete input['lastName']
       LoginUserMutation(environment, this.setErrors.bind(this), input)
     }
     else if (!errors) {
-      console.log(input)
       SignupUserMutation(environment, this.setErrors.bind(this), input)
     }
     else {

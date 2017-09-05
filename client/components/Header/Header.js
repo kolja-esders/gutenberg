@@ -3,10 +3,15 @@ import styles from './Header.scss'
 import Link from 'react-router-dom/es/Link'
 import { Button } from 'semantic-ui-react'
 import { graphql, createFragmentContainer } from 'react-relay';
+import { logoutViewer } from 'modules/auth/jwtUtils'
 
 class Header extends React.Component {
+
+  logOut() {
+    logoutViewer()
+  }
+
   render() {
-    console.log(this.props)
     const isLoggedIn = this.props.viewer != null
     return (
       <header className={styles.root}>
@@ -18,7 +23,7 @@ class Header extends React.Component {
                   <div>
                   <Button basic as={Link} to='/shared-books' className={styles.item}>All Books</Button>
                   <Button basic as={Link} to='/' className={styles.item}>My Books</Button>
-                  <Button basic primary as={Link} to='/' className={styles.item}>Log out</Button>
+                  <Button basic primary className={styles.item} onClick={() => {logoutViewer()}} >Log out</Button>
                 </div>
               ) : (
                 <div>

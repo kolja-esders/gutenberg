@@ -6,7 +6,6 @@ import { Helmet } from 'react-helmet';
 
 class Page extends React.Component {
   render() {
-    console.log(this.props)
     return (
       <div className={styles.root}>
         <Helmet>
