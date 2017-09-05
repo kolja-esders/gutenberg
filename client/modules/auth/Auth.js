@@ -1,5 +1,4 @@
 import React from 'react'
-import { Helmet } from 'react-helmet';
 import Textfield from 'react-mdc-web/lib/Textfield/Textfield'
 import LoginUserMutation from './mutations/Login'
 import SignupUserMutation from './mutations/Signup'
@@ -139,10 +138,7 @@ class Auth extends React.Component {
     //const formErrors = this.getErrors('')
 
     return (
-      <Page heading={title}>
-        <Helmet>
-            <title>{title}</title>
-        </Helmet>
+      <Page title={title}>
       <div className={styles.container}>
         <form
           id={isLogin ? 'Login' : ' Sign up'}

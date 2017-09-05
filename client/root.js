@@ -9,8 +9,9 @@ import { RelayComponent } from './utils/relay';
 const rootQuery = graphql`
     query rootViewerQuery {
         viewer {
-            ...Account_viewer
+            ...Page_viewer
             ...Landing_viewer
+            ...SharedBooks_viewer
         }
     }
 `;

@@ -1,13 +1,31 @@
 import React from 'react';
 import styles from './Page.scss';
 import Header from 'components/Header/Header';
+import { graphql, createFragmentContainer } from 'react-relay';
+import { Helmet } from 'react-helmet';
 
-const Page = (props: {heading: String, children: Object}) =>
-  <div className={styles.root}>
-    <Header />
-    <main className={styles.content}>
-      {props.children}
-    </main>
-  </div>
+class Page extends React.Component {
+  render() {
+    console.log(this.props)
+    return (
+      <div className={styles.root}>
+        <Helmet>
+          <title>{this.props.title}</title>
+        </Helmet>
+        <Header viewer={this.props.viewer} />
+        <main className={styles.content}>
+          {this.props.children}
+        </main>
+      </div>
+    )
+  }
+}
 
-export default Page;
+export default createFragmentContainer(
+  Page,
+  graphql`
+    fragment Page_viewer on Viewer {
+      ...Header_viewer
+    }
+  `,
+)

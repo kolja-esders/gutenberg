@@ -1,11 +1,11 @@
 import React from 'react';
-import { graphql, createFragmentContainer } from 'react-relay';
+import { graphql, createFragmentContainer, QueryRenderer } from 'react-relay';
 import Page from 'components/Page/Page';
 import { authenticatedRoute } from 'modules/auth/utils'
-import { Table, Rating } from 'semantic-ui-react';
-import styles from './MyBookList.scss';
+import { Table } from 'semantic-ui-react';
+import styles from './SharedBooksList.scss';
 
-class MyBookList extends React.Component {
+class SharedBookList extends React.Component {
   render() {
     const book_entries = this.props.book_entries;
     return (
@@ -25,9 +25,7 @@ class MyBookList extends React.Component {
               <Table.Row id={e.id}>
                 <Table.Cell>{e.book.name}</Table.Cell>
                 <Table.Cell>{e.book.author}</Table.Cell>
-                <Table.Cell>
-                  <Rating defaultRating={e.rating} maxRating={5} />
-                </Table.Cell>
+                <Table.Cell>{e.rating}</Table.Cell>
               </Table.Row>
             )}
 
@@ -40,9 +38,9 @@ class MyBookList extends React.Component {
 }
 
 export default createFragmentContainer(
-  MyBookList,
+  SharedBookList,
   graphql`
-    fragment MyBookList_book_entries on UserBookJoin @relay(plural: true) {
+    fragment SharedBooksList_book_entries on UserBookJoin @relay(plural: true) {
       id
       book {
         author
