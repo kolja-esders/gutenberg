@@ -2,7 +2,7 @@ import React from 'react';
 import { graphql, createFragmentContainer, QueryRenderer } from 'react-relay';
 import Page from 'components/Page/Page';
 import { authenticatedRoute } from 'modules/auth/utils'
-import { Table, Dimmer, Loader } from 'semantic-ui-react';
+import { Table, Dimmer, Loader, Rating } from 'semantic-ui-react';
 import styles from './SharedBooksList.scss';
 import { environment } from '../../utils/relay'
 
@@ -48,6 +48,7 @@ class SharedBookList extends React.Component {
                         <Table.Row>
                           <Table.HeaderCell>Title</Table.HeaderCell>
                           <Table.HeaderCell>Author</Table.HeaderCell>
+                          <Table.HeaderCell>User</Table.HeaderCell>
                           <Table.HeaderCell>Rating</Table.HeaderCell>
                         </Table.Row>
                       </Table.Header>
@@ -56,7 +57,8 @@ class SharedBookList extends React.Component {
                           <Table.Row key={e.id}>
                             <Table.Cell>{e.book.name}</Table.Cell>
                             <Table.Cell>{e.book.author}</Table.Cell>
-                            <Table.Cell>{e.rating}</Table.Cell>
+                            <Table.Cell>{e.user.firstName}</Table.Cell>
+                            <Table.Cell><Rating disabled rating={e.rating} maxRating={5} /></Table.Cell>
                           </Table.Row>
                         )}
                       </Table.Body>
