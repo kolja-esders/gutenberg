@@ -145,9 +145,7 @@ class Auth extends React.Component {
           id={isLogin ? 'Login' : ' Sign up'}
           onSubmit={this.submitForm}
           className={styles.form}
-          autoComplete={"off"}
         >
-          <input type="password" name="password" className={styles.dummyInput}/>
           <FormMessageList messages={errors} />
 
           { !isLogin &&
