@@ -1,8 +1,7 @@
 import React from 'react';
+import { Loader } from 'semantic-ui-react'
 
 const LoadingSpinner = () =>
-  <div style={{ position: 'absolute', top: '50%', left: '50%' }} >
-    Loading
-  </div>;
+  <Loader active size='large'>Loading</Loader>;
 
 export default LoadingSpinner;
