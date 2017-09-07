@@ -27,7 +27,7 @@ class BookFactory(factory.DjangoModelFactory):
     class Meta:
         model = Book
 
-    name = factory.Faker('word')
+    title = factory.Faker('word')
     author = factory.Faker('last_name')
 
 class BookshelfEntryFactory(factory.DjangoModelFactory):
