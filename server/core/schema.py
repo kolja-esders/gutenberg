@@ -158,13 +158,9 @@ class CreateGroup(graphene.Mutation):
 
 class CoreMutations(graphene.AbstractType):
     create_book = CreateBook.Field()
-<<<<<<< HEAD
     create_bookshelf_entry = CreateBookshelfEntry.Field()
-=======
-    create_user_to_book = ConnectUserToBook.Field()
     create_membership = CreateMembership.Field()
     create_group = CreateGroup.Field()
->>>>>>> 6d698d090512b122b4569d4e933159be1ec46d0f
 
 
 class Viewer(ObjectType, CoreQueries):
