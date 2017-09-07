@@ -2,11 +2,16 @@
 //import PollsDetail from 'modules/polls/PollsDetail';
 //import PollsResults from 'modules/polls/PollsResults';
 import SharedBooks from 'modules/core/SharedBooks/SharedBooks';
+import GroupPage from 'modules/core/GroupPage/GroupPage';
 
 const coreRoutes = [
   {
     path: '/shared-books',
     component: SharedBooks,
+  },
+  {
+    path: '/groups/:name_url',
+    component: GroupPage,
   },
   //{
     //path: '/polls/:id/detail',
