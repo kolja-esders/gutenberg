@@ -66,8 +66,15 @@ class CoreQueries(graphene.AbstractType):
     memberships = graphene.List(Membership)
     all_memberships = DjangoFilterConnectionField(Membership)
 
-    group = graphene.Node.Field(Group)
+    group = graphene.Field(Group, id=graphene.ID(), name_url=graphene.String())
     all_groups = DjangoFilterConnectionField(Group)
+
+
+    def resolve_group(self, args, context, info):
+        if 'id' in args:
+            return GroupModal.objects.get(pk=args['id'])
+
+        return GroupModal.objects.get(name_url=args['name_url'])
 
 
     def resolve_books(self, args, context, info):

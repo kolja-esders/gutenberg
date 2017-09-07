@@ -22,7 +22,7 @@ class MyBookList extends React.Component {
           <Table.Body>
 
             {book_entries.map((e) =>
-              <Table.Row id={e.id}>
+              <Table.Row key={e.id}>
                 <Table.Cell>{e.book.title}</Table.Cell>
                 <Table.Cell>{e.book.author}</Table.Cell>
                 <Table.Cell>
