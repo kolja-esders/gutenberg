@@ -23,7 +23,7 @@ class MyBookList extends React.Component {
 
             {book_entries.map((e) =>
               <Table.Row id={e.id}>
-                <Table.Cell>{e.book.name}</Table.Cell>
+                <Table.Cell>{e.book.title}</Table.Cell>
                 <Table.Cell>{e.book.author}</Table.Cell>
                 <Table.Cell>
                   <Rating defaultRating={e.rating} maxRating={5} />
@@ -45,8 +45,8 @@ export default createFragmentContainer(
     fragment MyBookList_book_entries on UserBookJoin @relay(plural: true) {
       id
       book {
+        title
         author
-        name
       }
       rating
     }

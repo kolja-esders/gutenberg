@@ -9,7 +9,7 @@ from .models import Book as BookModal, UserBookJoin as UserBookJoinModal, Member
 class Book(DjangoObjectType):
     class Meta:
         model = BookModal
-        filter_fields = ['author', 'name']
+        filter_fields = ['author', 'title']
         interfaces = (graphene.Node, )
 
 class UserBookJoin(DjangoObjectType):
@@ -42,7 +42,8 @@ class User(DjangoObjectType):
             'is_staff',
             'is_active',
             'date_joined',
-            'books'
+            'books',
+            'groups'
         )
         interfaces = (graphene.Node, TokensInterface)
 
@@ -81,20 +82,19 @@ class CoreQueries(graphene.AbstractType):
         memberships = MembershipModal.objects.all()
         return memberships
 
-class BookInput(graphene.InputObjectType):
-    name = graphene.String(required=True)
-    author = graphene.String(required=True)
 
 class CreateBook(graphene.Mutation):
     class Input:
-        book_data = BookInput(required=True)
+        title = graphene.String(required=True)
+        author = graphene.String(required=True)
 
     book = graphene.Field(Book)
 
     def mutate(self, args, ctx, info):
-        book_data = args['book_data']
+        title = args['title']
+        author = args['author']
         book = BookModal(
-                name = book_data['name'],
+                title = book_data['title'],
                 author = book_data['author']
             )
         book.save()

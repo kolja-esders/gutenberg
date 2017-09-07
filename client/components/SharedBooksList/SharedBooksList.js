@@ -19,7 +19,7 @@ class SharedBookList extends React.Component {
                   userBookJoins {
                     id
                     book {
-                      name
+                      title
                       author
                     }
                     user {
@@ -55,7 +55,7 @@ class SharedBookList extends React.Component {
                       <Table.Body>
                         {props.userBookJoins.map((e) =>
                           <Table.Row key={e.id}>
-                            <Table.Cell>{e.book.name}</Table.Cell>
+                            <Table.Cell>{e.book.title}</Table.Cell>
                             <Table.Cell>{e.book.author}</Table.Cell>
                             <Table.Cell>{e.user.firstName}</Table.Cell>
                             <Table.Cell><Rating disabled rating={e.rating} maxRating={5} /></Table.Cell>
@@ -96,8 +96,8 @@ export default createFragmentContainer(
     fragment SharedBooksList_book_entries on UserBookJoin @relay(plural: true) {
       id
       book {
+        title
         author
-        name
       }
       rating
     }
