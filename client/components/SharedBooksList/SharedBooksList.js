@@ -15,8 +15,8 @@ class SharedBookList extends React.Component {
             <QueryRenderer
               environment={environment}
               query={graphql`
-                query SharedBooksList_AllUserBookJoinsQuery {
-                  userBookJoins {
+                query SharedBooksList_AllBookshelfEntriesQuery {
+                  bookshelfEntries {
                     id
                     book {
                       name
@@ -52,7 +52,7 @@ class SharedBookList extends React.Component {
                         </Table.Row>
                       </Table.Header>
                       <Table.Body>
-                        {props.userBookJoins.map((e) =>
+                        {props.bookshelfEntries.map((e) =>
                           <Table.Row key={e.id}>
                             <Table.Cell>{e.book.name}</Table.Cell>
                             <Table.Cell>{e.book.author}</Table.Cell>
@@ -91,7 +91,7 @@ class SharedBookList extends React.Component {
 export default createFragmentContainer(
   SharedBookList,
   graphql`
-    fragment SharedBooksList_book_entries on UserBookJoin @relay(plural: true) {
+    fragment SharedBooksList_book_entries on BookshelfEntry @relay(plural: true) {
       id
       book {
         author

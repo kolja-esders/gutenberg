@@ -17,9 +17,9 @@ class CustomUser(AbstractEmailUser):
     username = models.CharField(max_length=31, blank=True)
     first_name = models.CharField(max_length=31, blank=True)
     last_name = models.CharField(max_length=31, blank=True)
-    books = models.ManyToManyField(Book, through='UserBookJoin', symmetrical=False, related_name='users')
+    books = models.ManyToManyField(Book, through='BookshelfEntry', symmetrical=False, related_name='users')
 
-class UserBookJoin(models.Model):
+class BookshelfEntry(models.Model):
     user = models.ForeignKey(CustomUser)
     book = models.ForeignKey(Book)
     state = models.CharField(max_length = 31) # to-read, read, ...
@@ -27,4 +27,3 @@ class UserBookJoin(models.Model):
 
     class Meta:
         unique_together = ('user', 'book')
-
