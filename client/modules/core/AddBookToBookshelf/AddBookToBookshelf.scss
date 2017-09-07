@@ -1,0 +1,28 @@
+.container {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  margin-top: 200px;
+
+  .form {
+    width: 350px;
+    text-align: center;
+
+    .dummyInput {
+      display: none;
+    }
+    .textFields {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .nameFields {
+      margin-bottom: 10px;
+    }
+
+    .dropDown {
+      margin-bottom: 10px;
+    }
+
+  }
+}
