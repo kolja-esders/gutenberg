@@ -28,3 +28,18 @@ class UserBookJoin(models.Model):
     class Meta:
         unique_together = ('user', 'book')
 
+class Group(models.Model):
+    name = models.CharField(max_length=32, unique=True)
+    name_url = models.CharField(max_length=64, unique=True)
+
+    @staticmethod
+    def get_url_from_name(name):
+        return name.strip().lower().replace('.', '').replace(',', '').replace(' ', '-')
+
+
+class Membership(models.Model):
+    user = models.ForeignKey(CustomUser)
+    group = models.ForeignKey(Group)
+
+    class Meta:
+        unique_together = ('user', 'group')

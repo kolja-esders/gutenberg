@@ -4,7 +4,7 @@ from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType, ObjectType
 from core.user_helper.jwt_util import get_token_user_id
 from core.user_helper.jwt_schema import TokensInterface
-from .models import Book as BookModal, UserBookJoin as UserBookJoinModal
+from .models import Book as BookModal, UserBookJoin as UserBookJoinModal, Membership as MembershipModal, Group as GroupModal
 
 class Book(DjangoObjectType):
     class Meta:
@@ -16,6 +16,16 @@ class UserBookJoin(DjangoObjectType):
     class Meta:
         model = UserBookJoinModal
         filter_fields = ['state', 'rating']
+        interfaces = (graphene.Node, )
+
+class Group(DjangoObjectType):
+    class Meta:
+        model = GroupModal
+        interfaces = (graphene.Node, )
+
+class Membership(DjangoObjectType):
+    class Meta:
+        model = MembershipModal
         interfaces = (graphene.Node, )
 
 class User(DjangoObjectType):
@@ -51,6 +61,14 @@ class CoreQueries(graphene.AbstractType):
     user_book_joins = graphene.List(UserBookJoin)
     all_user_book_joins = DjangoFilterConnectionField(UserBookJoin)
 
+    membership = graphene.Node.Field(Membership)
+    memberships = graphene.List(Membership)
+    all_memberships = DjangoFilterConnectionField(Membership)
+
+    group = graphene.Node.Field(Group)
+    all_groups = DjangoFilterConnectionField(Group)
+
+
     def resolve_books(self, args, context, info):
         books = BookModal.objects.all()
         return books
@@ -59,10 +77,13 @@ class CoreQueries(graphene.AbstractType):
         user_book_joins = UserBookJoinModal.objects.all()
         return user_book_joins
 
+    def resolve_memberships(self, args, context, info):
+        memberships = MembershipModal.objects.all()
+        return memberships
+
 class BookInput(graphene.InputObjectType):
     name = graphene.String(required=True)
     author = graphene.String(required=True)
-
 
 class CreateBook(graphene.Mutation):
     class Input:
@@ -105,10 +126,41 @@ class ConnectUserToBook(graphene.Mutation):
         user_book_join.save()
         return ConnectUserToBook(user_book_join=user_book_join)
 
+class CreateMembership(graphene.Mutation):
+    class Input:
+        user_id = graphene.String(required=True)
+        group_id = graphene.String(required=True)
+
+    membership = graphene.Field(Membership)
+
+    def mutate(self, args, ctx, info):
+        user = get_user_model().objects.get(pk=args['user_id'])
+        group = GroupModal.objects.get(pk=args['group_id'])
+        membership = MembershipModal(
+            user = user,
+            group = group
+        )
+        membership.save()
+        return CreateMembership(membership=membership)
+
+class CreateGroup(graphene.Mutation):
+    class Input:
+        name = graphene.String(required=True)
+
+    group = graphene.Field(Group)
+
+    def mutate(self, args, ctx, info):
+        name = args['name']
+        name_url = GroupModal.get_url_from_name(name)
+        group = GroupModal(name=name, name_url=name_url)
+        group.save()
+        return CreateGroup(group=group)
 
 class CoreMutations(graphene.AbstractType):
     create_book = CreateBook.Field()
     create_user_to_book = ConnectUserToBook.Field()
+    create_membership = CreateMembership.Field()
+    create_group = CreateGroup.Field()
 
 
 class Viewer(ObjectType, CoreQueries):
