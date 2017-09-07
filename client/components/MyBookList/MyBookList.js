@@ -42,7 +42,7 @@ class MyBookList extends React.Component {
 export default createFragmentContainer(
   MyBookList,
   graphql`
-    fragment MyBookList_book_entries on UserBookJoin @relay(plural: true) {
+    fragment MyBookList_book_entries on BookshelfEntry @relay(plural: true) {
       id
       book {
         title

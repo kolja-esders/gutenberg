@@ -1,8 +1,6 @@
 from django.contrib import admin
 
-from .models import Book, UserBookJoin
+from .models import Book, BookshelfEntry
 
 admin.site.register(Book)
-admin.site.register(UserBookJoin)
-
-
+admin.site.register(BookshelfEntry)

@@ -4,7 +4,7 @@ from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType, ObjectType
 from core.user_helper.jwt_util import get_token_user_id
 from core.user_helper.jwt_schema import TokensInterface
-from .models import Book as BookModal, UserBookJoin as UserBookJoinModal, Membership as MembershipModal, Group as GroupModal
+from .models import Book as BookModal, BookshelfEntry as BookshelfEntryModal, Membership as MembershipModal, Group as GroupModal
 
 class Book(DjangoObjectType):
     class Meta:
@@ -12,9 +12,9 @@ class Book(DjangoObjectType):
         filter_fields = ['author', 'title']
         interfaces = (graphene.Node, )
 
-class UserBookJoin(DjangoObjectType):
+class BookshelfEntry(DjangoObjectType):
     class Meta:
-        model = UserBookJoinModal
+        model = BookshelfEntryModal
         filter_fields = ['state', 'rating']
         interfaces = (graphene.Node, )
 
@@ -47,20 +47,20 @@ class User(DjangoObjectType):
         )
         interfaces = (graphene.Node, TokensInterface)
 
-    books = graphene.List(UserBookJoin)
+    books = graphene.List(BookshelfEntry)
 
     @graphene.resolve_only_args
     def resolve_books(self):
-        return self.userbookjoin_set.all()
+        return self.bookshelfentry_set.all()
 
 class CoreQueries(graphene.AbstractType):
     book = graphene.Node.Field(Book)
     books = graphene.List(Book)
     all_books = DjangoFilterConnectionField(Book)
 
-    user_book_join = graphene.Node.Field(UserBookJoin)
-    user_book_joins = graphene.List(UserBookJoin)
-    all_user_book_joins = DjangoFilterConnectionField(UserBookJoin)
+    bookshelf_entry = graphene.Node.Field(BookshelfEntry)
+    bookshelf_entries = graphene.List(BookshelfEntry)
+    all_bookshelf_entries = DjangoFilterConnectionField(BookshelfEntry)
 
     membership = graphene.Node.Field(Membership)
     memberships = graphene.List(Membership)
@@ -74,9 +74,9 @@ class CoreQueries(graphene.AbstractType):
         books = BookModal.objects.all()
         return books
 
-    def resolve_user_book_joins(self, args, context, info):
-        user_book_joins = UserBookJoinModal.objects.all()
-        return user_book_joins
+    def resolve_bookshelf_entries(self, args, context, info):
+        bookshelf_entries = BookshelfEntryModal.objects.all()
+        return bookshelf_entries
 
     def resolve_memberships(self, args, context, info):
         memberships = MembershipModal.objects.all()
@@ -101,14 +101,14 @@ class CreateBook(graphene.Mutation):
         return CreateBook(book=book)
 
 
-class ConnectUserToBook(graphene.Mutation):
+class CreateBookshelfEntry(graphene.Mutation):
     class Input:
         user_id = graphene.String(required=True)
         book_id = graphene.String(required=True)
         state = graphene.String(required=True)
         rating = graphene.Int(required=True)
 
-    user_book_join = graphene.Field(UserBookJoin)
+    bookshelf_entry = graphene.Field(BookshelfEntry)
 
     def mutate(self, args, ctx, info):
         user_id = args['user_id']
@@ -117,14 +117,14 @@ class ConnectUserToBook(graphene.Mutation):
         rating = args['rating']
         user = get_user_model().objects.get(pk=user_id)
         book = BookModal.objects.get(pk=book_id)
-        user_book_join = UserBookJoinModal(
+        bookshelf_entry = BookshelfEntryModal(
                 user = user,
                 book= book,
                 state = state,
                 rating = rating
             )
-        user_book_join.save()
-        return ConnectUserToBook(user_book_join=user_book_join)
+        bookshelf_entry.save()
+        return CreateBookshelfEntry(bookshelf_entry=bookshelf_entry)
 
 class CreateMembership(graphene.Mutation):
     class Input:
@@ -158,7 +158,7 @@ class CreateGroup(graphene.Mutation):
 
 class CoreMutations(graphene.AbstractType):
     create_book = CreateBook.Field()
-    create_user_to_book = ConnectUserToBook.Field()
+    create_bookshelf_entry = CreateBookshelfEntry.Field()
     create_membership = CreateMembership.Field()
     create_group = CreateGroup.Field()
 
