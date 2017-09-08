@@ -12,24 +12,30 @@ class GroupPage extends React.Component {
       <div>
         hello world { this.props.router.match.params.name_url  }
       </div>
-    );
+    )
   }
 }
 
 const AuthenticatedGroupPage = authenticatedRoute(GroupPage);
-export default AuthenticatedGroupPage;
+//export default AuthenticatedGroupPage;
 
-//export default createFragmentContainer(AuthenticatedGroupPage, graphql`
-    //fragment SharedBooks_viewer on Viewer {
-      //...Page_viewer
-      //id
-      //user {
-        //email
-        //username
-        //books {
-          //...SharedBooksList_book_entries
-        //}
-      //}
-    //}
-  //`  
-//);
+export default createFragmentContainer(AuthenticatedGroupPage, graphql`
+    fragment GroupPage_viewer on Viewer {
+      ...Page_viewer
+      group(nameUrl:"dead-poets-society") {
+        users {
+          edges {
+            node {
+              bookshelf {
+                book {
+                  title
+                }
+              }
+              firstName
+            }
+          }
+        }
+      }
+    }
+  `  
+);
