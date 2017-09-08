@@ -41,6 +41,7 @@ export default createFragmentContainer(
   Header,
   graphql`
     fragment Header_viewer on Viewer {
+      id
       user {
         email
       }
