@@ -15,7 +15,8 @@ const coreRoutes = [
 
     path: '/add-book',
     component: AddBookToBookshelf,
-
+  },
+  {
     path: '/groups/:name_url',
     component: GroupPage,
 
