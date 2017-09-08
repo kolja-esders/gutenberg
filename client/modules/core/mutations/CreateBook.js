@@ -10,7 +10,7 @@ const {
 
 
 
-const mutation_create_book = graphql`
+const mutation = graphql`
   mutation CreateBookMutation(
     $titleInput: String!, $authorInput: String!
   ){
@@ -27,7 +27,7 @@ const mutation_create_book = graphql`
 
 
 
-function CreateBook(environment, setErrors, input:{title: string, author: string}){
+function CreateBook(environment, setErrors, input: {title: string, author: string}){
 
   const variables = {
 
@@ -40,11 +40,11 @@ function CreateBook(environment, setErrors, input:{title: string, author: string
   commitMutation(
     environment,
     {
-      mutation_create_book,
+      mutation,
       variables,
       onError: err => console.error(err)
-    }
-  )
+    },
+  );
 }
 
 export default CreateBook

@@ -7,7 +7,7 @@ const {
 
 /*
 const mutation_create_bookshelf_entry = graphql`
-    mutation createBookshelfEntry(
+    mutation createBookshelfEntryMutation(
       $userIdInput: String!, $bookIdInput: String!, $stateInput: String!, $ratingInput: Int!
     ) {
         createUserToBook(userId: $userIdInput, bookId: $bookIdInput, state: $stateInput, rating: $ratingInput) {
