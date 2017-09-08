@@ -1,6 +1,9 @@
 import React from 'react'
 import styles from './AddBookToBookshelf.scss'
 import Page from 'components/Page/Page'
+// TODO
+//import CreateBookshelfEntryMutation from '../mutations/CreateBookshelfEntry'
+import CreateBookMutation from '../mutations/CreateBook'
 import FormMessageList from 'components/FormMessageList/FormMessageList'
 import { authenticatedRoute } from 'modules/auth//utils'
 
@@ -22,6 +25,7 @@ const ratingOptions = [ { key: 1, value: 1, text: '1' },
 
 
 function validateInput(input) {
+console.log("in validateInput")
  let errors = []
  let id = 0
 
@@ -43,6 +47,7 @@ function validateInput(input) {
      message: 'Please fill out the author field'
    })
  }
+/*
  if (!input.state) {
    id++
    errors.push({
@@ -59,7 +64,7 @@ function validateInput(input) {
      message: 'Please choose a rating'
    })
  }
-
+*/
  if (errors.length === 0) {
    // Empty array will still return true
    errors = false
@@ -99,11 +104,15 @@ class AddBookToBookshelf extends React.Component{
 
       submitForm = (form) => {
         form.preventDefault()
+        console.log("in submitForm")
         const { input, errors } = validateInput(this.state.input)
         const { environment, router } = this.props
         if (!errors) {
-          //TODO
-          createBook(environment, this.setErrors.bind(this), input)
+          delete input['rating']
+          delete input['state']
+          console.log(input)
+          console.log("submitForm -> no errors")
+          CreateBookMutation(environment, this.setErrors.bind(this), input)
         }
         else {
           this.setErrors(errors)
@@ -161,26 +170,6 @@ class AddBookToBookshelf extends React.Component{
             <br />
 
 
-            <Dropdown
-                id='rating'
-                className={styles.dropDown}
-                onChange={this.handleFieldChange.bind(this)}
-                value={input.state}
-                placeholder='rating'
-                fluid
-                search selection options={ratingOptions}
-            />
-
-            <Dropdown
-                id='state'
-                className={styles.dropDown}
-                onChange={this.handleFieldChange.bind(this)}
-                value={input.state}
-                placeholder='state'
-                fluid
-                required
-                search selection options={stateOptions}
-            />
 
             <Button
               primary

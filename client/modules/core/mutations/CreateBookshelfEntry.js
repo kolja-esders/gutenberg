@@ -5,13 +5,12 @@ const {
 //import { setToken } from '../modules/jwtUtils';
 
 
-
 /*
 const mutation_create_bookshelf_entry = graphql`
-    mutation createBookshelfEntry(
-      $uId: String!, $bId: String!, $st: String!, $rt: Int!
+    mutation createBookshelfEntryMutation(
+      $userIdInput: String!, $bookIdInput: String!, $stateInput: String!, $ratingInput: Int!
     ) {
-        createUserToBook(userId: $uId, bookId: $bId, state: $st, rating: $rt) {
+        createUserToBook(userId: $userIdInput, bookId: $bookIdInput, state: $stateInput, rating: $ratingInput) {
           userBookJoin {
             book {
               id
@@ -24,43 +23,19 @@ const mutation_create_bookshelf_entry = graphql`
     }
   }
 }
-`
-
-const mutation_create_book = graphql`
-  mutation createBook(
-    $titleInput: String!, $authorInput: String!
-  ){
-      createBook(title: $titleInput, author:$authorInput){
-        book
-        {
-          title
-          author
-        }
-}
-}
-`
+`;
 
 
 
-function CreateBookshelfEntry(environment, setErrors, input{title: string, author: string, rating: int, state: string}){
-  commitMutation(
-    environment,
-    {
-      mutation_create_book,
-      variables:{
-        titleInput: title
-        authorInput: author
-    }
-
-    }
-  )
-/*
+function CreateBookshelfEntry(environment, setErrors, input:{title: string, author: string, rating: int, state: string}){
   commitMutation(
     environment,
     {
       mutation_create_bookshelf_entry,
       variables:{
-
+        //TODO
+        userIdInput:
+        bookIdInput:
       }
 
     }
