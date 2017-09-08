@@ -3,8 +3,8 @@
  *   relay-compiler
  *
  * @providesModule rootViewerQuery.graphql
- * @generated SignedSource<<6091f53ddebc0f7523de5f7356c6f7f1>>
- * @relayHash 690f64bbdc4a10c3ffe979ae8cdc9324
+ * @generated SignedSource<<b246655c2d0723f1d9e4a2f739b49f3e>>
+ * @relayHash 387eece4fa881b9e191125d3889679b8
  * @flow
  * @nogrep
  */
@@ -25,6 +25,7 @@ query rootViewerQuery {
     ...SharedBooks_viewer
     ...Page_viewer
     ...Landing_viewer
+    ...GroupPage_viewer
     id
   }
 }
@@ -47,6 +48,28 @@ fragment Landing_viewer on Viewer {
     bookshelf {
       ...MyBookList_bookshelf
       id
+    }
+    id
+  }
+}
+
+fragment GroupPage_viewer on Viewer {
+  ...Page_viewer
+  group(nameUrl: "dead-poets-society") {
+    users {
+      edges {
+        node {
+          bookshelf {
+            book {
+              title
+              id
+            }
+            id
+          }
+          firstName
+          id
+        }
+      }
     }
     id
   }
@@ -116,6 +139,11 @@ const batch /*: ConcreteBatch*/ = {
           {
             "kind": "FragmentSpread",
             "name": "Landing_viewer",
+            "args": null
+          },
+          {
+            "kind": "FragmentSpread",
+            "name": "GroupPage_viewer",
             "args": null
           }
         ],
@@ -332,6 +360,121 @@ const batch /*: ConcreteBatch*/ = {
               }
             ],
             "storageKey": null
+          },
+          {
+            "kind": "LinkedField",
+            "alias": null,
+            "args": [
+              {
+                "kind": "Literal",
+                "name": "nameUrl",
+                "value": "dead-poets-society",
+                "type": "String"
+              }
+            ],
+            "concreteType": "Group",
+            "name": "group",
+            "plural": false,
+            "selections": [
+              {
+                "kind": "LinkedField",
+                "alias": null,
+                "args": null,
+                "concreteType": "UserConnection",
+                "name": "users",
+                "plural": false,
+                "selections": [
+                  {
+                    "kind": "LinkedField",
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "UserEdge",
+                    "name": "edges",
+                    "plural": true,
+                    "selections": [
+                      {
+                        "kind": "LinkedField",
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "User",
+                        "name": "node",
+                        "plural": false,
+                        "selections": [
+                          {
+                            "kind": "LinkedField",
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "BookshelfEntry",
+                            "name": "bookshelf",
+                            "plural": true,
+                            "selections": [
+                              {
+                                "kind": "LinkedField",
+                                "alias": null,
+                                "args": null,
+                                "concreteType": "Book",
+                                "name": "book",
+                                "plural": false,
+                                "selections": [
+                                  {
+                                    "kind": "ScalarField",
+                                    "alias": null,
+                                    "args": null,
+                                    "name": "title",
+                                    "storageKey": null
+                                  },
+                                  {
+                                    "kind": "ScalarField",
+                                    "alias": null,
+                                    "args": null,
+                                    "name": "id",
+                                    "storageKey": null
+                                  }
+                                ],
+                                "storageKey": null
+                              },
+                              {
+                                "kind": "ScalarField",
+                                "alias": null,
+                                "args": null,
+                                "name": "id",
+                                "storageKey": null
+                              }
+                            ],
+                            "storageKey": null
+                          },
+                          {
+                            "kind": "ScalarField",
+                            "alias": null,
+                            "args": null,
+                            "name": "firstName",
+                            "storageKey": null
+                          },
+                          {
+                            "kind": "ScalarField",
+                            "alias": null,
+                            "args": null,
+                            "name": "id",
+                            "storageKey": null
+                          }
+                        ],
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              },
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "args": null,
+                "name": "id",
+                "storageKey": null
+              }
+            ],
+            "storageKey": "group{\"nameUrl\":\"dead-poets-society\"}"
           }
         ],
         "storageKey": null
@@ -347,7 +490,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "query rootViewerQuery {\n  viewer {\n    ...SharedBooks_viewer\n    ...Page_viewer\n    ...Landing_viewer\n    id\n  }\n}\n\nfragment SharedBooks_viewer on Viewer {\n  ...Page_viewer\n  ...SharedBooksList_viewer\n}\n\nfragment Page_viewer on Viewer {\n  ...Header_viewer\n}\n\nfragment Landing_viewer on Viewer {\n  ...Page_viewer\n  id\n  user {\n    email\n    username\n    bookshelf {\n      ...MyBookList_bookshelf\n      id\n    }\n    id\n  }\n}\n\nfragment MyBookList_bookshelf on BookshelfEntry {\n  id\n  book {\n    title\n    author\n    id\n  }\n  rating\n}\n\nfragment Header_viewer on Viewer {\n  id\n  user {\n    email\n    id\n  }\n}\n\nfragment SharedBooksList_viewer on Viewer {\n  bookshelfEntries {\n    id\n    book {\n      title\n      author\n      id\n    }\n    user {\n      firstName\n      id\n    }\n    rating\n    state\n  }\n}\n"
+  "text": "query rootViewerQuery {\n  viewer {\n    ...SharedBooks_viewer\n    ...Page_viewer\n    ...Landing_viewer\n    ...GroupPage_viewer\n    id\n  }\n}\n\nfragment SharedBooks_viewer on Viewer {\n  ...Page_viewer\n  ...SharedBooksList_viewer\n}\n\nfragment Page_viewer on Viewer {\n  ...Header_viewer\n}\n\nfragment Landing_viewer on Viewer {\n  ...Page_viewer\n  id\n  user {\n    email\n    username\n    bookshelf {\n      ...MyBookList_bookshelf\n      id\n    }\n    id\n  }\n}\n\nfragment GroupPage_viewer on Viewer {\n  ...Page_viewer\n  group(nameUrl: \"dead-poets-society\") {\n    users {\n      edges {\n        node {\n          bookshelf {\n            book {\n              title\n              id\n            }\n            id\n          }\n          firstName\n          id\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment MyBookList_bookshelf on BookshelfEntry {\n  id\n  book {\n    title\n    author\n    id\n  }\n  rating\n}\n\nfragment Header_viewer on Viewer {\n  id\n  user {\n    email\n    id\n  }\n}\n\nfragment SharedBooksList_viewer on Viewer {\n  bookshelfEntries {\n    id\n    book {\n      title\n      author\n      id\n    }\n    user {\n      firstName\n      id\n    }\n    rating\n    state\n  }\n}\n"
 };
 
 module.exports = batch;
