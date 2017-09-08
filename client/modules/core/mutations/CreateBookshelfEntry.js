@@ -6,8 +6,8 @@ const {
 
 
 
-
-const mutation = graphql`
+/*
+const mutation_create_bookshelf_entry = graphql`
     mutation createBookshelfEntry(
       $uId: String!, $bId: String!, $st: String!, $rt: Int!
     ) {
@@ -26,19 +26,46 @@ const mutation = graphql`
 }
 `
 
+const mutation_create_book = graphql`
+  mutation createBook(
+    $titleInput: String!, $authorInput: String!
+  ){
+      createBook(title: $titleInput, author:$authorInput){
+        book
+        {
+          title
+          author
+        }
+}
+}
+`
 
 
-function CreateBookshelfEntry(environment, setErrors, input{title: string,, author: string, rating: int, state: string})
+
+function CreateBookshelfEntry(environment, setErrors, input{title: string, author: string, rating: int, state: string}){
   commitMutation(
     environment,
     {
-      mutation,
+      mutation_create_book,
       variables:{
-        input
+        titleInput: title
+        authorInput: author
+    }
+
+    }
+  )
+/*
+  commitMutation(
+    environment,
+    {
+      mutation_create_bookshelf_entry,
+      variables:{
+
       }
 
     }
   )
-}
 
+}
+*/
 export default CreateBookshelfEntry
