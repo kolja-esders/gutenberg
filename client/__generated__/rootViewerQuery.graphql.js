@@ -3,8 +3,8 @@
  *   relay-compiler
  *
  * @providesModule rootViewerQuery.graphql
- * @generated SignedSource<<b5705d7fb15b5391dc41c5bc563b3350>>
- * @relayHash 0a1a728dad6630d417947213936bd4c4
+ * @generated SignedSource<<196d1a219d7d1a4acbff0faca9f7b977>>
+ * @relayHash 644e3d09b3db115025afbf7ebddae34e
  * @flow
  * @nogrep
  */
@@ -22,11 +22,16 @@ import type {ConcreteBatch} from 'relay-runtime';
 /*
 query rootViewerQuery {
   viewer {
+    ...SharedBooks_viewer
     ...Page_viewer
     ...Landing_viewer
-    ...SharedBooks_viewer
     id
   }
+}
+
+fragment SharedBooks_viewer on Viewer {
+  ...Page_viewer
+  ...SharedBooksList_viewer
 }
 
 fragment Page_viewer on Viewer {
@@ -47,30 +52,6 @@ fragment Landing_viewer on Viewer {
   }
 }
 
-fragment SharedBooks_viewer on Viewer {
-  ...Page_viewer
-  id
-  user {
-    email
-    username
-    books {
-      ...SharedBooksList_book_entries
-      id
-    }
-    id
-  }
-}
-
-fragment SharedBooksList_book_entries on BookshelfEntry {
-  id
-  book {
-    title
-    author
-    id
-  }
-  rating
-}
-
 fragment MyBookList_book_entries on BookshelfEntry {
   id
   book {
@@ -86,6 +67,23 @@ fragment Header_viewer on Viewer {
   user {
     email
     id
+  }
+}
+
+fragment SharedBooksList_viewer on Viewer {
+  bookshelfEntries {
+    id
+    book {
+      title
+      author
+      id
+    }
+    user {
+      firstName
+      id
+    }
+    rating
+    state
   }
 }
 */
@@ -107,17 +105,17 @@ const batch /*: ConcreteBatch*/ = {
         "selections": [
           {
             "kind": "FragmentSpread",
+            "name": "SharedBooks_viewer",
+            "args": null
+          },
+          {
+            "kind": "FragmentSpread",
             "name": "Page_viewer",
             "args": null
           },
           {
             "kind": "FragmentSpread",
             "name": "Landing_viewer",
-            "args": null
-          },
-          {
-            "kind": "FragmentSpread",
-            "name": "SharedBooks_viewer",
             "args": null
           }
         ],
@@ -245,6 +243,95 @@ const batch /*: ConcreteBatch*/ = {
               }
             ],
             "storageKey": null
+          },
+          {
+            "kind": "LinkedField",
+            "alias": null,
+            "args": null,
+            "concreteType": "BookshelfEntry",
+            "name": "bookshelfEntries",
+            "plural": true,
+            "selections": [
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "args": null,
+                "name": "id",
+                "storageKey": null
+              },
+              {
+                "kind": "LinkedField",
+                "alias": null,
+                "args": null,
+                "concreteType": "Book",
+                "name": "book",
+                "plural": false,
+                "selections": [
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
+                    "name": "title",
+                    "storageKey": null
+                  },
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
+                    "name": "author",
+                    "storageKey": null
+                  },
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
+                    "name": "id",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              },
+              {
+                "kind": "LinkedField",
+                "alias": null,
+                "args": null,
+                "concreteType": "User",
+                "name": "user",
+                "plural": false,
+                "selections": [
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
+                    "name": "firstName",
+                    "storageKey": null
+                  },
+                  {
+                    "kind": "ScalarField",
+                    "alias": null,
+                    "args": null,
+                    "name": "id",
+                    "storageKey": null
+                  }
+                ],
+                "storageKey": null
+              },
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "args": null,
+                "name": "rating",
+                "storageKey": null
+              },
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "args": null,
+                "name": "state",
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -260,7 +347,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "query rootViewerQuery {\n  viewer {\n    ...Page_viewer\n    ...Landing_viewer\n    ...SharedBooks_viewer\n    id\n  }\n}\n\nfragment Page_viewer on Viewer {\n  ...Header_viewer\n}\n\nfragment Landing_viewer on Viewer {\n  ...Page_viewer\n  id\n  user {\n    email\n    username\n    books {\n      ...MyBookList_book_entries\n      id\n    }\n    id\n  }\n}\n\nfragment SharedBooks_viewer on Viewer {\n  ...Page_viewer\n  id\n  user {\n    email\n    username\n    books {\n      ...SharedBooksList_book_entries\n      id\n    }\n    id\n  }\n}\n\nfragment SharedBooksList_book_entries on BookshelfEntry {\n  id\n  book {\n    title\n    author\n    id\n  }\n  rating\n}\n\nfragment MyBookList_book_entries on BookshelfEntry {\n  id\n  book {\n    title\n    author\n    id\n  }\n  rating\n}\n\nfragment Header_viewer on Viewer {\n  id\n  user {\n    email\n    id\n  }\n}\n"
+  "text": "query rootViewerQuery {\n  viewer {\n    ...SharedBooks_viewer\n    ...Page_viewer\n    ...Landing_viewer\n    id\n  }\n}\n\nfragment SharedBooks_viewer on Viewer {\n  ...Page_viewer\n  ...SharedBooksList_viewer\n}\n\nfragment Page_viewer on Viewer {\n  ...Header_viewer\n}\n\nfragment Landing_viewer on Viewer {\n  ...Page_viewer\n  id\n  user {\n    email\n    username\n    books {\n      ...MyBookList_book_entries\n      id\n    }\n    id\n  }\n}\n\nfragment MyBookList_book_entries on BookshelfEntry {\n  id\n  book {\n    title\n    author\n    id\n  }\n  rating\n}\n\nfragment Header_viewer on Viewer {\n  id\n  user {\n    email\n    id\n  }\n}\n\nfragment SharedBooksList_viewer on Viewer {\n  bookshelfEntries {\n    id\n    book {\n      title\n      author\n      id\n    }\n    user {\n      firstName\n      id\n    }\n    rating\n    state\n  }\n}\n"
 };
 
 module.exports = batch;

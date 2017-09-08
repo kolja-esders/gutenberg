@@ -101,8 +101,8 @@ class CreateBook(graphene.Mutation):
         title = args['title']
         author = args['author']
         book = BookModal(
-                title = book_data['title'],
-                author = book_data['author']
+                title = title,
+                author = author
             )
         book.save()
         return CreateBook(book=book)

@@ -3,6 +3,8 @@ import { hasValidJwtToken } from './jwtUtils';
 
 export const postAuthRoute = '/'
 
+
+
 export function isAuthenticated(ComposedClass) {
   // Higher order component used to check if the user is authenticated
   class isAuthenticated extends Component {
