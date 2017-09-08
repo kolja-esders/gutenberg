@@ -3,7 +3,7 @@
  *   relay-compiler
  *
  * @providesModule SharedBooks_viewer.graphql
- * @generated SignedSource<<12a97fd7dd5dde367c26e7c152877e27>>
+ * @generated SignedSource<<eadaef4ba4766a1cd8f7e1b2b66d91d9>>
  * @flow
  * @nogrep
  */
@@ -14,14 +14,7 @@
 
 /*::
 import type {ConcreteFragment} from 'relay-runtime';
-export type SharedBooks_viewer = {|
-  +id: string;
-  +user: ?{|
-    +email: string;
-    +username: string;
-    +books: ?$ReadOnlyArray<?{| |}>;
-  |};
-|};
+export type SharedBooks_viewer = {| |};
 */
 
 
@@ -37,52 +30,9 @@ const fragment /*: ConcreteFragment*/ = {
       "args": null
     },
     {
-      "kind": "ScalarField",
-      "alias": null,
-      "args": null,
-      "name": "id",
-      "storageKey": null
-    },
-    {
-      "kind": "LinkedField",
-      "alias": null,
-      "args": null,
-      "concreteType": "User",
-      "name": "user",
-      "plural": false,
-      "selections": [
-        {
-          "kind": "ScalarField",
-          "alias": null,
-          "args": null,
-          "name": "email",
-          "storageKey": null
-        },
-        {
-          "kind": "ScalarField",
-          "alias": null,
-          "args": null,
-          "name": "username",
-          "storageKey": null
-        },
-        {
-          "kind": "LinkedField",
-          "alias": null,
-          "args": null,
-          "concreteType": "BookshelfEntry",
-          "name": "books",
-          "plural": true,
-          "selections": [
-            {
-              "kind": "FragmentSpread",
-              "name": "SharedBooksList_book_entries",
-              "args": null
-            }
-          ],
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
+      "kind": "FragmentSpread",
+      "name": "SharedBooksList_viewer",
+      "args": null
     }
   ],
   "type": "Viewer"
