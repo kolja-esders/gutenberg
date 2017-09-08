@@ -10,7 +10,7 @@ class SharedBooks extends React.Component {
     return (
       <div>
         <Page title='Books' viewer={this.props.viewer}>
-          <SharedBooksList book_entries={this.props.viewer.user.books}/>
+          <SharedBooksList viewer={this.props.viewer}/>
         </Page>
       </div>
     );
@@ -20,16 +20,8 @@ class SharedBooks extends React.Component {
 const AuthenticatedSharedBooks = authenticatedRoute(SharedBooks);
 
 export default createFragmentContainer(AuthenticatedSharedBooks, graphql`
-    fragment SharedBooks_viewer on Viewer {
-      ...Page_viewer
-      id
-      user {
-        email
-        username
-        books {
-          ...SharedBooksList_book_entries
-        }
-      }
-    }
-  `  
-);
+  fragment SharedBooks_viewer on Viewer {
+    ...Page_viewer
+    ...SharedBooksList_viewer
+  }
+`);

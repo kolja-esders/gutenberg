@@ -7,13 +7,13 @@ import RenderRoutes from './utils/RouteUtil';
 import { RelayComponent } from './utils/relay';
 
 const rootQuery = graphql`
-    query rootViewerQuery {
-        viewer {
-            ...Page_viewer
-            ...Landing_viewer
-            ...SharedBooks_viewer
-        }
-    }
+  query rootViewerQuery {
+    viewer {
+      ...SharedBooks_viewer
+      ...Page_viewer
+      ...Landing_viewer
+      }
+  }
 `;
 
 const AppWrapper = App(RenderRoutes)
