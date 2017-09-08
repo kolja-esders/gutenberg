@@ -3,7 +3,7 @@
  *   relay-compiler
  *
  * @providesModule GroupView_viewer.graphql
- * @generated SignedSource<<14eded873cef70ea8944da9c354104d7>>
+ * @generated SignedSource<<3a0d799ea963d0dbbc2bb69964e897e2>>
  * @flow
  * @nogrep
  */
@@ -15,56 +15,22 @@
 /*::
 import type {ConcreteFragment} from 'relay-runtime';
 export type GroupView_viewer = {|
-  +group: ?{|
-    +id: string;
-    +name: string;
-  |};
+  +id: string;
 |};
 */
 
 
 const fragment /*: ConcreteFragment*/ = {
-  "argumentDefinitions": [
-    {
-      "kind": "RootArgument",
-      "name": "nameUrl",
-      "type": "String"
-    }
-  ],
+  "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
   "name": "GroupView_viewer",
   "selections": [
     {
-      "kind": "LinkedField",
+      "kind": "ScalarField",
       "alias": null,
-      "args": [
-        {
-          "kind": "Variable",
-          "name": "nameUrl",
-          "variableName": "nameUrl",
-          "type": "String"
-        }
-      ],
-      "concreteType": "Group",
-      "name": "group",
-      "plural": false,
-      "selections": [
-        {
-          "kind": "ScalarField",
-          "alias": null,
-          "args": null,
-          "name": "id",
-          "storageKey": null
-        },
-        {
-          "kind": "ScalarField",
-          "alias": null,
-          "args": null,
-          "name": "name",
-          "storageKey": null
-        }
-      ],
+      "args": null,
+      "name": "id",
       "storageKey": null
     }
   ],

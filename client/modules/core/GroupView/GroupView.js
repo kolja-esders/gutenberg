@@ -16,12 +16,20 @@ class GroupView extends React.Component {
   }
 }
 
+//export default createFragmentContainer(authenticatedRoute(GroupView), graphql`
+    //fragment GroupView_viewer on Viewer {
+      //group(nameUrl: $nameUrl) {
+        //id
+        //name
+      //}
+    //}
+  //`  
+//);
+
+
 export default createFragmentContainer(authenticatedRoute(GroupView), graphql`
     fragment GroupView_viewer on Viewer {
-      group(nameUrl: $nameUrl) {
-        id
-        name
-      }
+      id
     }
   `  
 );
