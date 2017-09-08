@@ -1,7 +1,6 @@
 import React from 'react'
 import styles from './AddBookToBookshelf.scss'
 import Page from 'components/Page/Page'
-// TODO
 //import CreateBookshelfEntryMutation from '../mutations/CreateBookshelfEntry'
 import CreateBookMutation from '../mutations/CreateBook'
 import FormMessageList from 'components/FormMessageList/FormMessageList'
@@ -108,11 +107,12 @@ class AddBookToBookshelf extends React.Component{
         const { input, errors } = validateInput(this.state.input)
         const { environment, router } = this.props
         if (!errors) {
-          delete input['rating']
-          delete input['state']
           console.log(input)
           console.log("submitForm -> no errors")
           CreateBookMutation(environment, this.setErrors.bind(this), input)
+
+          //TODO: add userID and bookID
+          //CreateBookshelfEntryMutation(environment, this.setErrors.bind(this), input)
         }
         else {
           this.setErrors(errors)

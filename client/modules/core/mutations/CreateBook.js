@@ -27,7 +27,7 @@ const mutation = graphql`
 
 
 
-function CreateBook(environment, setErrors, input: {title: string, author: string}){
+function CreateBook(environment, setErrors, input: {title: string, author: string, rating: int, state: string}){
 
   const variables = {
 
