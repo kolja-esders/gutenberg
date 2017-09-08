@@ -4,7 +4,7 @@ import Page from 'components/Page/Page'
 import FormMessageList from 'components/FormMessageList/FormMessageList'
 import { authenticatedRoute } from 'modules/auth//utils'
 
-import { Input, Dropdown } from 'semantic-ui-react';
+import { Input, Dropdown, Button } from 'semantic-ui-react';
 
 
  const stateOptions = [ { key: 'toread', value: 'toread', text: 'to read' },
@@ -21,8 +21,55 @@ const ratingOptions = [ { key: 1, value: 1, text: '1' },
 
 
 
+function validateInput(input) {
+ let errors = []
+ let id = 0
+
+ input = { ...input }
+
+ if (!input.title) {
+   id++
+   errors.push({
+     id,
+     key: '',
+     message: 'Please fill out the title field'
+   })
+ }
+ if (!input.author) {
+   id++
+   errors.push({
+     id,
+     key: '',
+     message: 'Please fill out the author field'
+   })
+ }
+ if (!input.state) {
+   id++
+   errors.push({
+     id,
+     key: '',
+     message: 'Please choose a state'
+   })
+ }
+ if (!input.rating) {
+   id++
+   errors.push({
+     id,
+     key: '',
+     message: 'Please choose a rating'
+   })
+ }
+
+ if (errors.length === 0) {
+   // Empty array will still return true
+   errors = false
+
+ }
+ return { input, errors }
+}
 
 class AddBookToBookshelf extends React.Component{
+
   constructor(props){
     super(props)
     const initialInput = {
@@ -36,6 +83,43 @@ class AddBookToBookshelf extends React.Component{
         errors: []
       }
     }
+
+
+      handleFieldChange(e) {
+        const input = this.state.input
+        const inputName = e.target.id
+        input[inputName] = e.target.value
+        this.setState({ input })
+      }
+
+      setErrors = (errors) => {
+        this.setState({ errors })
+      }
+
+
+      submitForm = (form) => {
+        form.preventDefault()
+        const { input, errors } = validateInput(this.state.input)
+        const { environment, router } = this.props
+        if (!errors) {
+          //TODO
+          createBook(environment, this.setErrors.bind(this), input)
+        }
+        else {
+          this.setErrors(errors)
+        }
+      }
+
+
+      getErrors(fieldId) {
+        const { errors } = this.state
+        if (errors.length > 0) {
+          return errors.filter(x => x.key === fieldId)
+        }
+        else return []
+      }
+
+
       render(){
         const{ input, erros } = this.state
         const title = 'Add Book to Bookshelf'
@@ -50,11 +134,10 @@ class AddBookToBookshelf extends React.Component{
             >
 
 
-
-
             <Input
                 id='title'
                 className={styles.nameField}
+                onChange={this.handleFieldChange.bind(this)}
                 value={input.title}
                 type='text'
                 size="large"
@@ -67,6 +150,7 @@ class AddBookToBookshelf extends React.Component{
               <Input
                 id='author'
                 className={styles.nameField}
+                onChange={this.handleFieldChange.bind(this)}
                 value={input.author}
                 type='text'
                 size="large"
@@ -77,32 +161,20 @@ class AddBookToBookshelf extends React.Component{
             <br />
 
 
-              <Input
-                id='rating'
-                className={styles.nameField}
-                value={input.rating}
-                type='text'
-                size="large"
-                fluid
-                required
-                placeholder='rating' />
-
-            <br />
-
             <Dropdown
                 id='rating'
                 className={styles.dropDown}
+                onChange={this.handleFieldChange.bind(this)}
                 value={input.state}
                 placeholder='rating'
                 fluid
-                required
                 search selection options={ratingOptions}
             />
-
 
             <Dropdown
                 id='state'
                 className={styles.dropDown}
+                onChange={this.handleFieldChange.bind(this)}
                 value={input.state}
                 placeholder='state'
                 fluid
@@ -110,9 +182,15 @@ class AddBookToBookshelf extends React.Component{
                 search selection options={stateOptions}
             />
 
-
-
-
+            <Button
+              primary
+              fluid
+              type="submit"
+              size="large"
+              className='button_submit-add-books-form'
+            >
+              Submit
+            </Button>
 
 
               </form>
@@ -123,12 +201,5 @@ class AddBookToBookshelf extends React.Component{
     }
 
 }
-
-
-
-
-
-
-
 
 export default authenticatedRoute(AddBookToBookshelf)
