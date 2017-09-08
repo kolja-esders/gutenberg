@@ -3,7 +3,7 @@
 //import PollsResults from 'modules/polls/PollsResults';
 import SharedBooks from 'modules/core/SharedBooks/SharedBooks';
 import AddBookToBookshelf from 'modules/core/AddBookToBookshelf/AddBookToBookshelf';
-import GroupView from 'modules/core/GroupView/GroupView';
+import GroupPage from 'modules/core/GroupPage/GroupPage';
 
 
 const coreRoutes = [
@@ -12,12 +12,13 @@ const coreRoutes = [
     component: SharedBooks,
   },
   {
+
     path: '/add-book',
     component: AddBookToBookshelf,
   },
   {
-    path: '/group/:name_url',
-    component: GroupView,
+    path: '/groups/:name_url',
+    component: GroupPage,
   },
   //{
     //path: '/polls/:id/detail',
