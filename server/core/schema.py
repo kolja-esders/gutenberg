@@ -47,10 +47,10 @@ class User(DjangoObjectType):
         )
         interfaces = (graphene.Node, TokensInterface)
 
-    books = graphene.List(BookshelfEntry)
+    bookshelf = graphene.List(BookshelfEntry)
 
     @graphene.resolve_only_args
-    def resolve_books(self):
+    def resolve_bookshelf(self):
         return self.bookshelfentry_set.all()
 
 class CoreQueries(graphene.AbstractType):

@@ -9,7 +9,7 @@ class Landing extends React.Component {
   render() {
     return (
       <Page title='Gutenberg' viewer={this.props.viewer}>
-        <MyBookList book_entries={this.props.viewer.user.books}/>
+        <MyBookList bookshelf={this.props.viewer.user.bookshelf}/>
       </Page>
     );
   }
@@ -26,8 +26,8 @@ export default createFragmentContainer(
       user {
         email
         username
-        books {
-          ...MyBookList_book_entries
+        bookshelf {
+          ...MyBookList_bookshelf
         }
       }
     }

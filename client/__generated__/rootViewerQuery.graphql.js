@@ -3,8 +3,8 @@
  *   relay-compiler
  *
  * @providesModule rootViewerQuery.graphql
- * @generated SignedSource<<196d1a219d7d1a4acbff0faca9f7b977>>
- * @relayHash 644e3d09b3db115025afbf7ebddae34e
+ * @generated SignedSource<<6091f53ddebc0f7523de5f7356c6f7f1>>
+ * @relayHash 690f64bbdc4a10c3ffe979ae8cdc9324
  * @flow
  * @nogrep
  */
@@ -44,15 +44,15 @@ fragment Landing_viewer on Viewer {
   user {
     email
     username
-    books {
-      ...MyBookList_book_entries
+    bookshelf {
+      ...MyBookList_bookshelf
       id
     }
     id
   }
 }
 
-fragment MyBookList_book_entries on BookshelfEntry {
+fragment MyBookList_bookshelf on BookshelfEntry {
   id
   book {
     title
@@ -183,7 +183,7 @@ const batch /*: ConcreteBatch*/ = {
                 "alias": null,
                 "args": null,
                 "concreteType": "BookshelfEntry",
-                "name": "books",
+                "name": "bookshelf",
                 "plural": true,
                 "selections": [
                   {
@@ -347,7 +347,7 @@ const batch /*: ConcreteBatch*/ = {
       }
     ]
   },
-  "text": "query rootViewerQuery {\n  viewer {\n    ...SharedBooks_viewer\n    ...Page_viewer\n    ...Landing_viewer\n    id\n  }\n}\n\nfragment SharedBooks_viewer on Viewer {\n  ...Page_viewer\n  ...SharedBooksList_viewer\n}\n\nfragment Page_viewer on Viewer {\n  ...Header_viewer\n}\n\nfragment Landing_viewer on Viewer {\n  ...Page_viewer\n  id\n  user {\n    email\n    username\n    books {\n      ...MyBookList_book_entries\n      id\n    }\n    id\n  }\n}\n\nfragment MyBookList_book_entries on BookshelfEntry {\n  id\n  book {\n    title\n    author\n    id\n  }\n  rating\n}\n\nfragment Header_viewer on Viewer {\n  id\n  user {\n    email\n    id\n  }\n}\n\nfragment SharedBooksList_viewer on Viewer {\n  bookshelfEntries {\n    id\n    book {\n      title\n      author\n      id\n    }\n    user {\n      firstName\n      id\n    }\n    rating\n    state\n  }\n}\n"
+  "text": "query rootViewerQuery {\n  viewer {\n    ...SharedBooks_viewer\n    ...Page_viewer\n    ...Landing_viewer\n    id\n  }\n}\n\nfragment SharedBooks_viewer on Viewer {\n  ...Page_viewer\n  ...SharedBooksList_viewer\n}\n\nfragment Page_viewer on Viewer {\n  ...Header_viewer\n}\n\nfragment Landing_viewer on Viewer {\n  ...Page_viewer\n  id\n  user {\n    email\n    username\n    bookshelf {\n      ...MyBookList_bookshelf\n      id\n    }\n    id\n  }\n}\n\nfragment MyBookList_bookshelf on BookshelfEntry {\n  id\n  book {\n    title\n    author\n    id\n  }\n  rating\n}\n\nfragment Header_viewer on Viewer {\n  id\n  user {\n    email\n    id\n  }\n}\n\nfragment SharedBooksList_viewer on Viewer {\n  bookshelfEntries {\n    id\n    book {\n      title\n      author\n      id\n    }\n    user {\n      firstName\n      id\n    }\n    rating\n    state\n  }\n}\n"
 };
 
 module.exports = batch;

@@ -3,7 +3,7 @@
  *   relay-compiler
  *
  * @providesModule Landing_viewer.graphql
- * @generated SignedSource<<6e7fb5bbf6d85d3df49d5cd1b1dcc195>>
+ * @generated SignedSource<<c875005e4d18eeb572b1f2bc5d8b4b44>>
  * @flow
  * @nogrep
  */
@@ -19,7 +19,7 @@ export type Landing_viewer = {|
   +user: ?{|
     +email: string;
     +username: string;
-    +books: ?$ReadOnlyArray<?{| |}>;
+    +bookshelf: ?$ReadOnlyArray<?{| |}>;
   |};
 |};
 */
@@ -70,12 +70,12 @@ const fragment /*: ConcreteFragment*/ = {
           "alias": null,
           "args": null,
           "concreteType": "BookshelfEntry",
-          "name": "books",
+          "name": "bookshelf",
           "plural": true,
           "selections": [
             {
               "kind": "FragmentSpread",
-              "name": "MyBookList_book_entries",
+              "name": "MyBookList_bookshelf",
               "args": null
             }
           ],

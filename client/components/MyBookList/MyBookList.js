@@ -7,7 +7,7 @@ import styles from './MyBookList.scss';
 
 class MyBookList extends React.Component {
   render() {
-    const book_entries = this.props.book_entries;
+    const bookshelf = this.props.bookshelf;
     return (
       <div className={styles.root}>
         <Table singleLine className={styles.books}>
@@ -21,7 +21,7 @@ class MyBookList extends React.Component {
 
           <Table.Body>
 
-            {book_entries.map((e) =>
+            {bookshelf.map((e) =>
               <Table.Row key={e.id}>
                 <Table.Cell>{e.book.title}</Table.Cell>
                 <Table.Cell>{e.book.author}</Table.Cell>
@@ -41,7 +41,7 @@ class MyBookList extends React.Component {
 export default createFragmentContainer(
   MyBookList,
   graphql`
-    fragment MyBookList_book_entries on BookshelfEntry @relay(plural: true) {
+    fragment MyBookList_bookshelf on BookshelfEntry @relay(plural: true) {
       id
       book {
         title
