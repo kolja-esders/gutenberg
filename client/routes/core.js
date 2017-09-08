@@ -19,7 +19,6 @@ const coreRoutes = [
   {
     path: '/groups/:name_url',
     component: GroupPage,
-
   },
   //{
     //path: '/polls/:id/detail',

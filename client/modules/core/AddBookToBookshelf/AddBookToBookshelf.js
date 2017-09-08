@@ -6,7 +6,7 @@ import CreateBookMutation from '../mutations/CreateBook'
 import FormMessageList from 'components/FormMessageList/FormMessageList'
 import { authenticatedRoute } from 'modules/auth//utils'
 
-import { Input, Dropdown, Button } from 'semantic-ui-react';
+import { Input, Dropdown, Button, Rating } from 'semantic-ui-react';
 
 
  const stateOptions = [ { key: 'toread', value: 'toread', text: 'to read' },
@@ -130,8 +130,8 @@ class AddBookToBookshelf extends React.Component{
 
 
       render(){
-        const{ input, erros } = this.state
-        const title = 'Add Book to Bookshelf'
+        const { input, erros } = this.state
+        const title = 'Add book'
 
         return(
           <Page title={title}>
@@ -142,6 +142,20 @@ class AddBookToBookshelf extends React.Component{
               className={styles.form}
             >
 
+            <Button.Group basic fluid className={styles.readingStatus}>
+              <Button active>
+                <div className={styles.readIcon}></div>
+                read
+              </Button>
+              <Button>
+                <div className={styles.readingIcon}></div>
+                reading
+              </Button>
+              <Button>
+                <div className={styles.toReadIcon}></div>
+                to-read
+              </Button>
+            </Button.Group>
 
             <Input
                 id='title'
@@ -154,8 +168,6 @@ class AddBookToBookshelf extends React.Component{
                 required
                 placeholder='book title' />
 
-            <br />
-
               <Input
                 id='author'
                 className={styles.nameField}
@@ -167,27 +179,14 @@ class AddBookToBookshelf extends React.Component{
                 required
                 placeholder='author' />
 
-            <br />
             <Dropdown
                  id='rating'
                  className={styles.dropDown}
-
-
                  placeholder='rating'
                  fluid
                  search selection options={ratingOptions}
              />
 
-             <Dropdown
-                 id='state'
-                 className={styles.dropDown}
-
-
-                 placeholder='state'
-                 fluid
-
-                 search selection options={stateOptions}
-             />
 
 
 
@@ -198,7 +197,7 @@ class AddBookToBookshelf extends React.Component{
               size="large"
               className='button_submit-add-books-form'
             >
-              Submit
+              Add book
             </Button>
 
 
