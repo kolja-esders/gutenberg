@@ -168,6 +168,26 @@ class AddBookToBookshelf extends React.Component{
                 placeholder='author' />
 
             <br />
+            <Dropdown
+                 id='rating'
+                 className={styles.dropDown}
+
+
+                 placeholder='rating'
+                 fluid
+                 search selection options={ratingOptions}
+             />
+
+             <Dropdown
+                 id='state'
+                 className={styles.dropDown}
+
+
+                 placeholder='state'
+                 fluid
+
+                 search selection options={stateOptions}
+             />
 
 
 
