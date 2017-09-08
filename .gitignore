@@ -1,5 +1,6 @@
 *.sqlite3
 
+__generated__/
 
 ### START PRE GENERATED IGNORE TEMPLATE
 # Byte-compiled / optimized / DLL files
