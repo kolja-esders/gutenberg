@@ -12,7 +12,7 @@ class SharedBookList extends React.Component {
     const bookshelf_entries = this.props.viewer.bookshelfEntries;
     return (
       <div className={styles.root}>
-        { bookshelf_entries ? (
+        { bookshelf_entries.length ? (
           <Table singleLine className={styles.books}>
             <Table.Header>
               <Table.Row>
