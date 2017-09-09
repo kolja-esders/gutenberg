@@ -12,7 +12,7 @@ const rootQuery = graphql`
       ...SharedBooks_viewer
       ...Page_viewer
       ...Landing_viewer
-      ...GroupPage_viewer
+      ...GroupView_viewer
       }
   }
 `;

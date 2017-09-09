@@ -7,7 +7,7 @@ const routes = [
   {
     path: '/',
     component: Landing,
-    //queries: 'queries'
+    queries: 'queries'
   },
   ...authRoutes,
   ...coreRoutes,
