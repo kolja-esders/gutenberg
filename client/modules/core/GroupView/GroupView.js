@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/href-no-hash */
 import React from 'react';
 import { graphql, createFragmentContainer, QueryRenderer } from 'react-relay';
-import Page from 'components/Page/Page';
 import SharedBooksList from 'components/SharedBooksList/SharedBooksList';
 import { authenticatedRoute } from 'modules/auth/utils'
 
