@@ -143,15 +143,15 @@ class AddBookToBookshelf extends React.Component{
             >
 
             <Button.Group basic fluid className={styles.readingStatus}>
-              <Button active>
+              <Button type='button' active>
                 <div className={styles.readIcon}></div>
                 read
               </Button>
-              <Button>
+              <Button type='button'>
                 <div className={styles.readingIcon}></div>
                 reading
               </Button>
-              <Button>
+              <Button type='button'>
                 <div className={styles.toReadIcon}></div>
                 to-read
               </Button>
