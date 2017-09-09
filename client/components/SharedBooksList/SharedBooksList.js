@@ -38,7 +38,7 @@ class SharedBookList extends React.Component {
             <div className={styles.emoji}></div>
             <div className={styles.warning}>
               <h1>Your group has no books yet.</h1>
-              <p><Button basic color='green 'as={Link} to='/'>Invite friends</Button> to share the goodness.</p>
+              <p><Button basic color='green' as={Link} to='/'>Invite friends</Button> to share the goodness.</p>
             </div>
           </Segment>
         )}
