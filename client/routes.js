@@ -4,11 +4,6 @@ import SharedBooks from 'modules/core/SharedBooks/SharedBooks'
 import AddBookToBookshelf from 'modules/core/AddBookToBookshelf/AddBookToBookshelf'
 import GroupView from 'modules/core/GroupView/GroupView'
 
-    //path: '/group/:name_url',
-    //component: GroupView,
-
-
-
 import { Route, makeRouteConfig } from 'found'
 import React from 'react'
 import { graphql } from 'react-relay'
