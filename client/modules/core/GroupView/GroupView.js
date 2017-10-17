@@ -6,29 +6,19 @@ import { authenticatedRoute } from 'modules/auth/utils'
 
 class GroupView extends React.Component {
   render() {
-    console.log(this.props)
+    const group = this.props.viewer.group
     return (
       <div>
-        test
+        You're a member of group { group.name }.
       </div>
     )
   }
 }
 
-//export default createFragmentContainer(authenticatedRoute(GroupView), graphql`
-    //fragment GroupView_viewer on Viewer {
-      //group(nameUrl: $nameUrl) {
-        //id
-        //name
-      //}
-    //}
-  //`  
-//);
-
-
 export default createFragmentContainer(authenticatedRoute(GroupView), graphql`
-    fragment GroupView_viewer on Viewer {
-      id
+  fragment GroupView_viewer on Viewer {
+    group(nameUrl: $nameUrl) {
+      name
     }
-  `  
-);
+  }
+`);

@@ -4,11 +4,6 @@ import SharedBooks from 'modules/core/SharedBooks/SharedBooks'
 import AddBookToBookshelf from 'modules/core/AddBookToBookshelf/AddBookToBookshelf'
 import GroupView from 'modules/core/GroupView/GroupView'
 
-    //path: '/group/:name_url',
-    //component: GroupView,
-
-
-
 import { Route, makeRouteConfig } from 'found'
 import React from 'react'
 import { graphql } from 'react-relay'
@@ -38,7 +33,7 @@ const SharedBooksQuery = graphql`
 `
 
 const GroupViewQuery = graphql`
-  query routes_GroupView_Query {
+  query routes_GroupView_Query($nameUrl: String!) {
     viewer {
       ...GroupView_viewer
     }
@@ -54,7 +49,7 @@ export default makeRouteConfig(
     </Route>
     <Route path="add-books" Component={AddBookToBookshelf} />
     <Route path="shared-books" Component={SharedBooks} query={SharedBooksQuery}/>
-    <Route path="group/:id" Component={GroupView} query={GroupViewQuery}/>
+    <Route path="group/:nameUrl" Component={GroupView} query={GroupViewQuery}/>
   </Route>
 );
 
