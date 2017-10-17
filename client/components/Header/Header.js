@@ -1,6 +1,6 @@
 import React from 'react'
 import styles from './Header.scss'
-import Link from 'react-router-dom/es/Link'
+import { Link } from 'found'
 import { Button } from 'semantic-ui-react'
 import { graphql, createFragmentContainer } from 'react-relay';
 import { logoutViewer } from 'modules/auth/jwtUtils'

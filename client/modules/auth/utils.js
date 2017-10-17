@@ -48,13 +48,14 @@ export function authenticatedRoute(ComposedClass, requireAuth = true, ) {
   class RequireAuth extends Component {
 
     componentWillMount() {
-      const { router: { history }, isAuthenticated } = this.props;
+      console.log(this.props)
+      const { router, isAuthenticated } = this.props;
       if (!requireAuth && isAuthenticated) {
         // If route is meant for non authenticated user redirect to profile
-        history.push(postAuthRoute);
+        router.push(postAuthRoute);
       } else if (requireAuth && !isAuthenticated) {
         // If route is meant for authenticated user redirect to login page
-        history.push('/login');
+        router.push('/login');
       }
     }
 
