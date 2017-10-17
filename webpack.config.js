@@ -83,7 +83,7 @@ const buildPath = path.join(__dirname, 'static', 'bundles');
 module.exports = {
   entry: {
     app: appEntry,
-    vendor: ['react', 'react-dom', 'react-relay', 'react-router']
+    vendor: ['react', 'react-dom', 'react-relay']
   },
   output: {
     path: buildPath,
@@ -202,7 +202,7 @@ module.exports = {
     alias: {
       components: path.resolve(__dirname, 'client/components'),
       modules: path.resolve(__dirname, 'client/modules'),
-      '../../theme.config$': path.join(__dirname, 'client/semantic/theme.config') 
+      '../../theme.config$': path.join(__dirname, 'client/semantic/theme.config')
     }
   },
   plugins
