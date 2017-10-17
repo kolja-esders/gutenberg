@@ -1,19 +1,17 @@
-import React from 'react';
-import BrowserRouter from 'react-router-dom/es/BrowserRouter';
-import { graphql } from 'react-relay';
-import App from 'components/App/App'
-import routes from './routes';
-//import RenderRoutes from './utils/RouteUtil';
-//import { RelayComponent } from './utils/relay';
+import React from 'react'
+import BrowserRouter from 'react-router-dom/es/BrowserRouter'
+import { graphql } from 'react-relay'
+//import App from 'components/App/App'
+import routes from './routes'
 
-import BrowserProtocol from 'farce/lib/BrowserProtocol';
-import queryMiddleware from 'farce/lib/queryMiddleware';
-import createFarceRouter from 'found/lib/createFarceRouter';
-import createRender from 'found/lib/createRender';
-import { Resolver } from 'found-relay';
+import BrowserProtocol from 'farce/lib/BrowserProtocol'
+import queryMiddleware from 'farce/lib/queryMiddleware'
+import createFarceRouter from 'found/lib/createFarceRouter'
+import createRender from 'found/lib/createRender'
+import { Resolver } from 'found-relay'
 
 import { isAuthenticated } from 'modules/auth/utils'
-import { environment } from './utils/relay';
+import { environment } from './utils/relay'
 
 //const AppWrapper = App(RenderRoutes)
 
