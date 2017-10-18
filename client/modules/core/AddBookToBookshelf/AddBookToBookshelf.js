@@ -5,6 +5,7 @@ import Page from 'components/Page/Page'
 import CreateBookMutation from '../mutations/CreateBook'
 import FormMessageList from 'components/FormMessageList/FormMessageList'
 import { withAuth } from 'modules/auth//utils'
+import { graphql, createFragmentContainer } from 'react-relay';
 
 import { Input, Dropdown, Button, Rating } from 'semantic-ui-react';
 
@@ -134,7 +135,7 @@ class AddBookToBookshelf extends React.Component{
         const title = 'Add book'
 
         return(
-          <Page title={title}>
+          <Page viewer={this.props.viewer} title={title}>
           <div className={styles.container}>
 
             <form
@@ -210,4 +211,11 @@ class AddBookToBookshelf extends React.Component{
 
 }
 
-export default withAuth(AddBookToBookshelf)
+export default createFragmentContainer(
+  withAuth(AddBookToBookshelf),
+  graphql`
+    fragment AddBookToBookshelf_viewer on Viewer {
+      ...Page_viewer
+    }
+  `,
+)
