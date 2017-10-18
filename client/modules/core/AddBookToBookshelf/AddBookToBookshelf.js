@@ -4,7 +4,7 @@ import Page from 'components/Page/Page'
 //import CreateBookshelfEntryMutation from '../mutations/CreateBookshelfEntry'
 import CreateBookMutation from '../mutations/CreateBook'
 import FormMessageList from 'components/FormMessageList/FormMessageList'
-import { authenticatedRoute } from 'modules/auth//utils'
+import { withAuth } from 'modules/auth//utils'
 
 import { Input, Dropdown, Button, Rating } from 'semantic-ui-react';
 
@@ -210,4 +210,4 @@ class AddBookToBookshelf extends React.Component{
 
 }
 
-export default authenticatedRoute(AddBookToBookshelf)
+export default withAuth(AddBookToBookshelf)

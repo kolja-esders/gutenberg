@@ -2,7 +2,7 @@ import React from 'react';
 import { graphql, createFragmentContainer } from 'react-relay';
 import Page from 'components/Page/Page';
 import MyBookList from 'components/MyBookList/MyBookList';
-import { authenticatedRoute } from 'modules/auth/utils'
+import { withAuth } from 'modules/auth/utils'
 import { Button, Grid } from 'semantic-ui-react';
 import { Link } from 'found'
 import styles from './Landing.scss';
@@ -20,10 +20,8 @@ class Landing extends React.Component {
   }
 }
 
-const AuthenticatedLanding = authenticatedRoute(Landing);
-
 export default createFragmentContainer(
-  AuthenticatedLanding,
+  withAuth(Landing),
   graphql`
     fragment Landing_viewer on Viewer {
       ...Page_viewer

@@ -3,7 +3,7 @@ import React from 'react';
 import { graphql, createFragmentContainer, QueryRenderer } from 'react-relay';
 import Page from 'components/Page/Page';
 import SharedBooksList from 'components/SharedBooksList/SharedBooksList';
-import { authenticatedRoute } from 'modules/auth/utils'
+import { withAuth } from 'modules/auth/utils'
 
 class SharedBooks extends React.Component {
   render() {
@@ -17,11 +17,13 @@ class SharedBooks extends React.Component {
   }
 }
 
-const AuthenticatedSharedBooks = authenticatedRoute(SharedBooks);
 
-export default createFragmentContainer(AuthenticatedSharedBooks, graphql`
-  fragment SharedBooks_viewer on Viewer {
-    ...Page_viewer
-    ...SharedBooksList_viewer
-  }
-`);
+export default createFragmentContainer(
+  withAuth(SharedBooks),
+  graphql`
+    fragment SharedBooks_viewer on Viewer {
+      ...Page_viewer
+      ...SharedBooksList_viewer
+    }
+  `
+);
