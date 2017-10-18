@@ -5,7 +5,7 @@ import { authenticatedRoute } from 'modules/auth/utils'
 import { Table, Dimmer, Loader, Rating, Segment, Button } from 'semantic-ui-react';
 import styles from './SharedBooksList.scss';
 import { environment } from '../../utils/relay'
-import Link from 'react-router-dom/es/Link'
+import Link from 'found'
 
 class SharedBookList extends React.Component {
   render() {
