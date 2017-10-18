@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/href-no-hash */
 import React from 'react';
-import { graphql, createFragmentContainer, QueryRenderer } from 'react-relay';
+import { graphql, createFragmentContainer } from 'react-relay';
 import SharedBooksList from 'components/SharedBooksList/SharedBooksList';
 import { withAuth } from 'modules/auth/utils'
 
@@ -15,10 +15,13 @@ class GroupView extends React.Component {
   }
 }
 
-export default createFragmentContainer(withAuth(GroupView), graphql`
-  fragment GroupView_viewer on Viewer {
-    group(nameUrl: $nameUrl) {
-      name
+export default createFragmentContainer(
+  withAuth(GroupView),
+  graphql`
+    fragment GroupView_viewer on Viewer {
+      group(nameUrl: $nameUrl) {
+        name
+      }
     }
-  }
-`);
+  `
+);
