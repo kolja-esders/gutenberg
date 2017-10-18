@@ -1,5 +1,4 @@
 import React from 'react'
-import BrowserRouter from 'react-router-dom/es/BrowserRouter'
 import { graphql } from 'react-relay'
 //import App from 'components/App/App'
 import routes from './routes'
@@ -12,8 +11,6 @@ import { Resolver } from 'found-relay'
 
 import { isAuthenticated } from 'modules/auth/utils'
 import { environment } from './utils/relay'
-
-//const AppWrapper = App(RenderRoutes)
 
 const Router = createFarceRouter({
   historyProtocol: new BrowserProtocol(),

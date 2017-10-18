@@ -2,7 +2,7 @@
 import React from 'react';
 import { graphql, createFragmentContainer, QueryRenderer } from 'react-relay';
 import SharedBooksList from 'components/SharedBooksList/SharedBooksList';
-import { authenticatedRoute } from 'modules/auth/utils'
+import { withAuth } from 'modules/auth/utils'
 
 class GroupView extends React.Component {
   render() {
@@ -26,7 +26,9 @@ class GroupView extends React.Component {
 //);
 
 
-export default createFragmentContainer(authenticatedRoute(GroupView), graphql`
+export default createFragmentContainer(
+  withAuth(GroupView),
+  graphql`
     fragment GroupView_viewer on Viewer {
       id
     }

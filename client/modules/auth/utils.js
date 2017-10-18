@@ -43,7 +43,7 @@ export function isAuthenticated(ComposedClass) {
 }
 
 
-export function authenticatedRoute(ComposedClass, requireAuth = true, ) {
+export function withAuth(ComposedClass, requireAuth = true) {
   class RequireAuth extends Component {
 
     constructor(props) {

@@ -2,7 +2,7 @@ import React from 'react'
 import Textfield from 'react-mdc-web/lib/Textfield/Textfield'
 import LoginUserMutation from './mutations/Login'
 import SignupUserMutation from './mutations/Signup'
-import { authenticatedRoute } from './utils'
+import { withAuth } from './utils'
 import { graphql, createFragmentContainer } from 'react-relay';
 import FormMessageList from 'components/FormMessageList/FormMessageList'
 import styles from './Auth.scss'
@@ -241,7 +241,7 @@ class Auth extends React.Component {
 }
 
 export default createFragmentContainer(
-  authenticatedRoute(Auth, false),
+  withAuth(Auth, false),
   graphql`
     fragment Auth_viewer on Viewer {
       ...Page_viewer
