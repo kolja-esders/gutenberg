@@ -111,7 +111,6 @@ class Auth extends React.Component {
     const isLogin = isLoginCheck(this.props)
     const { input, errors } = validateInput(this.state.input)
     const { relay, router } = this.props
-    console.log('aiii', this.props)
     if (!errors && isLogin) {
       delete input['firstName']
       delete input['lastName']
