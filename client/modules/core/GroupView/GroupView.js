@@ -15,7 +15,7 @@ class GroupView extends React.Component {
   }
 }
 
-export default createFragmentContainer(authenticatedRoute(GroupView), graphql`
+export default createFragmentContainer(withAuth(GroupView), graphql`
   fragment GroupView_viewer on Viewer {
     group(nameUrl: $nameUrl) {
       name
