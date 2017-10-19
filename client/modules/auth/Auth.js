@@ -2,7 +2,8 @@ import React from 'react'
 import Textfield from 'react-mdc-web/lib/Textfield/Textfield'
 import LoginUserMutation from './mutations/Login'
 import SignupUserMutation from './mutations/Signup'
-import { authenticatedRoute } from './utils'
+import { withAuth } from './utils'
+import { graphql, createFragmentContainer } from 'react-relay';
 import FormMessageList from 'components/FormMessageList/FormMessageList'
 import styles from './Auth.scss'
 import Page from 'components/Page/Page'
@@ -109,14 +110,14 @@ class Auth extends React.Component {
     form.preventDefault()
     const isLogin = isLoginCheck(this.props)
     const { input, errors } = validateInput(this.state.input)
-    const { environment, router } = this.props
+    const { relay, router } = this.props
     if (!errors && isLogin) {
       delete input['firstName']
       delete input['lastName']
-      LoginUserMutation(environment, this.setErrors.bind(this), input)
+      LoginUserMutation(relay.environment, this.setErrors.bind(this), input)
     }
     else if (!errors) {
-      SignupUserMutation(environment, this.setErrors.bind(this), input)
+      SignupUserMutation(relay.environment, this.setErrors.bind(this), input)
     }
     else {
       this.setErrors(errors)
@@ -139,7 +140,7 @@ class Auth extends React.Component {
     //const formErrors = this.getErrors('')
 
     return (
-      <Page title={title}>
+      <Page viewer={this.props.viewer} title={title}>
       <div className={styles.container}>
         <form
           id={isLogin ? 'Login' : ' Sign up'}
@@ -238,4 +239,11 @@ class Auth extends React.Component {
 
 }
 
-export default authenticatedRoute(Auth, false)
+export default createFragmentContainer(
+  withAuth(Auth, false),
+  graphql`
+    fragment Auth_viewer on Viewer {
+      ...Page_viewer
+    }
+  `,
+)

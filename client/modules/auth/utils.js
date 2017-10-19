@@ -43,26 +43,36 @@ export function isAuthenticated(ComposedClass) {
 }
 
 
-export function authenticatedRoute(ComposedClass, requireAuth = true, ) {
-  // Higher order component used to restrict routes depending on if users is authenticated or not.
+export function withAuth(ComposedClass, requireAuth = true) {
   class RequireAuth extends Component {
 
+    constructor(props) {
+      super(props)
+      this.state = {
+        shouldRedirect: true
+      };
+    }
+
     componentWillMount() {
-      const { router: { history }, isAuthenticated } = this.props;
+      const { router, isAuthenticated } = this.props;
       if (!requireAuth && isAuthenticated) {
-        // If route is meant for non authenticated user redirect to profile
-        history.push(postAuthRoute);
+        router.push(postAuthRoute);
       } else if (requireAuth && !isAuthenticated) {
-        // If route is meant for authenticated user redirect to login page
-        history.push('/login');
+        router.push('/login');
+      } else {
+        this.setState({ shouldRedirect: false })
       }
     }
 
     render() {
-      return <ComposedClass {...this.props} />;
+      return (
+        <div>
+          { this.state.shouldRedirect ? null : <ComposedClass {...this.props} /> }
+        </div>
+      )
     }
 
   }
 
-  return isAuthenticated(RequireAuth);
+  return isAuthenticated(RequireAuth)
 }

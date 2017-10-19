@@ -4,9 +4,9 @@ const {
 } = require('react-relay')
 //import { setToken } from '../modules/jwtUtils';
 
-
 /*
-const mutation_create_bookshelf_entry = graphql`
+
+const mutation = graphql`
     mutation createBookshelfEntryMutation(
       $userIdInput: String!, $bookIdInput: String!, $stateInput: String!, $ratingInput: Int!
     ) {
@@ -28,16 +28,18 @@ const mutation_create_bookshelf_entry = graphql`
 
 
 function CreateBookshelfEntry(environment, setErrors, input:{title: string, author: string, rating: int, state: string}){
+const variables = {
+  userIdInput,
+  bookIdInput,
+  ratingInput = input.rating,
+  stateInput = input.state,
+}
   commitMutation(
     environment,
     {
-      mutation_create_bookshelf_entry,
-      variables:{
-        //TODO
-        userIdInput:
-        bookIdInput:
-      }
-
+      mutation,
+      variables
+      onError: err => console.error(err)
     }
   )
 

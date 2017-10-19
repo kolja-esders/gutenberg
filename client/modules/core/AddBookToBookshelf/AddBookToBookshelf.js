@@ -1,18 +1,15 @@
 import React from 'react'
 import styles from './AddBookToBookshelf.scss'
 import Page from 'components/Page/Page'
-// TODO
 //import CreateBookshelfEntryMutation from '../mutations/CreateBookshelfEntry'
 import CreateBookMutation from '../mutations/CreateBook'
 import FormMessageList from 'components/FormMessageList/FormMessageList'
 import { authenticatedRoute } from 'modules/auth//utils'
 import { graphql, createFragmentContainer, createRefetchContainer } from 'react-relay';
 
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
 import { Input, Dropdown, Button } from 'semantic-ui-react';
+
 
 
  const stateOptions = [ { key: 'toread', value: 'toread', text: 'to read' },
@@ -144,18 +141,14 @@ class AddBookToBookshelf extends React.Component{
         //console.log(user_id)
 
         if (!errors) {
-          delete input['rating']
-          delete input['state']
           console.log(input)
           console.log("submitForm -> no errors")
           CreateBookMutation(environment, this.setErrors.bind(this), input)
-<<<<<<< Updated upstream
-=======
 
 
           //TODO: add userID and bookID
-          //CreateBookshelfEntryMutation(environment, this.setErrors.bind(this), input, user_id)
->>>>>>> Stashed changes
+          //CreateBookshelfEntryMutation(environment, this.setErrors.bind(this), input)
+
         }
         else {
           console.log("errors")
@@ -175,15 +168,10 @@ class AddBookToBookshelf extends React.Component{
 
 
       render(){
-<<<<<<< Updated upstream
-=======
-        //console.log("viewer")
-        //console.log(this.props.viewer)
-        //console.log("user")
-        //console.log(this.props.user)
->>>>>>> Stashed changes
+
         const{ input, erros } = this.state
         const title = 'Add Book to Bookshelf'
+
 
         return(
           <Page title={title}>
@@ -194,6 +182,20 @@ class AddBookToBookshelf extends React.Component{
               className={styles.form}
             >
 
+            <Button.Group basic fluid className={styles.readingStatus}>
+              <Button type='button' active>
+                <div className={styles.readIcon}></div>
+                read
+              </Button>
+              <Button type='button'>
+                <div className={styles.readingIcon}></div>
+                reading
+              </Button>
+              <Button type='button'>
+                <div className={styles.toReadIcon}></div>
+                to-read
+              </Button>
+            </Button.Group>
 
             <Input
                 id='title'
@@ -206,8 +208,6 @@ class AddBookToBookshelf extends React.Component{
                 required
                 placeholder='book title' />
 
-            <br />
-
               <Input
                 id='author'
                 className={styles.nameField}
@@ -219,30 +219,21 @@ class AddBookToBookshelf extends React.Component{
                 required
                 placeholder='author' />
 
-            <br />
             <Dropdown
                  id='rating'
                  className={styles.dropDown}
-
-
                  placeholder='rating'
                  fluid
                  required
                  search selection options={ratingOptions}
              />
 
+
              <Dropdown
                  id='state'
                  className={styles.dropDown}
-
-
                  placeholder='state'
                  fluid
-<<<<<<< Updated upstream
-
-=======
-                 required
->>>>>>> Stashed changes
                  search selection options={stateOptions}
              />
 
@@ -255,7 +246,7 @@ class AddBookToBookshelf extends React.Component{
               size="large"
               className='button_submit-add-books-form'
             >
-              Submit
+              Add book
             </Button>
 
 

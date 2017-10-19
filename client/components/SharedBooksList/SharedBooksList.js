@@ -5,7 +5,7 @@ import { authenticatedRoute } from 'modules/auth/utils'
 import { Table, Dimmer, Loader, Rating, Segment, Button } from 'semantic-ui-react';
 import styles from './SharedBooksList.scss';
 import { environment } from '../../utils/relay'
-import Link from 'react-router-dom/es/Link'
+import Link from 'found'
 
 class SharedBookList extends React.Component {
   render() {
@@ -37,8 +37,8 @@ class SharedBookList extends React.Component {
           <Segment padded='very' className={styles.booksMissing}>
             <div className={styles.emoji}></div>
             <div className={styles.warning}>
-              <h1>Your group has no books yet</h1>
-              <p><Button basic color='green 'as={Link} to='/'>Invite friends</Button> to share the goodness.</p>
+              <h1>Your group has no books yet.</h1>
+              <p><Button basic color='green' as={Link} to='/'>Invite friends</Button> to share the goodness.</p>
             </div>
           </Segment>
         )}

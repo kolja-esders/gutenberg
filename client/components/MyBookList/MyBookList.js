@@ -1,7 +1,6 @@
 import React from 'react';
 import { graphql, createFragmentContainer } from 'react-relay';
 import Page from 'components/Page/Page';
-import { authenticatedRoute } from 'modules/auth/utils'
 import { Table, Rating } from 'semantic-ui-react';
 import styles from './MyBookList.scss';
 
