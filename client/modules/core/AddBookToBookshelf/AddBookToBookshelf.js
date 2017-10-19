@@ -174,7 +174,7 @@ class AddBookToBookshelf extends React.Component{
 
 
         return(
-          <Page title={title}>
+          <Page viewer={this.props.viewer} title={title}>
           <div className={styles.container}>
 
             <form
