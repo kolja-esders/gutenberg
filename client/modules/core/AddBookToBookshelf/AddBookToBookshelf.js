@@ -6,7 +6,12 @@ import Page from 'components/Page/Page'
 import CreateBookMutation from '../mutations/CreateBook'
 import FormMessageList from 'components/FormMessageList/FormMessageList'
 import { authenticatedRoute } from 'modules/auth//utils'
+import { graphql, createFragmentContainer, createRefetchContainer } from 'react-relay';
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 import { Input, Dropdown, Button } from 'semantic-ui-react';
 
 
@@ -21,7 +26,6 @@ const ratingOptions = [ { key: 1, value: 1, text: '1' },
                         { key: 4, value: 4, text: '4' },
                         { key: 5, value: 5, text: '5' },
                      ]
-
 
 
 function validateInput(input) {
@@ -47,7 +51,6 @@ console.log("in validateInput")
      message: 'Please fill out the author field'
    })
  }
-/*
  if (!input.state) {
    id++
    errors.push({
@@ -64,7 +67,6 @@ console.log("in validateInput")
      message: 'Please choose a rating'
    })
  }
-*/
  if (errors.length === 0) {
    // Empty array will still return true
    errors = false
@@ -104,17 +106,60 @@ class AddBookToBookshelf extends React.Component{
 
       submitForm = (form) => {
         form.preventDefault()
+
+        //console.log(this.props.viewer.book)
+
+
+
+
+
+
         console.log("in submitForm")
         const { input, errors } = validateInput(this.state.input)
-        const { environment, router } = this.props
+        //const { environment, router } = this.props
+
+        // const titleInput = input.title
+        // const authorInput = input.author
+
+        console.log(this.state.input.title)
+        console.log(this.state.input.author)
+
+        const refetchVariables = fragmentVariables => ({
+          title: this.state.input.title,
+          author: this.state.input.author
+        });
+        this.props.relay.refetch(refetchVariables, null)
+
+        console.log(this.state.input.title)
+        console.log(this.state.input.author)
+
+        // Only when clicking twice on submit the book_id is available
+        const book_id = this.props.viewer.book
+        console.log(book_id)
+        console.log(this.props.viewer.book)
+        console.log(this.props.viewer)
+
+        // user_id doesn't work
+        //const user_id = this.props.user.user.id
+        //console.log(user_id)
+
         if (!errors) {
           delete input['rating']
           delete input['state']
           console.log(input)
           console.log("submitForm -> no errors")
           CreateBookMutation(environment, this.setErrors.bind(this), input)
+<<<<<<< Updated upstream
+=======
+
+
+          //TODO: add userID and bookID
+          //CreateBookshelfEntryMutation(environment, this.setErrors.bind(this), input, user_id)
+>>>>>>> Stashed changes
         }
         else {
+          console.log("errors")
+          console.log(errors)
           this.setErrors(errors)
         }
       }
@@ -130,6 +175,13 @@ class AddBookToBookshelf extends React.Component{
 
 
       render(){
+<<<<<<< Updated upstream
+=======
+        //console.log("viewer")
+        //console.log(this.props.viewer)
+        //console.log("user")
+        //console.log(this.props.user)
+>>>>>>> Stashed changes
         const{ input, erros } = this.state
         const title = 'Add Book to Bookshelf'
 
@@ -138,7 +190,7 @@ class AddBookToBookshelf extends React.Component{
           <div className={styles.container}>
 
             <form
-              onSubmit={this.submitForm}
+              onSubmit={this.submitForm.bind(this)}
               className={styles.form}
             >
 
@@ -175,6 +227,7 @@ class AddBookToBookshelf extends React.Component{
 
                  placeholder='rating'
                  fluid
+                 required
                  search selection options={ratingOptions}
              />
 
@@ -185,7 +238,11 @@ class AddBookToBookshelf extends React.Component{
 
                  placeholder='state'
                  fluid
+<<<<<<< Updated upstream
 
+=======
+                 required
+>>>>>>> Stashed changes
                  search selection options={stateOptions}
              />
 
@@ -209,6 +266,100 @@ class AddBookToBookshelf extends React.Component{
 
     }
 
+/*      const refetchVariables = fragmentVariables => ({
+        title: fragmentVariables.input.title,
+        author: fragmentVariables.input.author
+      });*/
+    loadMore(e){
+      console.log("loadMore")
+      console.log(this.props.viewer.book)
+
+      const refetchVariables = fragmentVariables => ({
+        title: this.state.input.title,
+        author: this.state.input.author
+      });
+      this.props.relay.refetch(refetchVariables, null)
+    }
 }
 
-export default authenticatedRoute(AddBookToBookshelf)
+export default createRefetchContainer(
+  authenticatedRoute(AddBookToBookshelf),
+  {
+    viewer: graphql.experimental`
+      fragment AddBookToBookshelf_viewer on Viewer
+      @argumentDefinitions(
+        title: {type: "String"},
+        author: {type: "String"}
+      ){
+        book(title: $title, author: $author) {
+          id
+        }
+        user{
+          id
+        }
+      }
+      `,
+
+    user: graphql`
+     fragment AddBookToBookshelf_user on Viewer {
+          user{
+           id
+         }
+       }
+    `,
+  },
+
+  graphql.experimental`
+    query AddBookToBookshelfRefetchQuery($title: String!, $author: String!){
+      viewer {
+        ...AddBookToBookshelf_viewer @arguments(title: $title, author: $author)
+        ...AddBookToBookshelf_user
+      }
+    }
+    `,
+
+);
+
+/*
+graphql`
+  query AddBookToBookshelfQuery{
+    viewer{
+        ...AddBookToBookshelf_user
+      }
+  }
+`,
+*/
+
+/*
+user: graphql.experimental`
+ fragment AddBookToBookshelf_user on Viewer {
+     viewer{
+       id
+     }
+   }
+`,*/
+
+/*
+export default createFragmentContainer(
+  authenticatedRoute(AddBookToBookshelf),
+  graphql`
+   fragment AddBookToBookshelf_viewer on Viewer {
+     user {
+       id
+     }
+   }
+
+ `,
+
+
+ graphql`
+  fragment AddBookToBookshelf_book on Viewer {
+      book(title: $titleInput, author: $authorInput){
+      id
+    }
+  }
+
+`
+
+)
+*/

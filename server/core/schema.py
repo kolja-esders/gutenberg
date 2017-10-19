@@ -54,7 +54,7 @@ class User(DjangoObjectType):
         return self.bookshelfentry_set.all()
 
 class CoreQueries(graphene.AbstractType):
-    book = graphene.Node.Field(Book)
+    book = graphene.Field(Book, id=graphene.ID(), title=graphene.String(), author=graphene.String())
     books = graphene.List(Book)
     all_books = DjangoFilterConnectionField(Book)
 
@@ -76,6 +76,12 @@ class CoreQueries(graphene.AbstractType):
 
         return GroupModal.objects.get(name_url=args['name_url'])
 
+    def resolve_book(self, args, context, info):
+        if 'id' in args:
+            return BookModal.objects.get(pk=args['id'])
+
+        book = BookModal.objects.get(title=args['title'], author=args['author'])
+        return book
 
     def resolve_books(self, args, context, info):
         books = BookModal.objects.all()

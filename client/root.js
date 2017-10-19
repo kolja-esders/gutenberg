@@ -12,7 +12,17 @@ const rootQuery = graphql`
       ...SharedBooks_viewer
       ...Page_viewer
       ...Landing_viewer
+<<<<<<< Updated upstream
       }
+=======
+      ...GroupPage_viewer
+
+      ...AddBookToBookshelf_user
+      ...AddBookToBookshelf_viewer
+
+
+    }
+>>>>>>> Stashed changes
   }
 `;
 
