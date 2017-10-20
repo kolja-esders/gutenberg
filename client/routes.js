@@ -3,7 +3,7 @@ import Auth from 'modules/auth/Auth'
 import SharedBooks from 'modules/core/SharedBooks/SharedBooks'
 import AddBookToBookshelf from 'modules/core/AddBookToBookshelf/AddBookToBookshelf'
 import GroupView from 'modules/core/GroupView/GroupView'
-import GroupCreateView from 'modules/core/GroupCreateView/GroupCreateView'
+
 
 import { Route, makeRouteConfig } from 'found'
 import React from 'react'
@@ -33,29 +33,20 @@ const SharedBooksQuery = graphql`
   }
 `
 
-const GroupViewQuery = graphql`
-  query routes_GroupView_Query {
-    viewer {
-      ...GroupView_viewer
-    }
-  }
-`
 
-const GroupCreateViewQuery = graphql`
-  query routes_GroupCreateView_Query {
-    viewer {
-      ...GroupCreateView_viewer
-    }
-  }
-`
+
+
 
 const AddBookToBookshelfQuery = graphql`
   query routes_AddBookToBookshelf_Query {
     viewer {
       ...AddBookToBookshelf_viewer
+      ...AddBookToBookshelf_user
     }
   }
 `
+
+
 
 export default makeRouteConfig(
   <Route path="/">
@@ -69,4 +60,3 @@ export default makeRouteConfig(
     <Route path="group/:id" Component={GroupView} query={GroupViewQuery}/>
   </Route>
 );
-
