@@ -2,9 +2,6 @@ import Landing from 'components/Landing/Landing'
 import Auth from 'modules/auth/Auth'
 import SharedBooks from 'modules/core/SharedBooks/SharedBooks'
 import AddBookToBookshelf from 'modules/core/AddBookToBookshelf/AddBookToBookshelf'
-import GroupView from 'modules/core/GroupView/GroupView'
-
-
 import { Route, makeRouteConfig } from 'found'
 import React from 'react'
 import { graphql } from 'react-relay'
@@ -33,15 +30,12 @@ const SharedBooksQuery = graphql`
   }
 `
 
-
-
-
-
 const AddBookToBookshelfQuery = graphql`
   query routes_AddBookToBookshelf_Query {
     viewer {
       ...AddBookToBookshelf_viewer
       ...AddBookToBookshelf_user
+      
     }
   }
 `
@@ -57,6 +51,5 @@ export default makeRouteConfig(
     </Route>
     <Route path="add-book" Component={AddBookToBookshelf} query={AddBookToBookshelfQuery}/>
     <Route path="shared-books" Component={SharedBooks} query={SharedBooksQuery}/>
-    <Route path="group/:id" Component={GroupView} query={GroupViewQuery}/>
   </Route>
 );
