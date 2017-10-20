@@ -158,12 +158,13 @@ class CreateMembership(graphene.Mutation):
 class CreateGroup(graphene.Mutation):
     class Input:
         name = graphene.String(required=True)
+        name_url = graphene.String(required=True)
 
     group = graphene.Field(Group)
 
     def mutate(self, args, ctx, info):
         name = args['name']
-        name_url = GroupModal.get_url_from_name(name)
+        name_url = args['name_url']
         group = GroupModal(name=name, name_url=name_url)
         group.save()
         return CreateGroup(group=group)
