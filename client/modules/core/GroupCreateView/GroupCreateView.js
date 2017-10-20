@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/href-no-hash */
 import React from 'react';
-import { graphql, createFragmentContainer } from 'react-relay';
+import { graphql, createFragmentContainer, commitMutation } from 'react-relay';
 import { withAuth } from 'modules/auth/utils';
 import Page from 'components/Page/Page';
 import { Button, Input } from 'semantic-ui-react';
@@ -21,20 +21,64 @@ const CreateGroupMutation = graphql`
   }
 `;
 
+const CreateMembershipMutation = graphql`
+  mutation GroupCreateView_Test_Mutation (
+    $userId: ID!
+    $groupId: ID!
+  ) {
+    createMembership(userId: $userId, groupId: $groupId) {
+      membership {
+        id
+      }
+    }
+  }
+`;
+
 class GroupCreateView extends React.Component {
   static propTypes = {
-    viewer: PropTypes.object.isRequired
+    viewer: PropTypes.object.isRequired,
+    relay: PropTypes.object.isRequired
   }
 
-  state = { url: '' }
+  state = { name: '', url: '' }
 
-  onChangeHandler = (ev, data) => {
-    this.setState({ url: this.nameToUrl(data.value) });
+  onChangeHandler = (ev, { value }) => {
+    this.setState({ name: value, url: this.nameToUrl(value) });
   }
 
-  onSubmitHandler = (ev, data) => {
+  onSubmitHandler = (ev) => {
     ev.preventDefault();
-    console.log(ev, data);
+
+    const groupVars = {
+      name: this.state.name,
+      nameUrl: this.state.url
+    };
+
+    commitMutation(this.props.relay.environment, {
+      mutation: CreateGroupMutation,
+      variables: groupVars,
+      onCompleted: (groupResponse) => {
+        const membershipVars = {
+          groupId: groupResponse.createGroup.group.id,
+          userId: this.props.viewer.user.id
+        };
+        console.log(membershipVars);
+
+        commitMutation(this.props.relay.environment, {
+          mutation: CreateMembershipMutation,
+          variables: membershipVars,
+          onCompleted: (membershipResponse, membershipErrors) => {
+            console.log(membershipResponse, membershipErrors);
+          },
+          onError: (err) => {
+            console.error(err);
+          },
+        });
+      },
+      onError: (err) => {
+        console.error(err);
+      },
+    });
   }
 
   nameToUrl = name => name.toLowerCase().replace(/ /g, '-')
@@ -58,7 +102,10 @@ class GroupCreateView extends React.Component {
 export default createFragmentContainer(
   withAuth(GroupCreateView),
   graphql`
-    fragment GroupCreateView_viewer on Viewer {
+  fragment GroupCreateView_viewer on Viewer {
+      user {
+        id
+      }
       ...Page_viewer
     }
   `

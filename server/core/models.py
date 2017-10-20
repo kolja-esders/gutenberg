@@ -31,7 +31,7 @@ class CustomUser(AbstractEmailUser):
 class BookshelfEntry(models.Model):
     user = models.ForeignKey(CustomUser)
     book = models.ForeignKey(Book)
-    state = models.CharField(max_length = 31) # to-read, read, ...
+    state = models.CharField(max_length=31) # to-read, read, ...
     rating = models.PositiveSmallIntegerField(null=True)
 
     class Meta:

@@ -140,14 +140,16 @@ class CreateBookshelfEntry(graphene.Mutation):
 
 class CreateMembership(graphene.Mutation):
     class Input:
-        user_id = graphene.String(required=True)
-        group_id = graphene.String(required=True)
+        user_id = graphene.ID(required=True)
+        group_id = graphene.ID(required=True)
 
     membership = graphene.Field(Membership)
 
     def mutate(self, args, ctx, info):
-        user = get_user_model().objects.get(pk=args['user_id'])
-        group = GroupModal.objects.get(pk=args['group_id'])
+        get_node = graphene.Node.get_node_from_global_id
+        user = get_node(args['user_id'], ctx, info)
+        group = get_node(args['group_id'], ctx, info)
+
         membership = MembershipModal(
             user = user,
             group = group
