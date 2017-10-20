@@ -42,16 +42,21 @@ class User(DjangoObjectType):
             'is_staff',
             'is_active',
             'date_joined',
-            'books',
-            'groups'
+            # 'books',
+            # 'groups'
         )
         interfaces = (graphene.Node, TokensInterface)
 
     bookshelf = graphene.List(BookshelfEntry)
+    memberships = graphene.List(Membership)
 
     @graphene.resolve_only_args
     def resolve_bookshelf(self):
         return self.bookshelfentry_set.all()
+
+    @graphene.resolve_only_args
+    def resolve_memberships(self):
+        return self.membership_set.all()
 
 class CoreQueries(graphene.AbstractType):
     book = graphene.Node.Field(Book)
