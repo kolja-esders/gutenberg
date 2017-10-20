@@ -1,9 +1,29 @@
-.heading {
-  font-size: 2em;
-  font-weight: normal;
-}
+.container {
+  width: 800px;
+  margin: 0 auto;
 
-.body {
-  max-width: 80%;
-  margin: auto;
+  .createForm {
+    width: 400px;
+    margin: 100px auto;
+
+    .groupNameInput {
+      width: 400px;
+    }
+
+    .preview {
+      margin-top: 10px;
+      color: #aaa;
+      text-align: center;
+
+      span {
+        color: black;
+      }
+    }
+
+    .submitButton {
+      width: 300px;
+      margin: 30px auto;
+    }
+  }
+
 }

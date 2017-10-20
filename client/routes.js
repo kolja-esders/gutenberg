@@ -67,6 +67,7 @@ export default makeRouteConfig(
     <Route path="add-book" Component={AddBookToBookshelf} query={AddBookToBookshelfQuery}/>
     <Route path="shared-books" Component={SharedBooks} query={SharedBooksQuery}/>
     <Route path="group/:nameUrl" Component={GroupView} query={GroupViewQuery}/>
+    <Route path="create" Component={GroupCreateView} query={GroupCreateViewQuery}/>
   </Route>
 );
 
