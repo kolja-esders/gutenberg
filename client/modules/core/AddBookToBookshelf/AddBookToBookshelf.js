@@ -4,7 +4,7 @@ import Page from 'components/Page/Page'
 //import CreateBookshelfEntryMutation from '../mutations/CreateBookshelfEntry'
 import CreateBookMutation from '../mutations/CreateBook'
 import FormMessageList from 'components/FormMessageList/FormMessageList'
-import { authenticatedRoute } from 'modules/auth//utils'
+import { withAuth } from 'modules/auth//utils'
 import { graphql, createFragmentContainer, createRefetchContainer } from 'react-relay';
 
 
@@ -168,7 +168,7 @@ class AddBookToBookshelf extends React.Component{
 
 
       render(){
-
+        console.log(this.props.viewer)
         const{ input, erros } = this.state
         const title = 'Add Book to Bookshelf'
 
@@ -274,14 +274,16 @@ class AddBookToBookshelf extends React.Component{
 }
 
 export default createRefetchContainer(
-  authenticatedRoute(AddBookToBookshelf),
-  {
-    viewer: graphql.experimental`
+  withAuth(AddBookToBookshelf),
+
+{
+    viewer: graphql`
       fragment AddBookToBookshelf_viewer on Viewer
       @argumentDefinitions(
         title: {type: "String"},
         author: {type: "String"}
       ){
+        ...Page_viewer
         book(title: $title, author: $author) {
           id
         }
@@ -293,6 +295,7 @@ export default createRefetchContainer(
 
     user: graphql`
      fragment AddBookToBookshelf_user on Viewer {
+
           user{
            id
          }
@@ -300,7 +303,7 @@ export default createRefetchContainer(
     `,
   },
 
-  graphql.experimental`
+  graphql`
     query AddBookToBookshelfRefetchQuery($title: String!, $author: String!){
       viewer {
         ...AddBookToBookshelf_viewer @arguments(title: $title, author: $author)
@@ -308,6 +311,7 @@ export default createRefetchContainer(
       }
     }
     `,
+
 
 );
 
