@@ -4,6 +4,7 @@ import { isAuthenticated } from 'modules/auth/utils'
 import React from 'react'
 import { createFragmentContainer, graphql } from 'react-relay';
 import { Button, Dropdown, Popup } from 'semantic-ui-react'
+import classNames from 'classnames';
 
 import styles from './Header.scss'
 
@@ -28,8 +29,8 @@ class Header extends React.Component {
         <nav className={styles.nav}>
           { loggedIn ? (
             <div>
-              <Dropdown text={dropdownText} className='basic' button>
-                <Dropdown.Menu>
+              <Dropdown scrolling floating text={dropdownText} className='basic' button>
+                <Dropdown.Menu id={styles.dropdownMenu}>
                   <Dropdown.Header content={user.firstName} />
                   <Dropdown.Divider />
                   <Dropdown.Item as={Link} to='/'>{ bookshelfText }</Dropdown.Item>
