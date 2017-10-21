@@ -1,7 +1,9 @@
+@import "./global.scss";
+
 .root {
   height: 100px;
   line-height: 100px;
-  width: 800px;
+  width: $contentWidth;
   margin: 0 auto;
 
   .brand_name {
