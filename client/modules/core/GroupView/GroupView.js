@@ -1,22 +1,30 @@
 /* eslint-disable jsx-a11y/href-no-hash */
-import Page from 'components/Page/Page'
-import SharedBooksList from 'components/SharedBooksList/SharedBooksList'
-import { withAuth } from 'modules/auth/utils'
-import React from 'react'
-import { createFragmentContainer, graphql } from 'react-relay'
+import Page from 'components/Page/Page';
+import { withAuth } from 'modules/auth/utils';
+import React from 'react';
+import { createFragmentContainer, graphql } from 'react-relay';
+import PropTypes from 'prop-types';
+import { Link } from 'found';
 
-import styles from './GroupView.scss'
+import styles from './GroupView.scss';
 
 class GroupView extends React.Component {
+  static propTypes = {
+    viewer: PropTypes.object.isRequired
+  }
+
   render() {
-    const group = this.props.viewer.group
+    const group = this.props.viewer.group;
+    const inviteLink = `/group/${group.nameUrl}/invite`;
+
     return (
       <Page title='Gutenberg' viewer={this.props.viewer} activeGroup={group.name}>
-        <section className = {styles.container}>
-          You're a member of group { group.name }.
+        <section className={styles.container}>
+          You are a member of group { group.name }.
+          <Link to={inviteLink}>Invite friends</Link>
         </section>
       </Page>
-    )
+    );
   }
 }
 
@@ -25,6 +33,7 @@ export default createFragmentContainer(withAuth(GroupView), graphql`
       ...Page_viewer
       group(nameUrl: $nameUrl) {
         name
+        nameUrl
       }
     }
   `);

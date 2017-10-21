@@ -62,8 +62,6 @@ class GroupCreateView extends React.Component {
           groupId: groupResponse.createGroup.group.id,
           userId: this.props.viewer.user.id
         };
-        console.log(membershipVars);
-
         commitMutation(this.props.relay.environment, {
           mutation: CreateMembershipMutation,
           variables: membershipVars,
