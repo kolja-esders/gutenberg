@@ -25,7 +25,7 @@ class CustomUser(AbstractEmailUser):
     username = models.CharField(max_length=31, blank=True)
     first_name = models.CharField(max_length=31, blank=True)
     last_name = models.CharField(max_length=31, blank=True)
-    groups = models.ManyToManyField(Group, through='Membership', symmetrical=False, related_name='users')
+    groups = models.ManyToManyField(Group, through='Membership', symmetrical=False, related_name='members')
     books = models.ManyToManyField(Book, through='BookshelfEntry', symmetrical=False, related_name='users')
 
 class BookshelfEntry(models.Model):
