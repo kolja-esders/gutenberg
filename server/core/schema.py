@@ -115,24 +115,25 @@ class CreateBook(graphene.Mutation):
 
 
 class CreateBookshelfEntry(graphene.Mutation):
+
     class Input:
-        user_id = graphene.String(required=True)
-        book_id = graphene.String(required=True)
+        user_id = graphene.ID(required=True)
+        book_id = graphene.ID(required=True)
         state = graphene.String(required=True)
         rating = graphene.Int(required=True)
 
     bookshelf_entry = graphene.Field(BookshelfEntry)
 
     def mutate(self, args, ctx, info):
-        user_id = args['user_id']
-        book_id = args['book_id']
+        get_node = graphene.Node.get_node_from_global_id
+        print(args)
         state = args['state']
         rating = args['rating']
-        user = get_user_model().objects.get(pk=user_id)
-        book = BookModal.objects.get(pk=book_id)
+        user = get_node(args['user_id'], ctx, info)
+        book = get_node(args['book_id'], ctx, info)
         bookshelf_entry = BookshelfEntryModal(
                 user = user,
-                book= book,
+                book = book,
                 state = state,
                 rating = rating
             )
