@@ -4,14 +4,14 @@ const {
 } = require('react-relay')
 //import { setToken } from '../modules/jwtUtils';
 
-/*
+
 
 const mutation = graphql`
-    mutation createBookshelfEntryMutation(
-      $userIdInput: String!, $bookIdInput: String!, $stateInput: String!, $ratingInput: Int!
+    mutation CreateBookshelfEntryMutation(
+      $userIdInput: ID!, $bookIdInput: ID!, $stateInput: String!, $ratingInput: Int!
     ) {
-        createUserToBook(userId: $userIdInput, bookId: $bookIdInput, state: $stateInput, rating: $ratingInput) {
-          userBookJoin {
+      createBookshelfEntry(userId: $userIdInput, bookId: $bookIdInput, state: $stateInput, rating: $ratingInput) {
+          bookshelfEntry{
             book {
               id
             }
@@ -27,22 +27,27 @@ const mutation = graphql`
 
 
 
-function CreateBookshelfEntry(environment, setErrors, input:{title: string, author: string, rating: int, state: string}){
+function CreateBookshelfEntry(environment, setErrors, input:{title: string, author: string, rating: int, state: string}, book_id, user_id){
+console.log("CreateBookshelfEntry")
 const variables = {
-  userIdInput,
-  bookIdInput,
-  ratingInput = input.rating,
-  stateInput = input.state,
+  userIdInput: user_id,
+  bookIdInput: book_id,
+  ratingInput: input.rating,
+  stateInput: input.state,
 }
+console.log(variables)
   commitMutation(
     environment,
     {
       mutation,
-      variables
-      onError: err => console.error(err)
+      variables,
+      onError: err => console.error(err),
+      onCompleted: (response, err) => {
+        console.log(response, err)
+      }
     }
   )
 
 }
-*/
+
 export default CreateBookshelfEntry
