@@ -2,7 +2,8 @@ import React from 'react'
 import styles from './AddBookToBookshelf.scss'
 import Page from 'components/Page/Page'
 //import CreateBookshelfEntryMutation from '../mutations/CreateBookshelfEntry'
-import CreateBookMutation from '../mutations/CreateBook'
+import createBookMutation from '../mutations/CreateBook'
+import createBookshelfEntryMutation from '../mutations/CreateBookshelfEntry'
 import FormMessageList from 'components/FormMessageList/FormMessageList'
 import { withAuth } from 'modules/auth//utils'
 import { graphql, createFragmentContainer, createRefetchContainer } from 'react-relay';
@@ -89,11 +90,18 @@ class AddBookToBookshelf extends React.Component{
     }
 
 
-      handleFieldChange(e) {
+      handleFieldChange = (e, {value}) => {
         const input = this.state.input
         const inputName = e.target.id
         input[inputName] = e.target.value
         this.setState({ input })
+      }
+
+      handleDropdownChange = (e, data) => {
+        const input = this.state.input
+        const inputName = data.id
+        input[inputName] = data.value
+        this.setState({input})
       }
 
       setErrors = (errors) => {
@@ -107,10 +115,6 @@ class AddBookToBookshelf extends React.Component{
         //console.log(this.props.viewer.book)
 
 
-
-
-
-
         console.log("in submitForm")
         const { input, errors } = validateInput(this.state.input)
         //const { environment, router } = this.props
@@ -118,45 +122,50 @@ class AddBookToBookshelf extends React.Component{
         // const titleInput = input.title
         // const authorInput = input.author
 
-        console.log(this.state.input.title)
-        console.log(this.state.input.author)
-
-        const refetchVariables = fragmentVariables => ({
-          title: this.state.input.title,
-          author: this.state.input.author
-        });
-        this.props.relay.refetch(refetchVariables, null)
-
-        console.log(this.state.input.title)
-        console.log(this.state.input.author)
-
-        // Only when clicking twice on submit the book_id is available
-        const book_id = this.props.viewer.book
-        console.log(book_id)
-        console.log(this.props.viewer.book)
-        console.log(this.props.viewer)
-
-        // user_id doesn't work
-        //const user_id = this.props.user.user.id
-        //console.log(user_id)
-
         if (!errors) {
           console.log(input)
-          console.log("submitForm -> no errors")
-          CreateBookMutation(environment, this.setErrors.bind(this), input)
-
-
-          //TODO: add userID and bookID
-          //CreateBookshelfEntryMutation(environment, this.setErrors.bind(this), input)
-
+          createBookMutation(this.props.relay.environment, this.setErrors.bind(this), input, this.onCompletedCreateBook)
         }
         else {
           console.log("errors")
           console.log(errors)
           this.setErrors(errors)
         }
+
       }
 
+
+      onCompletedCreateBook = (error, data) => {
+        // const input = this.state.input
+        console.log("onCompletedCreateBook")
+        const refetchVariables = fragmentVariables => ({
+          title: this.state.input.title,
+          author: this.state.input.author
+        });
+        console.log(refetchVariables)
+        this.props.relay.refetch(refetchVariables, null, this.create)
+
+        // const book_id = this.props.viewer.book
+        // const user_id = this.props.viewer.user
+        // console.log(book_id)
+        // console.log(user_id)
+
+        //
+        // createBookshelfEntryMutation(this.props.relay.environment, this.setErrors.bind(this), input, book_id, user_id)
+      }
+
+      create = () => {
+        const input = this.state.input
+        const book_id = this.props.viewer.book
+        const user_id = this.props.viewer.user
+
+        console.log("Create")
+        console.log(book_id)
+        console.log(user_id)
+
+        createBookshelfEntryMutation(this.props.relay.environment, this.setErrors.bind(this), input, book_id, user_id)
+
+      }
 
       getErrors(fieldId) {
         const { errors } = this.state
@@ -168,7 +177,7 @@ class AddBookToBookshelf extends React.Component{
 
 
       render(){
-        console.log(this.props.viewer)
+        //console.log(this.props.viewer)
         const{ input, erros } = this.state
         const title = 'Add Book to Bookshelf'
 
@@ -200,7 +209,7 @@ class AddBookToBookshelf extends React.Component{
             <Input
                 id='title'
                 className={styles.nameField}
-                onChange={this.handleFieldChange.bind(this)}
+                onChange={this.handleFieldChange}
                 value={input.title}
                 type='text'
                 size="large"
@@ -211,7 +220,7 @@ class AddBookToBookshelf extends React.Component{
               <Input
                 id='author'
                 className={styles.nameField}
-                onChange={this.handleFieldChange.bind(this)}
+                onChange={this.handleFieldChange}
                 value={input.author}
                 type='text'
                 size="large"
@@ -222,21 +231,22 @@ class AddBookToBookshelf extends React.Component{
             <Dropdown
                  id='rating'
                  className={styles.dropDown}
+                 onChange={this.handleDropdownChange}
                  placeholder='rating'
                  fluid
                  required
                  search selection options={ratingOptions}
-             />
+            />
 
-
-             <Dropdown
+            <Dropdown
                  id='state'
                  className={styles.dropDown}
+                 onChange={this.handleDropdownChange}
                  placeholder='state'
                  fluid
+                 required
                  search selection options={stateOptions}
-             />
-
+            />
 
 
             <Button
@@ -257,20 +267,7 @@ class AddBookToBookshelf extends React.Component{
 
     }
 
-/*      const refetchVariables = fragmentVariables => ({
-        title: fragmentVariables.input.title,
-        author: fragmentVariables.input.author
-      });*/
-    loadMore(e){
-      console.log("loadMore")
-      console.log(this.props.viewer.book)
 
-      const refetchVariables = fragmentVariables => ({
-        title: this.state.input.title,
-        author: this.state.input.author
-      });
-      this.props.relay.refetch(refetchVariables, null)
-    }
 }
 
 export default createRefetchContainer(
