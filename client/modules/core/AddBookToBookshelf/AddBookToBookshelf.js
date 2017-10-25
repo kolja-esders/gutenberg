@@ -140,8 +140,12 @@ class AddBookToBookshelf extends React.Component {
       ratingInput: rating,
       stateInput: state
     };
+    console.log("create")
+    createBookshelfEntryMutation(this.props.relay.environment, variables, this.onCompletedBookshelfEntry, this.setErrors);
+  }
 
-    createBookshelfEntryMutation(this.props.relay.environment, variables);
+  onCompletedBookshelfEntry = (error, data) => {
+    this.props.router.push("/")
   }
 
   getErrors(fieldId) {
