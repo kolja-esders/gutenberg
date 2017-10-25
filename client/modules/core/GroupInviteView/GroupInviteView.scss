@@ -1,0 +1,30 @@
+.container {
+  width: 800px;
+  margin: 0 auto;
+
+  .createForm {
+    width: 400px;
+    margin: 100px auto;
+
+    .friendEmailInput {
+      width: 400px;
+      margin-bottom: 10px;
+    }
+
+    .preview {
+      margin-top: 10px;
+      color: #aaa;
+      text-align: center;
+
+      span {
+        color: black;
+      }
+    }
+
+    .submitButton {
+      width: 400px;
+      margin: 20px auto;
+    }
+  }
+
+}

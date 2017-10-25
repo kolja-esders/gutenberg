@@ -3,6 +3,8 @@ import Auth from 'modules/auth/Auth';
 import SharedBooks from 'modules/core/SharedBooks/SharedBooks';
 import AddBookToBookshelf from 'modules/core/AddBookToBookshelf/AddBookToBookshelf';
 import GroupView from 'modules/core/GroupView/GroupView';
+import GroupCreateView from 'modules/core/GroupCreateView/GroupCreateView';
+import GroupInviteView from 'modules/core/GroupInviteView/GroupInviteView';
 
 import { Route, makeRouteConfig } from 'found';
 import React from 'react';
@@ -33,9 +35,25 @@ const SharedBooksQuery = graphql`
 `;
 
 const GroupViewQuery = graphql`
-  query routes_GroupView_Query {
+  query routes_GroupView_Query($nameUrl: String!) {
     viewer {
       ...GroupView_viewer
+    }
+  }
+`;
+
+const GroupCreateViewQuery = graphql`
+  query routes_GroupCreateView_Query {
+    viewer {
+      ...GroupCreateView_viewer
+    }
+  }
+`;
+
+const GroupInviteViewQuery = graphql`
+  query routes_GroupInviteView_Query($nameUrl: String!) {
+    viewer {
+      ...GroupInviteView_viewer
     }
   }
 `;
@@ -57,7 +75,11 @@ export default makeRouteConfig(
     </Route>
     <Route path='add-book' Component={AddBookToBookshelf} query={AddBookToBookshelfQuery} />
     <Route path='shared-books' Component={SharedBooks} query={SharedBooksQuery} />
-    <Route path='group/:id' Component={GroupView} query={GroupViewQuery} />
+    <Route path='group/:nameUrl'>
+      <Route Component={GroupView} query={GroupViewQuery} />
+      <Route path='/invite' Component={GroupInviteView} query={GroupInviteViewQuery} />
+    </Route>
+    <Route path='create' Component={GroupCreateView} query={GroupCreateViewQuery} />
   </Route>
 );
 

@@ -3,6 +3,7 @@ import { Link } from 'found';
 import { Button, Popup, Dropdown } from 'semantic-ui-react';
 import { graphql, createFragmentContainer } from 'react-relay';
 import { logoutViewer } from 'modules/auth/jwtUtils';
+import { isAuthenticated } from 'modules/auth/utils';
 import styles from './Header.scss';
 
 class Header extends React.Component {
@@ -11,8 +12,17 @@ class Header extends React.Component {
     logoutViewer();
   }
 
+  urlFromGroup(group) {
+    return `/group/${group.nameUrl}`;
+  }
+
   render() {
     const loggedIn = this.props.isAuthenticated;
+    const memberships = this.props.viewer.user.memberships;
+    const user = this.props.viewer.user;
+    const bookshelfText = 'Bookshelf';
+    const dropdownText = this.props.activeGroup ? this.props.activeGroup : bookshelfText;
+
     return (
       <header className={styles.root}>
         <h1 className={styles.brand_name}>
@@ -45,7 +55,6 @@ class Header extends React.Component {
                 content='Log out'
                 inverted
               />
-
             </div>
           ) : (
             <div>
@@ -60,12 +69,20 @@ class Header extends React.Component {
 }
 
 export default createFragmentContainer(
-  Header,
+  isAuthenticated(Header),
   graphql`
     fragment Header_viewer on Viewer {
       id
       user {
+        firstName
         email
+        memberships {
+          group {
+            id
+            name
+            nameUrl
+          }
+        }
       }
     }
   `,
