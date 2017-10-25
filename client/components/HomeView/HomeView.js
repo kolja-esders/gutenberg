@@ -2,12 +2,12 @@ import React from 'react';
 import { graphql, createFragmentContainer } from 'react-relay';
 import Page from 'components/Page/Page';
 import MyBookList from 'components/MyBookList/MyBookList';
-import { withAuth } from 'modules/auth/utils'
-import { Button, Grid } from 'semantic-ui-react';
-import { Link } from 'found'
-import styles from './Landing.scss';
+import { withAuth } from 'modules/auth/utils';
+import { Button } from 'semantic-ui-react';
+import { Link } from 'found';
+import styles from './HomeView.scss';
 
-class Landing extends React.Component {
+class HomeView extends React.Component {
   render() {
     return (
       <Page title='Gutenberg' viewer={this.props.viewer}>
@@ -21,9 +21,9 @@ class Landing extends React.Component {
 }
 
 export default createFragmentContainer(
-  withAuth(Landing),
+  withAuth(HomeView),
   graphql`
-    fragment Landing_viewer on Viewer {
+    fragment HomeView_viewer on Viewer {
       ...Page_viewer
       id
       user {
@@ -35,4 +35,4 @@ export default createFragmentContainer(
       }
     }
   `,
-)
+);
