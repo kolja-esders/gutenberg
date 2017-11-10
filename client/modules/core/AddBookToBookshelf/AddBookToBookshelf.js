@@ -1,7 +1,7 @@
 import React from 'react';
 import Page from 'components/Page/Page';
 import { withAuth } from 'modules/auth//utils';
-import { Input, Dropdown, Button } from 'semantic-ui-react';
+import { Input, Dropdown, Button, Rating, Grid } from 'semantic-ui-react';
 import { graphql, createRefetchContainer } from 'react-relay';
 import createBookMutation from '../mutations/CreateBook';
 import createBookshelfEntryMutation from '../mutations/CreateBookshelfEntry';
@@ -106,29 +106,19 @@ class AddBookToBookshelf extends React.Component {
     this.setState({ input });
   }
 
+  handleRatingChange = (e, data) => {
+    const input = this.state.input;
+    const inputName = data.id;
+    console.log(data)
+    input[inputName] = data.rating;
+    this.setState({ input });
+  }
 
 
   setErrors = (errors) => {
     this.setState({ errors });
   }
 
-/*
-  onSubmit = (ev) => {
-    ev.preventDefault();
-    const { input, errors } = validateInput(this.state.input);
-    if (errors) {
-      this.setErrors(errors);
-      return;
-    }
-
-    const variables = {
-      titleInput: input.title,
-      authorInput: input.author
-    };
-
-    createBookMutation(this.props.relay.environment, variables, this.onCompletedCreateBook, this.setErrors);
-  }
-*/
 
   onCompletedSubmit = (ev) => {
     ev.preventDefault();
@@ -194,7 +184,6 @@ class AddBookToBookshelf extends React.Component {
         <div className={styles.container}>
 
           <form
-
             className={styles.form}
           >
 
@@ -223,15 +212,16 @@ class AddBookToBookshelf extends React.Component {
               placeholder='author'
             />
 
-            <Dropdown
-              id='rating'
-              className={styles.dropDown}
-              onChange={this.handleDropdownChange}
-              placeholder='rating'
-              fluid
-              required
-              search selection options={ratingOptions}
-            />
+            <Grid>
+              <Grid.Column floated='left' width={5}>
+                Rating
+              </Grid.Column>
+              <Grid.Column floated='right' width={5}>
+                <Rating maxRating={5}
+                  onRate={this.handleRatingChange}
+                  id = 'rating'/>
+              </Grid.Column>
+            </Grid>
 
 
             <Button.Group basic fluid className={styles.readingStatus}>
@@ -254,8 +244,6 @@ class AddBookToBookshelf extends React.Component {
                 to-read
               </Button>
             </Button.Group>
-
-
 
 
             <Button
