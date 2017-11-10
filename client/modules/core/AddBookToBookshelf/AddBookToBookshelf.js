@@ -97,12 +97,40 @@ class AddBookToBookshelf extends React.Component {
     this.setState({ input });
   }
 
+
+  handleButtonChange = (e, data) => {
+    e.preventDefault();
+    const input = this.state.input;
+    const inputName = data.type;
+    input[inputName] = data.id;
+    this.setState({ input });
+  }
+
+
+
   setErrors = (errors) => {
     this.setState({ errors });
   }
 
-
+/*
   onSubmit = (ev) => {
+    ev.preventDefault();
+    const { input, errors } = validateInput(this.state.input);
+    if (errors) {
+      this.setErrors(errors);
+      return;
+    }
+
+    const variables = {
+      titleInput: input.title,
+      authorInput: input.author
+    };
+
+    createBookMutation(this.props.relay.environment, variables, this.onCompletedCreateBook, this.setErrors);
+  }
+*/
+
+  onCompletedSubmit = (ev) => {
     ev.preventDefault();
     const { input, errors } = validateInput(this.state.input);
     if (errors) {
@@ -166,24 +194,10 @@ class AddBookToBookshelf extends React.Component {
         <div className={styles.container}>
 
           <form
-            onSubmit={this.onSubmit}
+
             className={styles.form}
           >
 
-            <Button.Group basic fluid className={styles.readingStatus}>
-              <Button type='button' active>
-                <div className={styles.readIcon} />
-                read
-              </Button>
-              <Button type='button'>
-                <div className={styles.readingIcon} />
-                reading
-              </Button>
-              <Button type='button'>
-                <div className={styles.toReadIcon} />
-                to-read
-              </Button>
-            </Button.Group>
 
             <Input
               id='title'
@@ -219,15 +233,29 @@ class AddBookToBookshelf extends React.Component {
               search selection options={ratingOptions}
             />
 
-            <Dropdown
-              id='state'
-              className={styles.dropDown}
-              onChange={this.handleDropdownChange}
-              placeholder='state'
-              fluid
-              required
-              search selection options={stateOptions}
-            />
+
+            <Button.Group basic fluid className={styles.readingStatus}>
+              <Button type='state'
+                onClick={this.handleButtonChange}
+                id="read">
+                <div className={styles.readIcon} />
+                read
+              </Button>
+              <Button type='state'
+                onClick={this.handleButtonChange}
+                id="reading">
+                <div className={styles.readingIcon} />
+                reading
+              </Button>
+              <Button type='state'
+                onClick={this.handleButtonChange}
+                id="to-read">
+                <div className={styles.toReadIcon} />
+                to-read
+              </Button>
+            </Button.Group>
+
+
 
 
             <Button
@@ -235,6 +263,7 @@ class AddBookToBookshelf extends React.Component {
               fluid
               type='submit'
               size='large'
+              onClick = {this.onCompletedSubmit}
               className='button_submit-add-books-form'
             >
               Add book
