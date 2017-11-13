@@ -37,7 +37,8 @@ const CreateMembershipMutation = graphql`
 class GroupCreateView extends React.Component {
   static propTypes = {
     viewer: PropTypes.object.isRequired,
-    relay: PropTypes.object.isRequired
+    relay: PropTypes.object.isRequired,
+    router: PropTypes.object.isRequired
   }
 
   state = { name: '', url: '' }
@@ -66,15 +67,15 @@ class GroupCreateView extends React.Component {
           mutation: CreateMembershipMutation,
           variables: membershipVars,
           onCompleted: (membershipResponse, membershipErrors) => {
-            console.log(membershipResponse, membershipErrors);
+            this.props.router.push(`/group/${groupVars.nameUrl}`);
           },
           onError: (err) => {
-            console.error(err);
+            //console.error(err);
           },
         });
       },
       onError: (err) => {
-        console.error(err);
+        //console.error(err);
       },
     });
   }
