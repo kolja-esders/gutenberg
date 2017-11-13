@@ -28,26 +28,12 @@
       margin-bottom: 10px;
     }
 
-    .readIcon, .toReadIcon, .readingIcon {
-      width: 32px;
-      height: 32px;
-      background-size: cover;
-      background-repeat: no-repeat;
-      filter: grayscale(1);
-      margin: 5px auto 8px auto;
-    }
+    .stateButton{
+      margin-bottom: 10px;
+      width: 116.6666px;
 
-    .readIcon {
-      background-image: url('../../../assets/read.png');
-    }
-
-    .toReadIcon {
-      background-image: url('../../../assets/to-read.png');
-    }
-
-    .readingIcon {
-      background-image: url('../../../assets/reading.png');
     }
 
   }
+
 }
