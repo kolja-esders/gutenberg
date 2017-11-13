@@ -26,6 +26,7 @@ class Group(DjangoObjectType):
 class Membership(DjangoObjectType):
     class Meta:
         model = MembershipModal
+        filter_fields = ['group', 'user']
         interfaces = (graphene.Node, )
 
 class User(DjangoObjectType):
@@ -49,6 +50,7 @@ class User(DjangoObjectType):
 
     bookshelf = graphene.List(BookshelfEntry)
     memberships = graphene.List(Membership)
+    all_memberships = DjangoFilterConnectionField(Membership)
 
     @graphene.resolve_only_args
     def resolve_bookshelf(self):
