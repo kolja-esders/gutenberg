@@ -1,0 +1,106 @@
+@import "./global.scss";
+
+.container {
+  height: 600vh;
+  background-image: url('../../assets/space.jpg');
+  background-size: 100%;
+  background-repeat: no-repeat;
+
+  .header {
+    height: 100px;
+    line-height: 100px;
+    width: $contentWidth;
+    margin: 0 auto;
+
+    .brandName {
+      font-size: 2.9rem;
+      font-weight: 800;
+      display: inline;
+    }
+
+    .brandNameLink {
+      color: rgba(255, 255, 255, 0.9);
+
+      &:hover {
+        color: rgba(255, 255, 255, 1);
+      }
+    }
+
+    .nav {
+      float: right;
+
+      .item {
+        margin-left: 10px;
+      }
+    }
+  }
+
+  .content {
+    //width: $contentWidth;
+    margin: 0 2.3rem 0 2.3rem;
+
+    .inverted {
+      color: #edf0f2;
+    }
+
+    h1, h2 {
+      text-align: center;
+    }
+
+    h1 {
+      font-weight: normal;
+      //margin-top: 200px;
+      //margin-bottom: 0px;
+      font-size: 5.1rem;
+    }
+
+    h2 {
+      //margin-top: 0px;
+      font-family: 'Lato';
+      font-weight: 100;
+      font-size: 2.32rem;
+    }
+
+    .sellingPoints {
+      height: calc(2rem + 400px);
+      text-align: center;
+
+      .box {
+        margin: 0rem;
+
+        .content{
+          padding: 40px 20px 40px 20px;
+          min-height: 400px;
+
+          .rating {
+            margin: 0 auto;
+
+            &> div {
+              color: #FF0066;
+            }
+          }
+
+          .desc {
+            color: #394b59;
+          }
+        }
+      }
+    }
+
+    .extendedFeature {
+      margin-top: 300px;
+    }
+  }
+
+  #hero {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 200px);
+  }
+
+  .centeredContainer {
+    margin-top: -100px;
+  
+  }
+}

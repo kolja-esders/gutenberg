@@ -11,7 +11,7 @@ class Page extends React.Component {
         <Helmet>
           <title>{this.props.title}</title>
         </Helmet>
-        <Header viewer={this.props.viewer} />
+        <Header viewer={this.props.viewer} activeGroup={this.props.activeGroup}/>
         <main className={styles.content}>
           {this.props.children}
         </main>

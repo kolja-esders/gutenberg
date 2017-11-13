@@ -26,6 +26,7 @@ class Group(DjangoObjectType):
 class Membership(DjangoObjectType):
     class Meta:
         model = MembershipModal
+        filter_fields = ['group', 'user']
         interfaces = (graphene.Node, )
 
 class User(DjangoObjectType):
@@ -42,16 +43,22 @@ class User(DjangoObjectType):
             'is_staff',
             'is_active',
             'date_joined',
-            'books',
-            'groups'
+            # 'books',
+            # 'groups'
         )
         interfaces = (graphene.Node, TokensInterface)
 
     bookshelf = graphene.List(BookshelfEntry)
+    memberships = graphene.List(Membership)
+    all_memberships = DjangoFilterConnectionField(Membership)
 
     @graphene.resolve_only_args
     def resolve_bookshelf(self):
         return self.bookshelfentry_set.all()
+
+    @graphene.resolve_only_args
+    def resolve_memberships(self):
+        return self.membership_set.all()
 
 class CoreQueries(graphene.AbstractType):
     book = graphene.Node.Field(Book)
@@ -135,14 +142,16 @@ class CreateBookshelfEntry(graphene.Mutation):
 
 class CreateMembership(graphene.Mutation):
     class Input:
-        user_id = graphene.String(required=True)
-        group_id = graphene.String(required=True)
+        user_id = graphene.ID(required=True)
+        group_id = graphene.ID(required=True)
 
     membership = graphene.Field(Membership)
 
     def mutate(self, args, ctx, info):
-        user = get_user_model().objects.get(pk=args['user_id'])
-        group = GroupModal.objects.get(pk=args['group_id'])
+        get_node = graphene.Node.get_node_from_global_id
+        user = get_node(args['user_id'], ctx, info)
+        group = get_node(args['group_id'], ctx, info)
+
         membership = MembershipModal(
             user = user,
             group = group
@@ -153,12 +162,13 @@ class CreateMembership(graphene.Mutation):
 class CreateGroup(graphene.Mutation):
     class Input:
         name = graphene.String(required=True)
+        name_url = graphene.String(required=True)
 
     group = graphene.Field(Group)
 
     def mutate(self, args, ctx, info):
         name = args['name']
-        name_url = GroupModal.get_url_from_name(name)
+        name_url = args['name_url']
         group = GroupModal(name=name, name_url=name_url)
         group.save()
         return CreateGroup(group=group)

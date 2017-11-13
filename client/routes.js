@@ -1,21 +1,22 @@
-import Landing from 'components/Landing/Landing'
-import Auth from 'modules/auth/Auth'
-import SharedBooks from 'modules/core/SharedBooks/SharedBooks'
-import AddBookToBookshelf from 'modules/core/AddBookToBookshelf/AddBookToBookshelf'
-import GroupView from 'modules/core/GroupView/GroupView'
-import GroupCreateView from 'modules/core/GroupCreateView/GroupCreateView'
+import LandingRedirectView from 'components/LandingRedirectView/LandingRedirectView';
+import Auth from 'modules/auth/Auth';
+import SharedBooks from 'modules/core/SharedBooks/SharedBooks';
+import AddBookToBookshelf from 'modules/core/AddBookToBookshelf/AddBookToBookshelf';
+import GroupView from 'modules/core/GroupView/GroupView';
+import GroupCreateView from 'modules/core/GroupCreateView/GroupCreateView';
+import GroupInviteView from 'modules/core/GroupInviteView/GroupInviteView';
 
-import { Route, makeRouteConfig } from 'found'
-import React from 'react'
-import { graphql } from 'react-relay'
+import { Route, makeRouteConfig } from 'found';
+import React from 'react';
+import { graphql } from 'react-relay';
 
-const LandingQuery = graphql`
+const LandingRedirectViewQuery = graphql`
   query routes_Landing_Query {
     viewer {
-      ...Landing_viewer
+      ...LandingRedirectView_viewer
     }
   }
-`
+`;
 
 const AuthQuery = graphql`
   query routes_Auth_Query {
@@ -23,7 +24,7 @@ const AuthQuery = graphql`
       ...Auth_viewer
     }
   }
-`
+`;
 
 const SharedBooksQuery = graphql`
   query routes_SharedBooks_Query {
@@ -31,15 +32,15 @@ const SharedBooksQuery = graphql`
       ...SharedBooks_viewer
     }
   }
-`
+`;
 
 const GroupViewQuery = graphql`
-  query routes_GroupView_Query {
+  query routes_GroupView_Query($nameUrl: String!) {
     viewer {
       ...GroupView_viewer
     }
   }
-`
+`;
 
 const GroupCreateViewQuery = graphql`
   query routes_GroupCreateView_Query {
@@ -47,7 +48,15 @@ const GroupCreateViewQuery = graphql`
       ...GroupCreateView_viewer
     }
   }
-`
+`;
+
+const GroupInviteViewQuery = graphql`
+  query routes_GroupInviteView_Query($nameUrl: String!) {
+    viewer {
+      ...GroupInviteView_viewer
+    }
+  }
+`;
 
 const AddBookToBookshelfQuery = graphql`
   query routes_AddBookToBookshelf_Query {
@@ -55,18 +64,22 @@ const AddBookToBookshelfQuery = graphql`
       ...AddBookToBookshelf_viewer
     }
   }
-`
+`;
 
 export default makeRouteConfig(
-  <Route path="/">
-    <Route Component={Landing} query={LandingQuery} />
+  <Route path='/'>
+    <Route Component={LandingRedirectView} query={LandingRedirectViewQuery} />
     <Route Component={Auth} query={AuthQuery}>
-      <Route path="login" />
-      <Route path="signup" />
+      <Route path='login' />
+      <Route path='signup' />
     </Route>
-    <Route path="add-book" Component={AddBookToBookshelf} query={AddBookToBookshelfQuery}/>
-    <Route path="shared-books" Component={SharedBooks} query={SharedBooksQuery}/>
-    <Route path="group/:id" Component={GroupView} query={GroupViewQuery}/>
+    <Route path='add-book' Component={AddBookToBookshelf} query={AddBookToBookshelfQuery} />
+    <Route path='shared-books' Component={SharedBooks} query={SharedBooksQuery} />
+    <Route path='group/:nameUrl'>
+      <Route Component={GroupView} query={GroupViewQuery} />
+      <Route path='/invite' Component={GroupInviteView} query={GroupInviteViewQuery} />
+    </Route>
+    <Route path='create' Component={GroupCreateView} query={GroupCreateViewQuery} />
   </Route>
 );
 

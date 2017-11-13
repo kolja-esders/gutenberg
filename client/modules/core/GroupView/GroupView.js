@@ -1,36 +1,54 @@
-/* eslint-disable jsx-a11y/href-no-hash */
+import Page from 'components/Page/Page';
+import { withAuth } from 'modules/auth/utils';
 import React from 'react';
-import { graphql, createFragmentContainer, QueryRenderer } from 'react-relay';
-import SharedBooksList from 'components/SharedBooksList/SharedBooksList';
-import { withAuth } from 'modules/auth/utils'
+import { createFragmentContainer, graphql } from 'react-relay';
+import PropTypes from 'prop-types';
+import { Link } from 'found';
+import { Button, Header } from 'semantic-ui-react';
+
+import styles from './GroupView.scss';
 
 class GroupView extends React.Component {
+  static propTypes = {
+    viewer: PropTypes.object.isRequired
+  }
+
   render() {
-    console.log(this.props)
+    const { group, user } = this.props.viewer;
+    const inviteLink = `/group/${group.nameUrl}/invite`;
+    const memberNodes = group.members.edges;
+
     return (
-      <div>
-        test
-      </div>
-    )
+      <Page title='Gutenberg' viewer={this.props.viewer} activeGroup={group.name}>
+        <section className={styles.container}>
+          { memberNodes.length === 1 &&
+          <div className={styles.inviteNudge}>
+            <Header className={styles.text} size='huge'>{user.firstName}, it's only you.<span className={styles.emoji}></span></Header>
+            <Button className={styles.btn} size='massive' as={Link} to={inviteLink} primary>Invite friends</Button>
+          </div>
+          }
+        </section>
+      </Page>
+    );
   }
 }
 
-//export default createFragmentContainer(authenticatedRoute(GroupView), graphql`
-    //fragment GroupView_viewer on Viewer {
-      //group(nameUrl: $nameUrl) {
-        //id
-        //name
-      //}
-    //}
-  //`  
-//);
-
-
-export default createFragmentContainer(
-  withAuth(GroupView),
-  graphql`
+export default createFragmentContainer(withAuth(GroupView), graphql`
     fragment GroupView_viewer on Viewer {
-      id
+      ...Page_viewer
+      user {
+        firstName
+      }
+      group(nameUrl: $nameUrl) {
+        name
+        nameUrl
+        members {
+          edges {
+            node {
+              firstName
+            }
+          }
+        }
+      }
     }
-  `  
-);
+  `);
