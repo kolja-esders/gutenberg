@@ -104,12 +104,12 @@ class AddBookToBookshelf extends React.Component {
     const inputName = data.type;
     input[inputName] = data.id;
     this.setState({ input });
+    this.setState({ active: data.id });
   }
 
   handleRatingChange = (e, data) => {
     const input = this.state.input;
     const inputName = data.id;
-    console.log(data)
     input[inputName] = data.rating;
     this.setState({ input });
   }
@@ -224,22 +224,31 @@ class AddBookToBookshelf extends React.Component {
             </Grid>
 
 
-            <Button.Group basic fluid className={styles.readingStatus}>
+
+
+
+            <Button.Group className={styles.readingStatus}>
               <Button type='state'
                 onClick={this.handleButtonChange}
-                id="read">
+                active={this.state.active == "read"}
+                id="read"
+                className={styles.stateButton}>
                 <div className={styles.readIcon} />
                 read
               </Button>
               <Button type='state'
                 onClick={this.handleButtonChange}
-                id="reading">
+                active={this.state.active == "reading"}
+                id="reading"
+                className={styles.stateButton}>
                 <div className={styles.readingIcon} />
                 reading
               </Button>
               <Button type='state'
                 onClick={this.handleButtonChange}
-                id="to-read">
+                active={this.state.active == "to-read"}
+                id="to-read"
+                className={styles.stateButton}>
                 <div className={styles.toReadIcon} />
                 to-read
               </Button>
