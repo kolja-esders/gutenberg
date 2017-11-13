@@ -4,7 +4,7 @@ from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType, ObjectType
 from core.user_helper.jwt_util import get_token_user_id
 from core.user_helper.jwt_schema import TokensInterface
-from .models import Book as BookModal, BookshelfEntry as BookshelfEntryModal, Membership as MembershipModal, Group as GroupModal
+from .models import Book as BookModal, BookshelfEntry as BookshelfEntryModal, Membership as MembershipModal, Group as GroupModal, GroupInvite as GroupInviteModal
 
 class Book(DjangoObjectType):
     class Meta:
@@ -21,6 +21,11 @@ class BookshelfEntry(DjangoObjectType):
 class Group(DjangoObjectType):
     class Meta:
         model = GroupModal
+        interfaces = (graphene.Node, )
+
+class GroupInvite(DjangoObjectType):
+    class Meta:
+        model = GroupInviteModal
         interfaces = (graphene.Node, )
 
 class Membership(DjangoObjectType):
@@ -73,9 +78,10 @@ class CoreQueries(graphene.AbstractType):
     memberships = graphene.List(Membership)
     all_memberships = DjangoFilterConnectionField(Membership)
 
+    group_invite = graphene.Field(GroupInvite, id=graphene.ID(), verification_token=graphene.String())
+
     group = graphene.Field(Group, id=graphene.ID(), name_url=graphene.String())
     all_groups = DjangoFilterConnectionField(Group)
-
 
     def resolve_group(self, args, context, info):
         if 'id' in args:
@@ -83,6 +89,11 @@ class CoreQueries(graphene.AbstractType):
 
         return GroupModal.objects.get(name_url=args['name_url'])
 
+    def resolve_group_invite(self, args, context, info):
+        if 'id' in args:
+            return GroupInviteModal.objects.get(pk=args['id'])
+
+        return GroupInviteModal.objects.get(verification_token=args['verification_token'])
 
     def resolve_books(self, args, context, info):
         books = BookModal.objects.all()
