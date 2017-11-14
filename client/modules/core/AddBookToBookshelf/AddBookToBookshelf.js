@@ -1,7 +1,7 @@
 import React from 'react';
 import Page from 'components/Page/Page';
 import { withAuth } from 'modules/auth//utils';
-import { Input, Dropdown, Button, Rating, Grid } from 'semantic-ui-react';
+import { Input, Dropdown, Button, Rating, Grid, Step, Divider } from 'semantic-ui-react';
 import { graphql, createRefetchContainer } from 'react-relay';
 import createBookMutation from '../mutations/CreateBook';
 import createBookshelfEntryMutation from '../mutations/CreateBookshelfEntry';
@@ -202,7 +202,7 @@ class AddBookToBookshelf extends React.Component {
 
             <Input
               id='author'
-              className={styles.nameField}
+              className={styles.authorField}
               onChange={this.handleFieldChange}
               value={input.author}
               type='text'
@@ -212,22 +212,18 @@ class AddBookToBookshelf extends React.Component {
               placeholder='author'
             />
 
-            <Grid>
-              <Grid.Column floated='left' width={5}>
-                Rating
-              </Grid.Column>
-              <Grid.Column floated='right' width={5}>
-                <Rating maxRating={5}
-                  onRate={this.handleRatingChange}
-                  id = 'rating'/>
-              </Grid.Column>
-            </Grid>
+          <Divider className={styles.divider}/>
+
+          <Rating maxRating={5}
+            onRate={this.handleRatingChange}
+            className={styles.rating}
+            size='huge'
+            id = 'rating'/>
 
 
 
 
-
-            <Button.Group className={styles.readingStatus}>
+          <Button.Group className={styles.readingStatus} widths='3' basic>
               <Button type='state'
                 onClick={this.handleButtonChange}
                 active={this.state.active == "read"}
