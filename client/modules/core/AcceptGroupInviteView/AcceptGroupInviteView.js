@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/href-no-hash */
 import Page from 'components/Page/Page';
-import { withAuth } from 'modules/auth/utils';
 import React from 'react';
 import { createFragmentContainer, graphql } from 'react-relay';
 import PropTypes from 'prop-types';
@@ -13,19 +12,31 @@ class AcceptGroupInviteView extends React.Component {
     viewer: PropTypes.object.isRequired
   }
 
+  state = { input: { } }
+
+  componentWillMount = () => {
+    const input = this.state.input;
+    const invite = this.props.viewer.groupInvite;
+    input.email = invite.email;
+    input.firstName = invite.firstName;
+    input.lastName = invite.lastName;
+    this.setState({ input });
+  }
+
   onSubmitHandler = (ev) => {
     ev.preventDefault();
   }
 
   handleFieldChange = (e) => {
-    const input = this.state.input
-    const inputName = e.target.id
-    input[inputName] = e.target.value
-    this.setState({ input })
+    const input = this.state.input;
+    const inputName = e.target.id;
+    input[inputName] = e.target.value;
+    this.setState({ input });
   }
 
   render() {
-    let input = { firstName: 'John', lastName: 'Doe', email: 'john.doe@gmail.com' }
+    const { input } = this.state;
+
     return (
       <Page viewer={this.props.viewer} title="Accept invite">
         <div className={styles.container}>
@@ -39,6 +50,7 @@ class AcceptGroupInviteView extends React.Component {
                 <Grid.Column className={styles.column}>
                   <Input
                     id='firstName'
+                    onChange={this.handleFieldChange.bind(this)}
                     className={styles.nameField}
                     value={input.firstName}
                     type='text'
@@ -50,6 +62,7 @@ class AcceptGroupInviteView extends React.Component {
                 <Grid.Column className={styles.column}>
                   <Input
                     id='lastName'
+                    onChange={this.handleFieldChange.bind(this)}
                     className={styles.nameField}
                     value={input.lastName}
                     type='text'
@@ -73,12 +86,10 @@ class AcceptGroupInviteView extends React.Component {
 
             <br />
 
-
             <Input
               id='password'
               className={styles.textFields}
               onChange={this.handleFieldChange.bind(this)}
-              value={input.password}
               placeholder='Password'
               type='password'
               size='huge'
@@ -106,6 +117,9 @@ export default createFragmentContainer(AcceptGroupInviteView, graphql`
     fragment AcceptGroupInviteView_viewer on Viewer {
       ...Page_viewer
       groupInvite(verificationToken: $verificationToken) {
+        firstName
+        lastName
+        createdBy
         email
       }
     }
