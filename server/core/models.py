@@ -43,6 +43,8 @@ class GroupInvite(models.Model):
     first_name = models.CharField(max_length=31, blank=True)
     last_name = models.CharField(max_length=31, blank=True)
     verification_token = models.CharField(max_length=31, unique=True)
+    created_by = models.ForeignKey(CustomUser, default=None)
+    consumed = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ('email', 'group')

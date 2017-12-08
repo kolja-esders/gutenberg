@@ -125,6 +125,27 @@ class CreateBook(graphene.Mutation):
         book.save()
         return CreateBook(book=book)
 
+class CreateGroupInvite(graphene.Mutation):
+    class Input:
+        group_id = graphene.ID(required=True)
+        email = graphene.String(required=True)
+        first_name = graphene.String()
+        last_name = graphene.String()
+
+    book = graphene.Field(Book)
+
+    def mutate(self, args, ctx, info):
+        title = args['title']
+        author = args['author']
+        author = args['author']
+        author = args['author']
+        book = BookModal(
+                title = title,
+                author = author
+            )
+        book.save()
+        return CreateBook(book=book)
+
 
 class CreateBookshelfEntry(graphene.Mutation):
     class Input:
