@@ -39,13 +39,13 @@ class AcceptGroupInviteView extends React.Component {
     const invite = this.props.viewer.groupInvite;
 
     return (
-      <Page viewer={this.props.viewer} title="Accept invite">
+      <Page viewer={this.props.viewer} title='Accept invite'>
         <div className={styles.container}>
           { invite.consumed ?
-            <Message size="massive" negative>The invite has already been accepted.</Message>
+            <Message size='massive' negative>The invite has already been accepted.</Message>
           :
             <form
-              id="accept_invite"
+              id='accept_invite'
               onSubmit={this.submitForm}
               className={styles.form}
             >
@@ -61,7 +61,8 @@ class AcceptGroupInviteView extends React.Component {
                       size='huge'
                       fluid
                       required
-                      placeholder='First name' />
+                      placeholder='First name'
+                    />
                   </Grid.Column>
                   <Grid.Column className={styles.column}>
                     <Input
@@ -73,7 +74,8 @@ class AcceptGroupInviteView extends React.Component {
                       size='huge'
                       fluid
                       required
-                      placeholder='Last name' />
+                      placeholder='Last name'
+                    />
                   </Grid.Column>
                 </Grid.Row>
               </Grid>
@@ -86,7 +88,8 @@ class AcceptGroupInviteView extends React.Component {
                 type='email'
                 size='huge'
                 required
-                placeholder='Email' />
+                placeholder='Email'
+              />
 
               <br />
 
@@ -114,7 +117,7 @@ class AcceptGroupInviteView extends React.Component {
           }
         </div>
       </Page>
-    )
+    );
   }
 }
 
