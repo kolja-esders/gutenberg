@@ -5,6 +5,7 @@ import AddBookToBookshelf from 'modules/core/AddBookToBookshelf/AddBookToBookshe
 import GroupView from 'modules/core/GroupView/GroupView';
 import GroupCreateView from 'modules/core/GroupCreateView/GroupCreateView';
 import GroupInviteView from 'modules/core/GroupInviteView/GroupInviteView';
+import AcceptGroupInviteView from 'modules/core/AcceptGroupInviteView/AcceptGroupInviteView';
 
 import { Route, makeRouteConfig } from 'found';
 import React from 'react';
@@ -66,6 +67,14 @@ const AddBookToBookshelfQuery = graphql`
   }
 `;
 
+const AcceptGroupInviteViewQuery = graphql`
+  query routes_AcceptGroupInviteView_Query($verificationToken: String!) {
+    viewer {
+      ...AcceptGroupInviteView_viewer
+    }
+  }
+`;
+
 export default makeRouteConfig(
   <Route path='/'>
     <Route Component={LandingRedirectView} query={LandingRedirectViewQuery} />
@@ -80,6 +89,7 @@ export default makeRouteConfig(
       <Route path='/invite' Component={GroupInviteView} query={GroupInviteViewQuery} />
     </Route>
     <Route path='create' Component={GroupCreateView} query={GroupCreateViewQuery} />
+    <Route path='accept/:verificationToken' Component={AcceptGroupInviteView} query={AcceptGroupInviteViewQuery} />
   </Route>
 );
 
