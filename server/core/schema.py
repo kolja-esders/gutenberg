@@ -5,6 +5,7 @@ from graphene_django.types import DjangoObjectType, ObjectType
 from core.user_helper.jwt_util import get_token_user_id
 from core.user_helper.jwt_schema import TokensInterface
 from .models import Book as BookModal, BookshelfEntry as BookshelfEntryModal, Membership as MembershipModal, Group as GroupModal, GroupInvite as GroupInviteModal
+from .utils import Utils
 
 class Book(DjangoObjectType):
     class Meta:
@@ -79,6 +80,7 @@ class CoreQueries(graphene.AbstractType):
     all_memberships = DjangoFilterConnectionField(Membership)
 
     group_invite = graphene.Field(GroupInvite, id=graphene.ID(), verification_token=graphene.String())
+    all_group_invites = DjangoFilterConnectionField(GroupInvite)
 
     group = graphene.Field(Group, id=graphene.ID(), name_url=graphene.String())
     all_groups = DjangoFilterConnectionField(Group)
@@ -128,23 +130,34 @@ class CreateBook(graphene.Mutation):
 class CreateGroupInvite(graphene.Mutation):
     class Input:
         group_id = graphene.ID(required=True)
-        email = graphene.String(required=True)
-        first_name = graphene.String()
-        last_name = graphene.String()
+        invitee_email = graphene.String(required=True)
+        invitee_first_name = graphene.String()
+        invitee_last_name = graphene.String()
+        host_id = graphene.ID(required=True)
 
-    book = graphene.Field(Book)
+    group_invite = graphene.Field(GroupInvite)
 
     def mutate(self, args, ctx, info):
-        title = args['title']
-        author = args['author']
-        author = args['author']
-        author = args['author']
-        book = BookModal(
-                title = title,
-                author = author
-            )
-        book.save()
-        return CreateBook(book=book)
+        get_node = graphene.Node.get_node_from_global_id
+        group = get_node(args['group_id'], ctx, info)
+        host = get_user_model().objects.get(pk=args['host_id'])
+        # TODO(kolja): Throw if user or group not found
+        email = args['invitee_email']
+        first_name = args['invitee_first_name']
+        last_name = args['invitee_last_name']
+        verification_token = Utils.generate_verification_token(group, email)
+
+        group_invite = GroupInviteModal(
+            group=group,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            verification_token=verification_token,
+            created_by=host,
+            consumed=False
+        )
+        group_invite.save()
+        return CreateGroupInvite(group_invite=group_invite)
 
 
 class CreateBookshelfEntry(graphene.Mutation):
@@ -210,6 +223,7 @@ class CoreMutations(graphene.AbstractType):
     create_bookshelf_entry = CreateBookshelfEntry.Field()
     create_membership = CreateMembership.Field()
     create_group = CreateGroup.Field()
+    create_group_invite = CreateGroupInvite.Field()
 
 
 class Viewer(ObjectType, CoreQueries):
