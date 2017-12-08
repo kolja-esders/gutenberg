@@ -159,6 +159,21 @@ class CreateGroupInvite(graphene.Mutation):
         group_invite.save()
         return CreateGroupInvite(group_invite=group_invite)
 
+class AcceptGroupInvite(graphene.Mutation):
+    class Input:
+        invite_id = graphene.ID(required=True)
+
+    success = graphene.Boolean()
+
+    def mutate(self, args, ctx, info):
+        get_node = graphene.Node.get_node_from_global_id
+        invite = get_node(args['invite_id'], ctx, info)
+        consumed = invite.consumed
+        invite.consumed = True
+        invite.save()
+        success = not consumed
+
+        return AcceptGroupInvite(success=success)
 
 class CreateBookshelfEntry(graphene.Mutation):
     class Input:
@@ -224,6 +239,7 @@ class CoreMutations(graphene.AbstractType):
     create_membership = CreateMembership.Field()
     create_group = CreateGroup.Field()
     create_group_invite = CreateGroupInvite.Field()
+    accept_group_invite = AcceptGroupInvite.Field()
 
 
 class Viewer(ObjectType, CoreQueries):
