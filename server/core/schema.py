@@ -162,18 +162,28 @@ class CreateGroupInvite(graphene.Mutation):
 class AcceptGroupInvite(graphene.Mutation):
     class Input:
         invite_id = graphene.ID(required=True)
+        verification_token = graphene.String(required=True)
 
     success = graphene.Boolean()
+    reason = graphene.String()
 
     def mutate(self, args, ctx, info):
         get_node = graphene.Node.get_node_from_global_id
+        verification_token = args['verification_token']
         invite = get_node(args['invite_id'], ctx, info)
-        consumed = invite.consumed
-        invite.consumed = True
-        invite.save()
-        success = not consumed
 
-        return AcceptGroupInvite(success=success)
+        reason = ''
+        success = False
+        if invite.verification_token != verification_token:
+            reason = 'Authorization missing to accept invitation.'
+        elif invite.consumed:
+            reason = 'Invitation has already been accepted.'
+        else:
+            invite.consumed = True
+            invite.save()
+            success = True
+
+        return AcceptGroupInvite(success=success, reason=reason)
 
 class CreateBookshelfEntry(graphene.Mutation):
     class Input:
