@@ -66,7 +66,6 @@ class AcceptGroupInviteView extends React.Component {
               className={`${styles.textFields} email_input`}
               onChange={this.handleFieldChange}
               value={input.email}
-              disabled
               type='email'
               size='huge'
               required
