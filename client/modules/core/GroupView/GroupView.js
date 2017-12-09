@@ -28,6 +28,9 @@ class GroupView extends React.Component {
             </div>
           :
             <div>
+              <h1>Members</h1>
+              <p>{ members.map(m => `${m.node.firstName} ${m.node.lastName}`).join(', ') }</p>
+              <h1>Books</h1>
               <Table singleLine className={styles.books}>
                 <Table.Header>
                   <Table.Row>
@@ -76,6 +79,7 @@ export default createFragmentContainer(withAuth(GroupView), graphql`
           edges {
             node {
               firstName
+              lastName
               books {
                 edges {
                   node {
