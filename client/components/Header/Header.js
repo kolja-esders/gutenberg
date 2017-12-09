@@ -18,7 +18,7 @@ class Header extends React.Component {
 
   render() {
     const loggedIn = this.props.isAuthenticated;
-    const memberships = this.props.viewer.user.memberships;
+    const memberships = this.props.viewer.user.groups.edges;
     const user = this.props.viewer.user;
     const bookshelfText = 'Bookshelf';
     const dropdownText = this.props.activeGroup ? this.props.activeGroup : bookshelfText;
@@ -39,8 +39,8 @@ class Header extends React.Component {
                   <Dropdown.Header content='Groups' />
                   <Dropdown.Divider />
                   { memberships.map(m =>
-                    <Dropdown.Item as={Link} to={this.urlFromGroup(m.group)} key={m.group.id}>
-                      { m.group.name }
+                    <Dropdown.Item as={Link} to={this.urlFromGroup(m.node.group)} key={m.node.group.id}>
+                      { m.node.group.name }
                     </Dropdown.Item>
                   )}
                 </Dropdown.Menu>
@@ -76,11 +76,15 @@ export default createFragmentContainer(
       user {
         firstName
         email
-        memberships {
-          group {
-            id
-            name
-            nameUrl
+        groups {
+          edges {
+            node {
+              group {
+                id
+                name
+                nameUrl
+              }
+            }
           }
         }
       }

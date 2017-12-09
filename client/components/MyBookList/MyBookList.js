@@ -1,12 +1,11 @@
 import React from 'react';
 import { graphql, createFragmentContainer } from 'react-relay';
-import Page from 'components/Page/Page';
 import { Table, Rating } from 'semantic-ui-react';
 import styles from './MyBookList.scss';
 
 class MyBookList extends React.Component {
   render() {
-    const bookshelf = this.props.bookshelf;
+    const bookshelfEntries = this.props.books.edges;
     return (
       <div className={styles.root}>
         <Table singleLine className={styles.books}>
@@ -20,12 +19,12 @@ class MyBookList extends React.Component {
 
           <Table.Body>
 
-            {bookshelf.map((e) =>
-              <Table.Row key={e.id}>
-                <Table.Cell>{e.book.title}</Table.Cell>
-                <Table.Cell>{e.book.author}</Table.Cell>
+            {bookshelfEntries.map(e =>
+              <Table.Row key={e.node.id}>
+                <Table.Cell>{e.node.book.title}</Table.Cell>
+                <Table.Cell>{e.node.book.author}</Table.Cell>
                 <Table.Cell>
-                  <Rating defaultRating={e.rating} maxRating={5} />
+                  <Rating defaultRating={e.node.rating} maxRating={5} />
                 </Table.Cell>
               </Table.Row>
             )}
@@ -40,13 +39,16 @@ class MyBookList extends React.Component {
 export default createFragmentContainer(
   MyBookList,
   graphql`
-    fragment MyBookList_bookshelf on BookshelfEntry @relay(plural: true) {
-      id
-      book {
-        title
-        author
+  fragment MyBookList_books on BookshelfEntryConnection {
+    edges {
+      node {
+        id
+        book {
+          title
+          author
+        }
+        rating
       }
-      rating
     }
-  `
-)
+  }`
+);

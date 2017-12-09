@@ -12,7 +12,7 @@ class HomeView extends React.Component {
     return (
       <Page title='Gutenberg' viewer={this.props.viewer}>
         <section className={styles.container}>
-          <MyBookList bookshelf={this.props.viewer.user.bookshelf}/>
+          <MyBookList books={this.props.viewer.user.books}/>
           <Button primary as={Link} to='/add-book' className={styles.addBook}>Add book</Button>
         </section>
       </Page>
@@ -27,10 +27,8 @@ export default createFragmentContainer(
       ...Page_viewer
       id
       user {
-        email
-        username
-        bookshelf {
-          ...MyBookList_bookshelf
+        books {
+          ...MyBookList_books
         }
       }
     }
