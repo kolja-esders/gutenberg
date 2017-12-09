@@ -7,7 +7,7 @@ import FormMessageList from 'components/FormMessageList/FormMessageList'
 import { withAuth } from 'modules/auth//utils'
 import { graphql, createFragmentContainer } from 'react-relay';
 
-import { Input, Dropdown, Button, Rating } from 'semantic-ui-react';
+import { Header, Segment, Input, Dropdown, Button, Rating } from 'semantic-ui-react';
 
 
  const stateOptions = [ { key: 'toread', value: 'toread', text: 'to read' },
@@ -136,7 +136,9 @@ class AddBookToBookshelf extends React.Component{
 
         return(
           <Page viewer={this.props.viewer} title={title}>
-          <div className={styles.container}>
+            <div className={styles.container}>
+              <Segment padded='very'>
+                <Header as='h1'>New book</Header>
 
             <form
               onSubmit={this.submitForm}
@@ -164,7 +166,7 @@ class AddBookToBookshelf extends React.Component{
                 onChange={this.handleFieldChange.bind(this)}
                 value={input.title}
                 type='text'
-                size="large"
+                size='huge'
                 fluid
                 required
                 placeholder='book title' />
@@ -175,7 +177,7 @@ class AddBookToBookshelf extends React.Component{
                 onChange={this.handleFieldChange.bind(this)}
                 value={input.author}
                 type='text'
-                size="large"
+                size='huge'
                 fluid
                 required
                 placeholder='author' />
@@ -184,25 +186,24 @@ class AddBookToBookshelf extends React.Component{
                  id='rating'
                  className={styles.dropDown}
                  placeholder='rating'
+                 size='huge'
                  fluid
                  search selection options={ratingOptions}
              />
 
-
-
-
-            <Button
-              primary
+           <Button
+             color='green'
               fluid
-              type="submit"
-              size="large"
+              type='submit'
+              size='huge'
               className='button_submit-add-books-form'
             >
               Add book
             </Button>
 
 
-              </form>
+          </form>
+        </Segment>
             </div>
           </Page>
         )
