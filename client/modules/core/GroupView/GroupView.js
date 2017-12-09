@@ -31,6 +31,7 @@ class GroupView extends React.Component {
               <Table singleLine className={styles.books}>
                 <Table.Header>
                   <Table.Row>
+                    <Table.HeaderCell>User</Table.HeaderCell>
                     <Table.HeaderCell>Title</Table.HeaderCell>
                     <Table.HeaderCell>Author</Table.HeaderCell>
                     <Table.HeaderCell>Rating</Table.HeaderCell>
@@ -40,13 +41,14 @@ class GroupView extends React.Component {
                 <Table.Body>
 
                   { members.map(m =>
-                    m.bookshelfEntries &&
-                    m.bookshelfEntries.map(e =>
-                      <Table.Row key={e.id}>
-                        <Table.Cell>{e.book.title}</Table.Cell>
-                        <Table.Cell>{e.book.author}</Table.Cell>
+                    m.node.books &&
+                    m.node.books.edges.map(e =>
+                      <Table.Row key={e.node.id}>
+                        <Table.Cell>{m.node.firstName}</Table.Cell>
+                        <Table.Cell>{e.node.book.title}</Table.Cell>
+                        <Table.Cell>{e.node.book.author}</Table.Cell>
                         <Table.Cell>
-                          <Rating defaultRating={e.rating} maxRating={5} />
+                          <Rating defaultRating={e.node.rating} maxRating={5} />
                         </Table.Cell>
                       </Table.Row>
                     )
