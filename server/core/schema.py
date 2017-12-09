@@ -116,7 +116,7 @@ class CreateBook(graphene.Mutation):
 
     book = graphene.Field(Book)
 
-    def mutate(self, args, ctx, info):
+    def mutate(self, info, **args):
         title = args['title']
         author = args['author']
         book = BookModal(
@@ -136,7 +136,7 @@ class CreateGroupInvite(graphene.Mutation):
 
     group_invite = graphene.Field(GroupInvite)
 
-    def mutate(self, args, ctx, info):
+    def mutate(self, info, **args):
         get_node = graphene.Node.get_node_from_global_id
         group = get_node(info, args['group_id'])
         host = get_user_model().objects.get(pk=args['host_id'])
@@ -166,7 +166,7 @@ class AcceptGroupInvite(graphene.Mutation):
     success = graphene.Boolean()
     reason = graphene.String()
 
-    def mutate(self, args, ctx, info):
+    def mutate(self, info, **args):
         get_node = graphene.Node.get_node_from_global_id
         verification_token = args['verification_token']
         invite = get_node(info, args['invite_id'])
@@ -193,7 +193,7 @@ class CreateBookshelfEntry(graphene.Mutation):
 
     bookshelf_entry = graphene.Field(BookshelfEntry)
 
-    def mutate(self, args, ctx, info):
+    def mutate(self, info, **args):
         user_id = args['user_id']
         book_id = args['book_id']
         state = args['state']
@@ -213,17 +213,20 @@ class CreateMembership(graphene.Mutation):
     class Arguments:
         user_id = graphene.ID(required=True)
         group_id = graphene.ID(required=True)
+        invite_id = graphene.ID()
 
     membership = graphene.Field(Membership)
 
-    def mutate(self, args, ctx, info):
+    def mutate(self, info, **args):
         get_node = graphene.Node.get_node_from_global_id
         user = get_node(info, args['user_id'])
         group = get_node(info, args['group_id'])
+        invite = get_node(info, args['invite_id']) if 'invite_id' in args else None
 
         membership = MembershipModal(
-            user = user,
-            group = group
+            user=user,
+            group=group,
+            invite=invite
         )
         membership.save()
         return CreateMembership(membership=membership)
@@ -235,7 +238,7 @@ class CreateGroup(graphene.Mutation):
 
     group = graphene.Field(Group)
 
-    def mutate(self, args, ctx, info):
+    def mutate(self, info, **args):
         name = args['name']
         name_url = args['name_url']
         group = GroupModal(name=name, name_url=name_url)

@@ -37,6 +37,9 @@ class GroupView extends React.Component {
                     <Button>Invites</Button>
                   </Button.Group>
                 </div>
+              <Header as='h1'>Members</Header>
+              <p>{ members.map(m => `${m.node.firstName} ${m.node.lastName}`).join(', ') }</p>
+              <Header as='h1'>Books</Header>
                 <Table singleLine className={styles.books}>
                   <Table.Header>
                     <Table.Row>
@@ -46,7 +49,6 @@ class GroupView extends React.Component {
                       <Table.HeaderCell>Rating</Table.HeaderCell>
                     </Table.Row>
                   </Table.Header>
-
                   <Table.Body>
 
                     { members.map(m =>
@@ -86,6 +88,7 @@ export default createFragmentContainer(withAuth(GroupView), graphql`
           edges {
             node {
               firstName
+              lastName
               books {
                 edges {
                   node {
