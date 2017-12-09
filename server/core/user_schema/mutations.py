@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, get_user_model
-from graphene import AbstractType, relay, Field, String, ObjectType, Union, List
+from graphene import relay, Field, String, ObjectType, Union, List
 
 from core.user_helper.jwt_schema import TokensSuccess
 from core.user_helper.jwt_util import get_jwt_token
@@ -36,7 +36,7 @@ class LoginMutation(relay.ClientIDMutation):
     auth_form_payload = Field(AuthFormUnion)
 
     @classmethod
-    def mutate_and_get_payload(cls, input, context, info):
+    def mutate_and_get_payload(cls, root, info, **input):
         email = input.get('email')
         password = input.get('password')
         user_exists = get_user_model().objects.filter(email=email)
@@ -77,7 +77,7 @@ class SignupUserMutation(relay.ClientIDMutation):
     auth_form_payload = Field(AuthFormUnion)
 
     @classmethod
-    def mutate_and_get_payload(cls, input, context, info):
+    def mutate_and_get_payload(cls, root, info, **input):
         email = input.get('email')
         password = input.get('password')
         first_name = input.get('first_name')
@@ -103,6 +103,6 @@ class SignupUserMutation(relay.ClientIDMutation):
             return SignupUserMutation(FormErrors(errors))
 
 
-class UserMutations(AbstractType):
+class UserMutations:
     login = LoginMutation.Field()
     signup = SignupUserMutation.Field()

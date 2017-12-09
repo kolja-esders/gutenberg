@@ -1,28 +1,22 @@
 import graphene
 from django.contrib.auth import get_user_model
-from graphene import AbstractType, Field, String
+from graphene import Field, String
 
 from core.user_helper.jwt_util import get_token_user_id
 from core.schema import User, Viewer
 
-
-class UserQueries(AbstractType):
+class UserQueries:
     viewer = Field(Viewer)
-
     users = graphene.List(User)
     user = graphene.Node.Field(User)
 
-    @staticmethod
-    def resolve_users(self, args, context, info):
+    def resolve_users(self, info, **args):
         return get_user_model().objects.select_related('books').all()
 
-    @staticmethod
-    def resolve_viewer(self, args, context, info):
-
+    def resolve_viewer(self, info, **args):
         try:
-            token_user_id = get_token_user_id(args, context)
+            token_user_id = get_token_user_id(args, info.context)
             user = get_user_model().objects.get(id=token_user_id)
-            print(user)
             return Viewer(
                 id=0,
                 user=user
