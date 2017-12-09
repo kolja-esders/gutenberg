@@ -1,10 +1,13 @@
+@import "./global.scss";
+
 .container {
-  width: 800px;
+  width: $contentWidth;
   margin: 0 auto;
 
-  .addBook {
-    margin-top: 10px;
-    float: right;
+  .head:after {
+    content: "";
+    display: table;
+    clear: both;
   }
 
 }
