@@ -111,13 +111,16 @@ class Auth extends React.Component {
     const isLogin = isLoginCheck(this.props)
     const { input, errors } = validateInput(this.state.input)
     const { relay, router } = this.props
+    const postAuthAction = (user) => {
+      router.replace('/');
+    }
     if (!errors && isLogin) {
       delete input['firstName']
       delete input['lastName']
-      LoginUserMutation(relay.environment, this.setErrors.bind(this), input)
+      LoginUserMutation(relay.environment, this.setErrors.bind(this), postAuthAction, input)
     }
     else if (!errors) {
-      SignupUserMutation(relay.environment, this.setErrors.bind(this), input)
+      SignupUserMutation(relay.environment, this.setErrors.bind(this), postAuthAction, input)
     }
     else {
       this.setErrors(errors)
@@ -141,7 +144,10 @@ class Auth extends React.Component {
 
     return (
       <Page viewer={this.props.viewer} title={title}>
-      <div className={styles.container}>
+        <div className={styles.container}>
+          { isLogin &&
+            <div className={styles.raisingHandEmoji}></div>
+          }
         <form
           id={isLogin ? 'Login' : ' Sign up'}
           onSubmit={this.submitForm}

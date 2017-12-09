@@ -4,7 +4,8 @@ from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType, ObjectType
 from core.user_helper.jwt_util import get_token_user_id
 from core.user_helper.jwt_schema import TokensInterface
-from .models import Book as BookModal, BookshelfEntry as BookshelfEntryModal, Membership as MembershipModal, Group as GroupModal
+from .models import Book as BookModal, BookshelfEntry as BookshelfEntryModal, Membership as MembershipModal, Group as GroupModal, GroupInvite as GroupInviteModal
+from .utils import Utils
 
 class Book(DjangoObjectType):
     class Meta:
@@ -21,6 +22,11 @@ class BookshelfEntry(DjangoObjectType):
 class Group(DjangoObjectType):
     class Meta:
         model = GroupModal
+        interfaces = (graphene.Node, )
+
+class GroupInvite(DjangoObjectType):
+    class Meta:
+        model = GroupInviteModal
         interfaces = (graphene.Node, )
 
 class Membership(DjangoObjectType):
@@ -73,9 +79,11 @@ class CoreQueries(graphene.AbstractType):
     memberships = graphene.List(Membership)
     all_memberships = DjangoFilterConnectionField(Membership)
 
+    group_invite = graphene.Field(GroupInvite, id=graphene.ID(), verification_token=graphene.String())
+    all_group_invites = DjangoFilterConnectionField(GroupInvite)
+
     group = graphene.Field(Group, id=graphene.ID(), name_url=graphene.String())
     all_groups = DjangoFilterConnectionField(Group)
-
 
     def resolve_group(self, args, context, info):
         if 'id' in args:
@@ -83,6 +91,11 @@ class CoreQueries(graphene.AbstractType):
 
         return GroupModal.objects.get(name_url=args['name_url'])
 
+    def resolve_group_invite(self, args, context, info):
+        if 'id' in args:
+            return GroupInviteModal.objects.get(pk=args['id'])
+
+        return GroupInviteModal.objects.get(verification_token=args['verification_token'])
 
     def resolve_books(self, args, context, info):
         books = BookModal.objects.all()
@@ -114,6 +127,63 @@ class CreateBook(graphene.Mutation):
         book.save()
         return CreateBook(book=book)
 
+class CreateGroupInvite(graphene.Mutation):
+    class Input:
+        group_id = graphene.ID(required=True)
+        invitee_email = graphene.String(required=True)
+        invitee_first_name = graphene.String()
+        invitee_last_name = graphene.String()
+        host_id = graphene.ID(required=True)
+
+    group_invite = graphene.Field(GroupInvite)
+
+    def mutate(self, args, ctx, info):
+        get_node = graphene.Node.get_node_from_global_id
+        group = get_node(args['group_id'], ctx, info)
+        host = get_user_model().objects.get(pk=args['host_id'])
+        # TODO(kolja): Throw if user or group not found
+        email = args['invitee_email']
+        first_name = args['invitee_first_name']
+        last_name = args['invitee_last_name']
+        verification_token = Utils.generate_verification_token(group, email)
+
+        group_invite = GroupInviteModal(
+            group=group,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            verification_token=verification_token,
+            created_by=host,
+            consumed=False
+        )
+        group_invite.save()
+        return CreateGroupInvite(group_invite=group_invite)
+
+class AcceptGroupInvite(graphene.Mutation):
+    class Input:
+        invite_id = graphene.ID(required=True)
+        verification_token = graphene.String(required=True)
+
+    success = graphene.Boolean()
+    reason = graphene.String()
+
+    def mutate(self, args, ctx, info):
+        get_node = graphene.Node.get_node_from_global_id
+        verification_token = args['verification_token']
+        invite = get_node(args['invite_id'], ctx, info)
+
+        reason = ''
+        success = False
+        if invite.verification_token != verification_token:
+            reason = 'Authorization missing to accept invitation.'
+        elif invite.consumed:
+            reason = 'Invitation has already been accepted.'
+        else:
+            invite.consumed = True
+            invite.save()
+            success = True
+
+        return AcceptGroupInvite(success=success, reason=reason)
 
 class CreateBookshelfEntry(graphene.Mutation):
     class Input:
@@ -178,6 +248,8 @@ class CoreMutations(graphene.AbstractType):
     create_bookshelf_entry = CreateBookshelfEntry.Field()
     create_membership = CreateMembership.Field()
     create_group = CreateGroup.Field()
+    create_group_invite = CreateGroupInvite.Field()
+    accept_group_invite = AcceptGroupInvite.Field()
 
 
 class Viewer(ObjectType, CoreQueries):
