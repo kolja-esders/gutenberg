@@ -6,6 +6,7 @@ import { withAuth } from 'modules/auth/utils';
 import { Button, Segment, Header } from 'semantic-ui-react';
 import { Link } from 'found';
 import styles from './HomeView.scss';
+import classNames from 'classnames';
 
 class HomeView extends React.Component {
   render() {
@@ -15,7 +16,7 @@ class HomeView extends React.Component {
           <Segment className={styles.segment} padded='very'>
             <div className={styles.head}>
               <Header floated='left' as='h1'>Bookshelf</Header>
-              <Button floated='right' basic color='blue' as={Link} to='/add-book' className={styles.addBook} floated='right'>Add new book</Button>
+              <Button floated='right' basic color='green' as={Link} to='/add-book' className={styles.upperText} floated='right'>Add book</Button>
             </div>
             <MyBookList books={this.props.viewer.user.books}/>
           </Segment>
