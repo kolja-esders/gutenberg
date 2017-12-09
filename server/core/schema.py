@@ -23,11 +23,13 @@ class Group(DjangoObjectType):
     class Meta:
         model = GroupModal
         interfaces = (graphene.Node, )
+        filter_fields = []
 
 class GroupInvite(DjangoObjectType):
     class Meta:
         model = GroupInviteModal
         interfaces = (graphene.Node, )
+        filter_fields = []
 
 class Membership(DjangoObjectType):
     class Meta:
@@ -49,24 +51,21 @@ class User(DjangoObjectType):
             'is_staff',
             'is_active',
             'date_joined',
-            # 'books',
-            # 'groups'
         )
         interfaces = (graphene.Node, TokensInterface)
+        filter_fields = []
 
-    bookshelf = graphene.List(BookshelfEntry)
-    memberships = graphene.List(Membership)
-    all_memberships = DjangoFilterConnectionField(Membership)
+    # TODO(kolja): This is currently needed since M2M is still broken in Graphene 2.0.
+    books = DjangoFilterConnectionField(BookshelfEntry)
+    groups = DjangoFilterConnectionField(Membership)
 
-    @graphene.resolve_only_args
-    def resolve_bookshelf(self):
+    def resolve_books(self, info):
         return self.bookshelfentry_set.all()
 
-    @graphene.resolve_only_args
-    def resolve_memberships(self):
+    def resolve_groups(self, info):
         return self.membership_set.all()
 
-class CoreQueries(graphene.AbstractType):
+class CoreQueries:
     book = graphene.Node.Field(Book)
     books = graphene.List(Book)
     all_books = DjangoFilterConnectionField(Book)
@@ -85,33 +84,33 @@ class CoreQueries(graphene.AbstractType):
     group = graphene.Field(Group, id=graphene.ID(), name_url=graphene.String())
     all_groups = DjangoFilterConnectionField(Group)
 
-    def resolve_group(self, args, context, info):
+    def resolve_group(self, info, **args):
         if 'id' in args:
             return GroupModal.objects.get(pk=args['id'])
 
         return GroupModal.objects.get(name_url=args['name_url'])
 
-    def resolve_group_invite(self, args, context, info):
+    def resolve_group_invite(self, info, **args):
         if 'id' in args:
             return GroupInviteModal.objects.get(pk=args['id'])
 
         return GroupInviteModal.objects.get(verification_token=args['verification_token'])
 
-    def resolve_books(self, args, context, info):
+    def resolve_books(self, info, **args):
         books = BookModal.objects.all()
         return books
 
-    def resolve_bookshelf_entries(self, args, context, info):
+    def resolve_bookshelf_entries(self, info, **args):
         bookshelf_entries = BookshelfEntryModal.objects.all()
         return bookshelf_entries
 
-    def resolve_memberships(self, args, context, info):
+    def resolve_memberships(self, info, **args):
         memberships = MembershipModal.objects.all()
         return memberships
 
 
 class CreateBook(graphene.Mutation):
-    class Input:
+    class Arguments:
         title = graphene.String(required=True)
         author = graphene.String(required=True)
 
@@ -128,7 +127,7 @@ class CreateBook(graphene.Mutation):
         return CreateBook(book=book)
 
 class CreateGroupInvite(graphene.Mutation):
-    class Input:
+    class Arguments:
         group_id = graphene.ID(required=True)
         invitee_email = graphene.String(required=True)
         invitee_first_name = graphene.String()
@@ -139,7 +138,7 @@ class CreateGroupInvite(graphene.Mutation):
 
     def mutate(self, args, ctx, info):
         get_node = graphene.Node.get_node_from_global_id
-        group = get_node(args['group_id'], ctx, info)
+        group = get_node(info, args['group_id'])
         host = get_user_model().objects.get(pk=args['host_id'])
         # TODO(kolja): Throw if user or group not found
         email = args['invitee_email']
@@ -160,7 +159,7 @@ class CreateGroupInvite(graphene.Mutation):
         return CreateGroupInvite(group_invite=group_invite)
 
 class AcceptGroupInvite(graphene.Mutation):
-    class Input:
+    class Arguments:
         invite_id = graphene.ID(required=True)
         verification_token = graphene.String(required=True)
 
@@ -170,7 +169,7 @@ class AcceptGroupInvite(graphene.Mutation):
     def mutate(self, args, ctx, info):
         get_node = graphene.Node.get_node_from_global_id
         verification_token = args['verification_token']
-        invite = get_node(args['invite_id'], ctx, info)
+        invite = get_node(info, args['invite_id'])
 
         reason = ''
         success = False
@@ -186,7 +185,7 @@ class AcceptGroupInvite(graphene.Mutation):
         return AcceptGroupInvite(success=success, reason=reason)
 
 class CreateBookshelfEntry(graphene.Mutation):
-    class Input:
+    class Arguments:
         user_id = graphene.String(required=True)
         book_id = graphene.String(required=True)
         state = graphene.String(required=True)
@@ -211,7 +210,7 @@ class CreateBookshelfEntry(graphene.Mutation):
         return CreateBookshelfEntry(bookshelf_entry=bookshelf_entry)
 
 class CreateMembership(graphene.Mutation):
-    class Input:
+    class Arguments:
         user_id = graphene.ID(required=True)
         group_id = graphene.ID(required=True)
 
@@ -219,8 +218,8 @@ class CreateMembership(graphene.Mutation):
 
     def mutate(self, args, ctx, info):
         get_node = graphene.Node.get_node_from_global_id
-        user = get_node(args['user_id'], ctx, info)
-        group = get_node(args['group_id'], ctx, info)
+        user = get_node(info, args['user_id'])
+        group = get_node(info, args['group_id'])
 
         membership = MembershipModal(
             user = user,
@@ -230,7 +229,7 @@ class CreateMembership(graphene.Mutation):
         return CreateMembership(membership=membership)
 
 class CreateGroup(graphene.Mutation):
-    class Input:
+    class Arguments:
         name = graphene.String(required=True)
         name_url = graphene.String(required=True)
 
@@ -243,7 +242,7 @@ class CreateGroup(graphene.Mutation):
         group.save()
         return CreateGroup(group=group)
 
-class CoreMutations(graphene.AbstractType):
+class CoreMutations:
     create_book = CreateBook.Field()
     create_bookshelf_entry = CreateBookshelfEntry.Field()
     create_membership = CreateMembership.Field()
