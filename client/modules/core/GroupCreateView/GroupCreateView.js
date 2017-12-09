@@ -3,7 +3,7 @@ import React from 'react';
 import { graphql, createFragmentContainer, commitMutation } from 'react-relay';
 import { withAuth } from 'modules/auth/utils';
 import Page from 'components/Page/Page';
-import { Button, Input } from 'semantic-ui-react';
+import { Header, Segment, Button, Input } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
 
 import styles from './GroupCreateView.scss';
@@ -86,12 +86,15 @@ class GroupCreateView extends React.Component {
     return (
       <Page title='Gutenberg' viewer={this.props.viewer}>
         <section className={styles.container}>
-          <form className={styles.createForm} onSubmit={this.onSubmitHandler}>
-            <Input className={styles.groupNameInput} size='massive' onChange={this.onChangeHandler} />
-            <p className={styles.preview}>gutenberg.de/group/<span>{ this.state.url }</span></p>
+          <Segment padded='very'>
+            <Header as='h1'>New Group</Header>
+            <form className={styles.createForm} onSubmit={this.onSubmitHandler}>
+              <Input maxLength='25' placeholder='Group name' className={styles.groupNameInput} size='massive' onChange={this.onChangeHandler} />
+              <p className={styles.preview}>gutenberg.com/group/<span>{ this.state.url }</span></p>
 
-            <Button className={styles.submitButton} type='submit' size='massive' primary fluid>Create group</Button>
-          </form>
+              <Button className={styles.submitButton} type='submit' size='massive' color='green' fluid>Create group</Button>
+            </form>
+          </Segment>
         </section>
       </Page>
     );

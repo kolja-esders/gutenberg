@@ -5,4 +5,4 @@
 @fontName: 'Lato';
 @headerFont: 'Merriweather', serif;
 
-@googleFontRequest: 'https://fonts.googleapis.com/css?family=Merriweather:300,400,700|Lato:100,400,700';
+@googleFontRequest: 'https://fonts.googleapis.com/css?family=Merriweather:300,400,700|Lato:100,300,400,700';

@@ -3,7 +3,7 @@ import { graphql, createFragmentContainer } from 'react-relay';
 import Page from 'components/Page/Page';
 import MyBookList from 'components/MyBookList/MyBookList';
 import { withAuth } from 'modules/auth/utils';
-import { Button } from 'semantic-ui-react';
+import { Button, Segment, Header } from 'semantic-ui-react';
 import { Link } from 'found';
 import styles from './HomeView.scss';
 
@@ -12,9 +12,14 @@ class HomeView extends React.Component {
     return (
       <Page title='Gutenberg' viewer={this.props.viewer}>
         <section className={styles.container}>
-          <MyBookList books={this.props.viewer.user.books}/>
-          <Button primary as={Link} to='/add-book' className={styles.addBook}>Add book</Button>
-        </section>
+          <Segment className={styles.segment} padded='very'>
+            <div className={styles.head}>
+              <Header floated='left' as='h1'>Bookshelf</Header>
+              <Button floated='right' basic color='blue' as={Link} to='/add-book' className={styles.addBook} floated='right'>Add new book</Button>
+            </div>
+            <MyBookList books={this.props.viewer.user.books}/>
+          </Segment>
+      </section>
       </Page>
     );
   }

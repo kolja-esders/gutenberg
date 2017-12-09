@@ -4,7 +4,7 @@ import React from 'react';
 import { createFragmentContainer, graphql } from 'react-relay';
 import PropTypes from 'prop-types';
 import { Link } from 'found';
-import { Button, Header, Table, Rating } from 'semantic-ui-react';
+import { Segment, Button, Header, Table, Rating } from 'semantic-ui-react';
 
 import styles from './GroupView.scss';
 
@@ -21,45 +21,54 @@ class GroupView extends React.Component {
     return (
       <Page title='Gutenberg' viewer={this.props.viewer} activeGroup={group.name}>
         <section className={styles.container}>
-          { members.length === 1 ?
-            <div className={styles.inviteNudge}>
-              <Header className={styles.text} size='huge'>{user.firstName}, it's only you.<span className={styles.emoji}></span></Header>
-              <Button className={styles.btn} size='massive' as={Link} to={inviteLink} primary>Invite friends</Button>
-            </div>
-          :
+            { members.length === 1 ?
+              <div className={styles.inviteNudge}>
+                <Header className={styles.text} size='huge'>{user.firstName}, it's only you.<span className={styles.emoji}></span></Header>
+                <Button className={styles.btn} size='massive' as={Link} to={inviteLink} primary>Invite friends</Button>
+              </div>
+            :
             <div>
-              <h1>Members</h1>
+              <Segment attached='top' padded='very'>
+                <div className={styles.groupInfo}>
+                  <Header as='h1'>{ group.name }</Header>
+                  <Button.Group basic>
+                    <Button active>Books</Button>
+                    <Button>Members</Button>
+                    <Button>Invites</Button>
+                  </Button.Group>
+                </div>
+              <Header as='h1'>Members</Header>
               <p>{ members.map(m => `${m.node.firstName} ${m.node.lastName}`).join(', ') }</p>
-              <h1>Books</h1>
-              <Table singleLine className={styles.books}>
-                <Table.Header>
-                  <Table.Row>
-                    <Table.HeaderCell>User</Table.HeaderCell>
-                    <Table.HeaderCell>Title</Table.HeaderCell>
-                    <Table.HeaderCell>Author</Table.HeaderCell>
-                    <Table.HeaderCell>Rating</Table.HeaderCell>
-                  </Table.Row>
-                </Table.Header>
+              <Header as='h1'>Books</Header>
+                <Table singleLine className={styles.books}>
+                  <Table.Header>
+                    <Table.Row>
+                      <Table.HeaderCell>User</Table.HeaderCell>
+                      <Table.HeaderCell>Title</Table.HeaderCell>
+                      <Table.HeaderCell>Author</Table.HeaderCell>
+                      <Table.HeaderCell>Rating</Table.HeaderCell>
+                    </Table.Row>
+                  </Table.Header>
+                  <Table.Body>
 
-                <Table.Body>
-
-                  { members.map(m =>
-                    m.node.books &&
-                    m.node.books.edges.map(e =>
-                      <Table.Row key={e.node.id}>
-                        <Table.Cell>{m.node.firstName}</Table.Cell>
-                        <Table.Cell>{e.node.book.title}</Table.Cell>
-                        <Table.Cell>{e.node.book.author}</Table.Cell>
-                        <Table.Cell>
-                          <Rating defaultRating={e.node.rating} maxRating={5} />
-                        </Table.Cell>
-                      </Table.Row>
-                    )
-                  )}
-                </Table.Body>
-              </Table>
+                    { members.map(m =>
+                      m.node.books &&
+                      m.node.books.edges.map(e =>
+                        <Table.Row key={e.node.id}>
+                          <Table.Cell>{m.node.firstName}</Table.Cell>
+                          <Table.Cell>{e.node.book.title}</Table.Cell>
+                          <Table.Cell>{e.node.book.author}</Table.Cell>
+                          <Table.Cell>
+                            <Rating defaultRating={e.node.rating} maxRating={5} />
+                          </Table.Cell>
+                        </Table.Row>
+                      )
+                    )}
+                  </Table.Body>
+                </Table>
+              </Segment>
             </div>
-          }
+            }
         </section>
       </Page>
     );
