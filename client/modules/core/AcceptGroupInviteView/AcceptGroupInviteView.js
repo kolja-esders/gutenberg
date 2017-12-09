@@ -23,8 +23,9 @@ const CreateMembershipMutation = graphql`
   mutation AcceptGroupInviteView_CreateMembership_Mutation (
     $userId: ID!
     $groupId: ID!
+    $inviteId: ID!
   ) {
-    createMembership(userId: $userId, groupId: $groupId) {
+    createMembership(userId: $userId, groupId: $groupId, inviteId: $inviteId) {
       membership {
         id
       }
@@ -79,7 +80,8 @@ class AcceptGroupInviteView extends React.Component {
   onSuccessfulLogin = (user) => {
     const variables = {
       groupId: this.props.viewer.groupInvite.group.id,
-      userId: user.id
+      userId: user.id,
+      inviteId: this.props.viewer.groupInvite.id
     };
     commitMutation(this.props.relay.environment, {
       mutation: CreateMembershipMutation,
