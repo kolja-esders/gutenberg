@@ -1,11 +1,11 @@
-import { postAuthRoute } from './utils'
+import { postAuthRoute } from './utils';
+
 const tokenName = 'jwtToken';
 
-export function setToken(token) {
+export function setToken(token, user, onSuccess) {
   // Used when login or sign up mutation returns a jwt token successfully
   localStorage.setItem(tokenName, token);
-  window.location.replace(postAuthRoute);
-  window.location.reload();
+  onSuccess(user);
 }
 
 export function logoutViewer() {
