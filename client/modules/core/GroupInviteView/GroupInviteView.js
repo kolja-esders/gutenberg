@@ -4,7 +4,7 @@ import { withAuth } from 'modules/auth/utils';
 import React from 'react';
 import { createFragmentContainer, graphql, commitMutation } from 'react-relay';
 import PropTypes from 'prop-types';
-import { Grid, Header, Segment, Button, Input, Icon } from 'semantic-ui-react';
+import { Message, Grid, Header, Segment, Button, Input, Icon } from 'semantic-ui-react';
 
 import styles from './GroupInviteView.scss';
 
@@ -30,18 +30,18 @@ class GroupInviteView extends React.Component {
     relay: PropTypes.object.isRequired
   }
 
-  state = { input: {} }
+  state = { input: { firstName: '', lastName: '', email: '' }, loading: false, isNegative: false, isPositive: false, showMessage: false, message: '' }
 
   onChangeHandler = (e) => {
     const input = this.state.input;
     const inputName = e.target.id;
     input[inputName] = e.target.value;
     this.setState({ input });
-    console.log(this.state.input);
   }
 
   onSubmitHandler = (ev) => {
     ev.preventDefault();
+    this.setState({ ...this.state, loading: true });
     const { input } = this.state;
 
     const variables = {
@@ -55,13 +55,32 @@ class GroupInviteView extends React.Component {
     commitMutation(this.props.relay.environment, {
       mutation: CreateInviteMutation,
       variables,
-      onCompleted: (groupResponse) => {
-        console.log(groupResponse);
+      onCompleted: (response, err) => {
+        console.log(response, err);
+        if (err != null) {
+          this.showError(err[0].message);
+        } else {
+          this.showSuccess(`Successfully sent invite to ${variables.inviteeEmail}.`);
+        }
       },
-      onError: (err) => {
-        console.error(err);
+      onError: () => {
+        this.showError(`Unable to send email to ${variables.inviteeEmail}. Try again later.`);
       },
     });
+  }
+
+  showError = (msg) => {
+    this.setState({ ...this.state, loading: false, isNegative: true, message: msg, showMessage: true });
+    setTimeout(this.resetMessage, 5000);
+  }
+
+  showSuccess = (msg) => {
+    this.setState({ ...this.state, isPositive: true, message: msg, loading: false, showMessage: true });
+    setTimeout(this.resetMessage, 5000);
+  }
+
+  resetMessage = () => {
+    this.setState({ ...this.state, showMessage: false, isNegative: false, isPositive: false, message: '' });
   }
 
   render() {
@@ -82,7 +101,7 @@ class GroupInviteView extends React.Component {
                       className={styles.nameField}
                       onChange={this.onChangeHandler}
                       value={input.firstName}
-                      type='test'
+                      type='text'
                       size='huge'
                       fluid
                       required
@@ -108,12 +127,15 @@ class GroupInviteView extends React.Component {
                 fluid
                 className={styles.friendEmailInput}
                 placeholder='Email address'
+                value={input.email}
+                type='email'
                 id='email'
                 size='huge'
                 onChange={this.onChangeHandler}
               />
 
-              <Button className={styles.submitButton} type='submit' size='huge' primary fluid><Icon name='send' />Send invite</Button>
+              <Button loading={this.state.loading} type='submit' size='huge' primary fluid><Icon name='send' />Send invite</Button>
+              <Message negative={this.state.isNegative} positive={this.state.isPositive} hidden={!this.state.showMessage}>{ this.state.message }</Message>
             </form>
           </Segment>
         </section>
