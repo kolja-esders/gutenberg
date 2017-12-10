@@ -6,7 +6,7 @@ from django.utils import timezone
 
 class AutoDateTimeField(models.DateTimeField):
     def pre_save(self, model_instance, add):
-        return datetime.datetime.now()
+        return timezone.now()
 
 class Book(models.Model):
     title = models.CharField(max_length=255)
