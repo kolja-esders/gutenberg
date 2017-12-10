@@ -42,7 +42,7 @@ class GroupInvite(models.Model):
     email = models.CharField(max_length=63)
     first_name = models.CharField(max_length=31, blank=True)
     last_name = models.CharField(max_length=31, blank=True)
-    verification_token = models.CharField(max_length=31, unique=True)
+    verification_token = models.CharField(max_length=64, unique=True)
     created_by = models.ForeignKey(CustomUser, default=None)
     consumed = models.BooleanField(default=False)
     email_sent = models.BooleanField(default=False)
