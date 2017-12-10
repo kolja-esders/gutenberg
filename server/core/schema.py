@@ -1,11 +1,13 @@
 import graphene
 from django.contrib.auth import get_user_model
+from graphql import GraphQLError
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType, ObjectType
 from core.user_helper.jwt_util import get_token_user_id
 from core.user_helper.jwt_schema import TokensInterface
 from .models import Book as BookModal, BookshelfEntry as BookshelfEntryModal, Membership as MembershipModal, Group as GroupModal, GroupInvite as GroupInviteModal
 from .utils import Utils
+from .email import Email, EmailBuilder
 
 class Book(DjangoObjectType):
     class Meta:
@@ -28,8 +30,8 @@ class Group(DjangoObjectType):
 class GroupInvite(DjangoObjectType):
     class Meta:
         model = GroupInviteModal
+        filter_fields = ['group']
         interfaces = (graphene.Node, )
-        filter_fields = []
 
 class Membership(DjangoObjectType):
     class Meta:
@@ -139,23 +141,42 @@ class CreateGroupInvite(graphene.Mutation):
     def mutate(self, info, **args):
         get_node = graphene.Node.get_node_from_global_id
         group = get_node(info, args['group_id'])
-        host = get_user_model().objects.get(pk=args['host_id'])
+        host = get_node(info, args['host_id'])
         # TODO(kolja): Throw if user or group not found
         email = args['invitee_email']
         first_name = args['invitee_first_name']
         last_name = args['invitee_last_name']
         verification_token = Utils.generate_verification_token(group, email)
 
-        group_invite = GroupInviteModal(
-            group=group,
-            email=email,
-            first_name=first_name,
-            last_name=last_name,
-            verification_token=verification_token,
-            created_by=host,
-            consumed=False
-        )
+        group_invite = None
+        try:
+            group_invite = GroupInviteModal(
+                group=group,
+                email=email,
+                first_name=first_name,
+                last_name=last_name,
+                verification_token=verification_token,
+                created_by=host,
+                consumed=False,
+                email_sent=False
+            )
+            group_invite.save()
+        except Exception:
+            raise GraphQLError('Invite was already sent to this email.')
+
+        host = {'first_name': host.first_name, 'last_name': host.last_name}
+        invitee = {'first_name': first_name, 'last_name': last_name}
+        invite = {'group_name': group.name, 'verification_token': verification_token}
+        content = EmailBuilder.build_invitation_email(invite, host, invitee)
+
+        try:
+            Email().recipient('kolja.esders@gmail.com').sender(email).subject(content['subject']).text(content['text']).send()
+        except Exception:
+            raise GraphQLError('Unable to send email.')
+
+        group_invite.email_sent = True
         group_invite.save()
+
         return CreateGroupInvite(group_invite=group_invite)
 
 class AcceptGroupInvite(graphene.Mutation):
