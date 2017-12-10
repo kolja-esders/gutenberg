@@ -21,14 +21,14 @@ class GroupView extends React.Component {
     return (
       <Page title='Gutenberg' viewer={this.props.viewer} activeGroup={group.name}>
         <section className={styles.container}>
-            { members.length === 1 ?
-              <div className={styles.inviteNudge}>
-                <Header className={styles.text} size='huge'>{user.firstName}, it's only you.<span className={styles.emoji}></span></Header>
-                <Button className={styles.btn} size='massive' as={Link} to={inviteLink} primary>Invite friends</Button>
-              </div>
-            :
-            <div>
               <Segment attached='top' padded='very'>
+                { members.length === 1 ?
+                  <div className={styles.inviteNudge}>
+                    <Header className={styles.text} size='huge'>{user.firstName}, it's only you.<span className={styles.emoji}></span></Header>
+                    <Button className={styles.btn} size='massive' as={Link} to={inviteLink} primary>Invite friends</Button>
+                  </div>
+                :
+              <div>
                 <div className={styles.groupInfo}>
                   <Header as='h1'>{ group.name }</Header>
                   <Button.Group basic>
@@ -66,9 +66,9 @@ class GroupView extends React.Component {
                     )}
                   </Table.Body>
                 </Table>
-              </Segment>
-            </div>
+              </div>
             }
+          </Segment>
         </section>
       </Page>
     );
