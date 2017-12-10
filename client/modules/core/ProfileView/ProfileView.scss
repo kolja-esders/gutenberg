@@ -3,4 +3,27 @@
 .container {
   width: $contentWidth;
   margin: 0 auto;
+
+  .nav {
+    float: left;
+  }
+
+  .content {
+    margin-left: 210px;
+    padding-left: 42px!important;
+
+    h1 {
+      margin-top: 0;
+    }
+
+    .profileImage {
+      //box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.5);
+      float: right;
+    }
+
+    .profileInfo {
+      //margin-top: 22px;
+
+    }
+  }
 }
