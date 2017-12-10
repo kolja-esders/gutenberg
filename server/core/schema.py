@@ -1,5 +1,6 @@
 import graphene
 from django.contrib.auth import get_user_model
+from graphql import GraphQLError
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType, ObjectType
 from core.user_helper.jwt_util import get_token_user_id
@@ -147,23 +148,34 @@ class CreateGroupInvite(graphene.Mutation):
         last_name = args['invitee_last_name']
         verification_token = Utils.generate_verification_token(group, email)
 
-        group_invite = GroupInviteModal(
-            group=group,
-            email=email,
-            first_name=first_name,
-            last_name=last_name,
-            verification_token=verification_token,
-            created_by=host,
-            consumed=False
-        )
-        group_invite.save()
+        group_invite = None
+        try:
+            group_invite = GroupInviteModal(
+                group=group,
+                email=email,
+                first_name=first_name,
+                last_name=last_name,
+                verification_token=verification_token,
+                created_by=host,
+                consumed=False,
+                email_sent=False
+            )
+            group_invite.save()
+        except Exception:
+            raise GraphQLError('Invite was already sent to this email.')
 
         host = {'first_name': host.first_name, 'last_name': host.last_name}
         invitee = {'first_name': first_name, 'last_name': last_name}
         invite = {'group_name': group.name, 'verification_token': verification_token}
         content = EmailBuilder.build_invitation_email(invite, host, invitee)
 
-        Email().recipient('kolja.esders@gmail.com').sender(email).subject(content['subject']).text(content['text']).send()
+        try:
+            Email().recipient('kolja.esders@gmail.com').sender(email).subject(content['subject']).text(content['text']).send()
+        except Exception:
+            raise GraphQLError('Unable to send email.')
+
+        group_invite.email_sent = True
+        group_invite.save()
 
         return CreateGroupInvite(group_invite=group_invite)
 
