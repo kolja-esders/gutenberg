@@ -15,6 +15,7 @@ class GroupView extends React.Component {
 
   render() {
     const { group, user } = this.props.viewer;
+    console.log(group)
     const inviteLink = `/group/${group.nameUrl}/invite`;
     const members = group.members.edges;
 

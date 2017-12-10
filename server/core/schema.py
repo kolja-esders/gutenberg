@@ -68,7 +68,7 @@ class User(DjangoObjectType):
         return self.membership_set.all()
 
 class CoreQueries:
-    book = graphene.Node.Field(Book)
+    book = graphene.Field(Book, id=graphene.ID(), title=graphene.String(), author=graphene.String())
     books = graphene.List(Book)
     all_books = DjangoFilterConnectionField(Book)
 
@@ -85,6 +85,13 @@ class CoreQueries:
 
     group = graphene.Field(Group, id=graphene.ID(), name_url=graphene.String())
     all_groups = DjangoFilterConnectionField(Group)
+
+    def resolve_book(self, info, **args):
+        if 'id' in args:
+            return BookModal.objects.get(pk=args['id'])
+
+        book = BookModal.objects.get(title=args['title'], author=args['author'])
+        return book
 
     def resolve_group(self, info, **args):
         if 'id' in args:
@@ -207,20 +214,19 @@ class AcceptGroupInvite(graphene.Mutation):
 
 class CreateBookshelfEntry(graphene.Mutation):
     class Arguments:
-        user_id = graphene.String(required=True)
-        book_id = graphene.String(required=True)
+        user_id = graphene.ID(required=True)
+        book_id = graphene.ID(required=True)
         state = graphene.String(required=True)
         rating = graphene.Int(required=True)
 
     bookshelf_entry = graphene.Field(BookshelfEntry)
 
     def mutate(self, info, **args):
-        user_id = args['user_id']
-        book_id = args['book_id']
+        get_node = graphene.Node.get_node_from_global_id
         state = args['state']
         rating = args['rating']
-        user = get_user_model().objects.get(pk=user_id)
-        book = BookModal.objects.get(pk=book_id)
+        user = get_node(info, args['user_id'])
+        book = get_node(info, args['book_id'])
         bookshelf_entry = BookshelfEntryModal(
                 user = user,
                 book= book,

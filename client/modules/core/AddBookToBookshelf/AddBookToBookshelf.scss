@@ -20,34 +20,36 @@
       margin-bottom: 10px;
     }
 
+    .authorField {
+      margin-bottom: 10px;
+    }
+
+    .divider{
+        margin-top: 0px;
+        margin-bottom: 10px;
+    }
+
+    .rating{
+      margin-bottom: 10px;
+    }
+
     .dropDown {
       margin-bottom: 10px;
     }
 
     .readingStatus {
       margin-bottom: 10px;
+      width: 100%;
     }
 
-    .readIcon, .toReadIcon, .readingIcon {
-      width: 32px;
-      height: 32px;
-      background-size: cover;
-      background-repeat: no-repeat;
-      filter: grayscale(1);
-      margin: 5px auto 8px auto;
+    .stateButton{
+  
+
+
     }
 
-    .readIcon {
-      background-image: url('../../../assets/read.png');
-    }
 
-    .toReadIcon {
-      background-image: url('../../../assets/to-read.png');
-    }
-
-    .readingIcon {
-      background-image: url('../../../assets/reading.png');
-    }
 
   }
+
 }

@@ -11,6 +11,7 @@ import { Route, makeRouteConfig } from 'found';
 import React from 'react';
 import { graphql } from 'react-relay';
 
+
 const LandingRedirectViewQuery = graphql`
   query routes_Landing_Query {
     viewer {
@@ -63,6 +64,7 @@ const AddBookToBookshelfQuery = graphql`
   query routes_AddBookToBookshelf_Query {
     viewer {
       ...AddBookToBookshelf_viewer
+      ...AddBookToBookshelf_user
     }
   }
 `;
@@ -75,6 +77,8 @@ const AcceptGroupInviteViewQuery = graphql`
   }
 `;
 
+
+
 export default makeRouteConfig(
   <Route path='/'>
     <Route Component={LandingRedirectView} query={LandingRedirectViewQuery} />
@@ -83,13 +87,14 @@ export default makeRouteConfig(
       <Route path='signup' />
     </Route>
     <Route path='add-book' Component={AddBookToBookshelf} query={AddBookToBookshelfQuery} />
-    <Route path='shared-books' Component={SharedBooks} query={SharedBooksQuery} />
+    <Route path='shared-books' Component={SharedBooks} query={SharedBooksQuery}/>
     <Route path='group/:nameUrl'>
       <Route Component={GroupView} query={GroupViewQuery} />
       <Route path='/invite' Component={GroupInviteView} query={GroupInviteViewQuery} />
     </Route>
+
     <Route path='create' Component={GroupCreateView} query={GroupCreateViewQuery} />
     <Route path='accept/:verificationToken' Component={AcceptGroupInviteView} query={AcceptGroupInviteViewQuery} />
+
   </Route>
 );
-
