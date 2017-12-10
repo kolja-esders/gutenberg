@@ -1,5 +1,4 @@
 import React from 'react'
-import Textfield from 'react-mdc-web/lib/Textfield/Textfield'
 import LoginUserMutation from './mutations/Login'
 import SignupUserMutation from './mutations/Signup'
 import { withAuth } from './utils'
@@ -8,7 +7,7 @@ import FormMessageList from 'components/FormMessageList/FormMessageList'
 import styles from './Auth.scss'
 import Page from 'components/Page/Page'
 
-import { Input, Button, Checkbox, Grid } from 'semantic-ui-react';
+import { Header, Form, Segment, Input, Button, Checkbox, Grid } from 'semantic-ui-react';
 
 
 function isLoginCheck() {
@@ -111,13 +110,16 @@ class Auth extends React.Component {
     const isLogin = isLoginCheck(this.props)
     const { input, errors } = validateInput(this.state.input)
     const { relay, router } = this.props
+    const postAuthAction = (user) => {
+      router.replace('/');
+    }
     if (!errors && isLogin) {
       delete input['firstName']
       delete input['lastName']
-      LoginUserMutation(relay.environment, this.setErrors.bind(this), input)
+      LoginUserMutation(relay.environment, this.setErrors.bind(this), postAuthAction, input)
     }
     else if (!errors) {
-      SignupUserMutation(relay.environment, this.setErrors.bind(this), input)
+      SignupUserMutation(relay.environment, this.setErrors.bind(this), postAuthAction, input)
     }
     else {
       this.setErrors(errors)
@@ -141,14 +143,15 @@ class Auth extends React.Component {
 
     return (
       <Page viewer={this.props.viewer} title={title}>
-      <div className={styles.container}>
-        <form
-          id={isLogin ? 'Login' : ' Sign up'}
-          onSubmit={this.submitForm}
-          className={styles.form}
-        >
-          <FormMessageList messages={errors} />
-
+        <div className={styles.container}>
+          <Segment className={styles.paddedSegment} padded='very'>
+          <div className={styles.raisingHandEmoji}></div>
+          <Header as='h1' textAlign='center'>{ title }</Header>
+          <Form
+            id={isLogin ? 'Login' : ' Sign up'}
+            onSubmit={this.submitForm}
+            className={styles.form}
+          >
           { !isLogin &&
             <Grid className={styles.nameFields}>
               <Grid.Row columns={2} className={styles.row}>
@@ -159,7 +162,7 @@ class Auth extends React.Component {
                     onChange={this.handleFieldChange.bind(this)}
                     value={input.firstName}
                     type='test'
-                    size="large"
+                    size='huge'
                     fluid
                     required
                     placeholder='First name' />
@@ -171,7 +174,7 @@ class Auth extends React.Component {
                     onChange={this.handleFieldChange.bind(this)}
                     value={input.lastName}
                     type='text'
-                    size="large"
+                    size='huge'
                     fluid
                     required
                     placeholder='Last name' />
@@ -186,12 +189,9 @@ class Auth extends React.Component {
             onChange={this.handleFieldChange.bind(this)}
             value={input.email}
             type='email'
-            size="large"
+            size='huge'
             required
             placeholder='Email' />
-
-          <br />
-
 
           <Input
             id='password'
@@ -200,7 +200,7 @@ class Auth extends React.Component {
             value={input.password}
             placeholder='Password'
             type='password'
-            size="large"
+            size='huge'
             minLength={8}
             required
           />
@@ -209,8 +209,8 @@ class Auth extends React.Component {
               <Button
                 primary
                 fluid
-                type="submit"
-                size="large"
+                type='submit'
+                size='huge'
                 className='button_submit-login-form'
               >
                 Login
@@ -219,18 +219,21 @@ class Auth extends React.Component {
               <Button
                 primary
                 fluid
-                type="submit"
-                size="large"
+                type='submit'
+                size='huge'
                 className='button_submit-signup-form'
               >
                 Sign up
               </Button>
             }
-            <br />
             { isLogin &&
-              <Checkbox className={styles.rememberMe} label='Remember me' />
+              <div>
+                <br />
+                <Checkbox className={styles.rememberMe} label='Remember me' />
+              </div>
             }
-        </form>
+          </Form>
+        </Segment>
         </div>
       </Page>
     )

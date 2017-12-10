@@ -1,7 +1,7 @@
 import React from 'react';
 import Page from 'components/Page/Page';
 import { withAuth } from 'modules/auth//utils';
-import { Input, Dropdown, Button, Rating, Grid, Step, Divider } from 'semantic-ui-react';
+import { Input, Dropdown, Button, Rating, Grid, Divider, Segment, Header } from 'semantic-ui-react';
 import { graphql, createRefetchContainer } from 'react-relay';
 import createBookMutation from '../mutations/CreateBook';
 import createBookshelfEntryMutation from '../mutations/CreateBookshelfEntry';
@@ -182,10 +182,12 @@ class AddBookToBookshelf extends React.Component {
     return (
       <Page viewer={this.props.viewer} title={title}>
         <div className={styles.container}>
+          <Segment padded='very'>
+            <Header as='h1'>New book</Header>
 
           <form
-            className={styles.form}
-          >
+              className={styles.form}
+            >
 
 
             <Input
@@ -221,8 +223,6 @@ class AddBookToBookshelf extends React.Component {
             id = 'rating'/>
 
 
-
-
           <Button.Group className={styles.readingStatus} widths='3' basic>
               <Button type='state'
                 onClick={this.handleButtonChange}
@@ -249,13 +249,11 @@ class AddBookToBookshelf extends React.Component {
                 to-read
               </Button>
             </Button.Group>
-
-
-            <Button
-              primary
+           <Button
+             color='green'
               fluid
               type='submit'
-              size='large'
+              size='huge'
               onClick = {this.onCompletedSubmit}
               className='button_submit-add-books-form'
             >
@@ -264,12 +262,12 @@ class AddBookToBookshelf extends React.Component {
 
 
           </form>
-        </div>
-      </Page>
-    );
-  }
+        </Segment>
+            </div>
+          </Page>
+        )
 
-
+      }
 }
 
 export default createRefetchContainer(
@@ -294,7 +292,6 @@ export default createRefetchContainer(
 
     user: graphql`
      fragment AddBookToBookshelf_user on Viewer {
-
           user{
            id
          }
@@ -313,47 +310,3 @@ export default createRefetchContainer(
 
 
 );
-
-/*
-graphql`
-  query AddBookToBookshelfQuery{
-    viewer{
-        ...AddBookToBookshelf_user
-      }
-  }
-`,
-*/
-
-/*
-user: graphql.experimental`
- fragment AddBookToBookshelf_user on Viewer {
-     viewer{
-       id
-     }
-   }
-`,*/
-
-/*
-export default createFragmentContainer(
-  authenticatedRoute(AddBookToBookshelf),
-  graphql`
-   fragment AddBookToBookshelf_viewer on Viewer {
-     user {
-       id
-     }
-   }
-
- `,
-
-
- graphql`
-  fragment AddBookToBookshelf_book on Viewer {
-      book(title: $titleInput, author: $authorInput){
-      id
-    }
-  }
-
-`
-
-)
-*/

@@ -1,9 +1,8 @@
-import React from 'react'
-import { hasValidJwtToken } from 'modules/auth/jwtUtils'
-import { Environment, Network, RecordSource, Store } from 'relay-runtime'
+import { hasValidJwtToken } from 'modules/auth/jwtUtils';
+import { Environment, Network, RecordSource, Store } from 'relay-runtime';
 
-const source = new RecordSource()
-const store = new Store(source)
+const source = new RecordSource();
+const store = new Store(source);
 
 function fetchQuery(operation, variables) {
   return fetch('/graphql', {
@@ -18,12 +17,12 @@ function fetchQuery(operation, variables) {
       query: operation.text,
       variables,
     }),
-  }).then(response => response.json())
+  }).then(response => response.json());
 }
 
-const network = Network.create(fetchQuery)
+const network = Network.create(fetchQuery);
 
 export const environment = new Environment({
   network,
   store,
-})
+});
