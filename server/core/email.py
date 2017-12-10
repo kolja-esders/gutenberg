@@ -32,38 +32,32 @@ class Email:
         return self
 
     def send(self):
-        try:
-            #Provide the contents of the email.
-            response = self.client.send_email(
-                Destination={
-                    'ToAddresses': [
-                        self._recipient,
-                    ],
-                },
-                Message={
-                    'Body': {
-                        # 'Html': {
-                            # 'Charset': self.charset,
-                            # 'Data': self.body_html,
-                        # },
-                        'Text': {
-                            'Charset': self._charset,
-                            'Data': self._text,
-                        },
-                    },
-                    'Subject': {
+        #Provide the contents of the email.
+        response = self.client.send_email(
+            Destination={
+                'ToAddresses': [
+                    self._recipient,
+                ],
+            },
+            Message={
+                'Body': {
+                    # 'Html': {
+                        # 'Charset': self.charset,
+                        # 'Data': self.body_html,
+                    # },
+                    'Text': {
                         'Charset': self._charset,
-                        'Data': self._subject,
+                        'Data': self._text,
                     },
                 },
-                Source=self._sender,
-            )
-        # Display an error if something goes wrong.	
-        except ClientError as e:
-            print(e.response['Error']['Message'])
-        else:
-            print("Email sent! Message ID:"),
-            print(response['ResponseMetadata']['RequestId'])
+                'Subject': {
+                    'Charset': self._charset,
+                    'Data': self._subject,
+                },
+            },
+            Source=self._sender,
+        )
+        # print(e.response['Error']['Message'])
 
 class EmailBuilder:
 
