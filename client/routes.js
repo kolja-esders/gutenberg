@@ -6,6 +6,7 @@ import GroupView from 'modules/core/GroupView/GroupView';
 import GroupCreateView from 'modules/core/GroupCreateView/GroupCreateView';
 import GroupInviteView from 'modules/core/GroupInviteView/GroupInviteView';
 import AcceptGroupInviteView from 'modules/core/AcceptGroupInviteView/AcceptGroupInviteView';
+import ProfileView from 'modules/core/ProfileView/ProfileView';
 
 import { Route, makeRouteConfig } from 'found';
 import React from 'react';
@@ -75,6 +76,14 @@ const AcceptGroupInviteViewQuery = graphql`
   }
 `;
 
+const ProfileViewQuery = graphql`
+  query routes_ProfileView_Query {
+    viewer {
+      ...ProfileView_viewer
+    }
+  }
+`;
+
 export default makeRouteConfig(
   <Route path='/'>
     <Route Component={LandingRedirectView} query={LandingRedirectViewQuery} />
@@ -90,6 +99,7 @@ export default makeRouteConfig(
     </Route>
     <Route path='create' Component={GroupCreateView} query={GroupCreateViewQuery} />
     <Route path='accept/:verificationToken' Component={AcceptGroupInviteView} query={AcceptGroupInviteViewQuery} />
+    <Route path='profile' Component={ProfileView} query={ProfileViewQuery} />
   </Route>
 );
 
