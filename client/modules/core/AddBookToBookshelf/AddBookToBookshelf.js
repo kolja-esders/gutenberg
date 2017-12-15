@@ -43,22 +43,22 @@ function validateInput(input) {
       message: 'Please fill out the author field'
     });
   }
-  if (!input.state) {
-    id++;
-    errors.push({
-      id,
-      key: '',
-      message: 'Please choose a state'
-    });
-  }
-  if (!input.rating) {
-    id++;
-    errors.push({
-      id,
-      key: '',
-      message: 'Please choose a rating'
-    });
-  }
+  // if (!input.state) {
+  //   id++;
+  //   errors.push({
+  //     id,
+  //     key: '',
+  //     message: 'Please choose a state'
+  //   });
+  // }
+  // if (!input.rating) {
+  // id++;
+  // errors.push({
+  //   id,
+  //   key: '',
+  //   message: 'Please choose a rating'
+  // });
+  // }
   if (errors.length === 0) {
    // Empty array will still return true
     errors = false;
@@ -67,7 +67,7 @@ function validateInput(input) {
 }
 
 class AddBookToBookshelf extends React.Component {
-  state = { input: { title: '', author: '', state: '', rating: null }, active: 'to-read', errors: [] }
+  state = { input: { title: '', author: '', state: 'to-read', rating: 0 }, active: 'to-read', errors: [] }
 
   handleFieldChange = (e, { value }) => {
     const input = this.state.input;
@@ -108,6 +108,7 @@ class AddBookToBookshelf extends React.Component {
 
   onCompletedSubmit = (ev) => {
     ev.preventDefault();
+
     const { input, errors } = validateInput(this.state.input);
     if (errors) {
       this.setErrors(errors);
@@ -118,7 +119,6 @@ class AddBookToBookshelf extends React.Component {
       titleInput: input.title,
       authorInput: input.author
     };
-
     createBookMutation(this.props.relay.environment, variables, this.onCompletedCreateBook, this.setErrors);
   }
 
@@ -228,7 +228,7 @@ class AddBookToBookshelf extends React.Component {
                 read
               </Button>
             </Button.Group>
-          
+
             <div className={styles.ratingContainer} hidden={this.state.active != "read"}>
               <span>Your rating:</span>
               <Rating maxRating={5}
