@@ -1,7 +1,7 @@
 import React from 'react';
 import Page from 'components/Page/Page';
 import { withAuth } from 'modules/auth//utils';
-import { Input, Dropdown, Button, Rating, Grid, Divider, Segment, Header } from 'semantic-ui-react';
+import { Input, Dropdown, Button, Rating, Grid, Segment, Header } from 'semantic-ui-react';
 import { graphql, createRefetchContainer } from 'react-relay';
 import createBookMutation from '../mutations/CreateBook';
 import createBookshelfEntryMutation from '../mutations/CreateBookshelfEntry';
@@ -67,21 +67,7 @@ function validateInput(input) {
 }
 
 class AddBookToBookshelf extends React.Component {
-
-  constructor(props) {
-    super(props);
-    const initialInput = {
-      title: '',
-      author: '',
-      state: '',
-      rating: ''
-    };
-    this.state = {
-      input: initialInput,
-      errors: []
-    };
-  }
-
+  state = { input: { title: '', author: '', state: '', rating: null }, active: 'to-read', errors: [] }
 
   handleFieldChange = (e, { value }) => {
     const input = this.state.input;
@@ -214,23 +200,16 @@ class AddBookToBookshelf extends React.Component {
               placeholder='author'
             />
 
-          <Divider className={styles.divider}/>
-
-          <Rating maxRating={5}
-            onRate={this.handleRatingChange}
-            className={styles.rating}
-            size='huge'
-            id = 'rating'/>
 
 
           <Button.Group className={styles.readingStatus} widths='3' basic>
               <Button type='state'
                 onClick={this.handleButtonChange}
-                active={this.state.active == "read"}
-                id="read"
+                active={this.state.active == "to-read"}
+                id="to-read"
                 className={styles.stateButton}>
-                <div className={styles.readIcon} />
-                read
+                <div className={styles.toReadIcon} />
+                to-read
               </Button>
               <Button type='state'
                 onClick={this.handleButtonChange}
@@ -242,13 +221,25 @@ class AddBookToBookshelf extends React.Component {
               </Button>
               <Button type='state'
                 onClick={this.handleButtonChange}
-                active={this.state.active == "to-read"}
-                id="to-read"
+                active={this.state.active == "read"}
+                id="read"
                 className={styles.stateButton}>
-                <div className={styles.toReadIcon} />
-                to-read
+                <div className={styles.readIcon} />
+                read
               </Button>
             </Button.Group>
+          
+            <div className={styles.ratingContainer} hidden={this.state.active != "read"}>
+              <span>Your rating:</span>
+              <Rating maxRating={5}
+                onRate={this.handleRatingChange}
+                className={styles.rating}
+                size='huge'
+                id = 'rating'/>
+            </div>
+
+
+
            <Button
              color='green'
               fluid

@@ -6,50 +6,24 @@
 
   .form {
     width: 400px;
-    text-align: center;
 
     .dummyInput {
       display: none;
     }
-    .textFields {
-      width: 100%;
+
+    .nameField, .authorField, .dropDown, .readingStatus, .textFields, .ratingContainer {
       margin-bottom: 10px;
     }
 
-    .nameField {
-      margin-bottom: 10px;
-    }
-
-    .authorField {
-      margin-bottom: 10px;
-    }
-
-    .divider{
-        margin-top: 0px;
-        margin-bottom: 10px;
-    }
-
-    .rating{
-      margin-bottom: 10px;
-    }
-
-    .dropDown {
-      margin-bottom: 10px;
-    }
-
-    .readingStatus {
-      margin-bottom: 10px;
+    .readingStatus, .textFields {
       width: 100%;
     }
 
-    .stateButton{
-  
-
-
+    .ratingContainer > span {
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-right: 10px;
+      vertical-align: top;
     }
-
-
-
   }
-
 }
