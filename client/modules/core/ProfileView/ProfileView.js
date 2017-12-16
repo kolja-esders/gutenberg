@@ -3,7 +3,7 @@ import { withAuth } from 'modules/auth/utils';
 import React from 'react';
 import { createFragmentContainer, graphql } from 'react-relay';
 import PropTypes from 'prop-types';
-import { Button, Image, Menu, Segment, Header, Form } from 'semantic-ui-react';
+import { Modal, Icon, Button, Image, Menu, Segment, Header, Form } from 'semantic-ui-react';
 import profileImage from '../../../assets/raising_hand_emoji.png';
 
 import styles from './ProfileView.scss';
@@ -18,7 +18,7 @@ class ProfileView extends React.Component {
     const name = e.target.name;
     const { user } = this.state;
     user[name] = value;
-    this.setState({ ...this.state, user })
+    this.setState({ ...this.state, user });
   }
 
   render() {
@@ -39,7 +39,23 @@ class ProfileView extends React.Component {
               </Menu>
             </section>
             <section className={styles.content}>
-              <Image src={profileImage} className={styles.profileImage} size='small' avatar/>
+              <div className={styles.overlayContainer}>
+                <Image src={profileImage} className={styles.profileImage} size='small' avatar/>
+                <Modal size='small' dimmer='blurring' trigger={
+                  <div className={styles.overlayWrap}>
+                    <Icon name='write' size='huge' />
+                  </div>
+                }>
+                  <Modal.Header>Change profile image</Modal.Header>
+                  <Modal.Content image>
+                    <Modal.Description>
+                      <Header>Default Profile Image</Header>
+                      <p>We've found the following gravatar image associated with your e-mail address.</p>
+                      <p>Is it okay to use this photo?</p>
+                    </Modal.Description>
+                  </Modal.Content>
+                </Modal>
+              </div>
               <Header as='h1'>Profile</Header>
               <Form className={styles.profileInfo}>
                 <Form.Group>
