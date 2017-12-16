@@ -1,50 +1,26 @@
-const {
-  commitMutation,
-  graphql,
-} = require('react-relay')
-//import { setToken } from '../modules/jwtUtils';
-
-
-
-
-
-
+import { commitMutation, graphql } from 'react-relay';
 
 const mutation = graphql`
   mutation CreateBookMutation(
     $titleInput: String!, $authorInput: String!
-  ){
-      createBook(title: $titleInput, author: $authorInput){
-        book
-        {
-          title
-          author
-        }
-}
-}
+  ) {
+    createBook(title: $titleInput, author: $authorInput) {
+      book {
+        title
+        author
+      }
+    }
+  }
 `;
 
-
-
-
-function CreateBook(environment, setErrors, input: {title: string, author: string, rating: int, state: string}){
-
-  const variables = {
-
-      titleInput: input.title,
-      authorInput: input.author,
-
-  };
-  console.log("CreateBook")
-  console.log(variables)
+export default function createBook(environment, variables, onCompleted = null, onError = null) {
   commitMutation(
     environment,
     {
       mutation,
       variables,
-      onError: err => console.error(err)
+      onCompleted,
+      onError
     },
   );
 }
-
-export default CreateBook

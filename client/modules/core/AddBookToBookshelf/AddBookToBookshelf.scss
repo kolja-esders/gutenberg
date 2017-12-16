@@ -6,48 +6,24 @@
 
   .form {
     width: 400px;
-    text-align: center;
 
     .dummyInput {
       display: none;
     }
-    .textFields {
+
+    .nameField, .authorField, .dropDown, .readingStatus, .textFields, .ratingContainer {
+      margin-bottom: 10px;
+    }
+
+    .readingStatus, .textFields {
       width: 100%;
-      margin-bottom: 10px;
     }
 
-    .nameField {
-      margin-bottom: 10px;
+    .ratingContainer > span {
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-right: 10px;
+      vertical-align: top;
     }
-
-    .dropDown {
-      margin-bottom: 10px;
-    }
-
-    .readingStatus {
-      margin-bottom: 10px;
-    }
-
-    .readIcon, .toReadIcon, .readingIcon {
-      width: 32px;
-      height: 32px;
-      background-size: cover;
-      background-repeat: no-repeat;
-      filter: grayscale(1);
-      margin: 5px auto 8px auto;
-    }
-
-    .readIcon {
-      background-image: url('../../../assets/read.png');
-    }
-
-    .toReadIcon {
-      background-image: url('../../../assets/to-read.png');
-    }
-
-    .readingIcon {
-      background-image: url('../../../assets/reading.png');
-    }
-
   }
 }
