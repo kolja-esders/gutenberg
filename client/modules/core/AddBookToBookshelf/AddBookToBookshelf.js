@@ -6,6 +6,7 @@ import { graphql, createRefetchContainer } from 'react-relay';
 import createBookMutation from '../mutations/CreateBook';
 import createBookshelfEntryMutation from '../mutations/CreateBookshelfEntry';
 import styles from './AddBookToBookshelf.scss';
+import AutoComplete from 'components/AutoComplete/AutoComplete';
 
 
 const stateOptions = [{ key: 'toread', value: 'toread', text: 'to read' },
@@ -250,6 +251,11 @@ class AddBookToBookshelf extends React.Component {
             >
               Add book
             </Button>
+
+            <div>
+              <AutoComplete data={stateOptions} />
+            </div>
+
 
 
           </form>
