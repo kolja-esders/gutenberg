@@ -71,6 +71,10 @@ class AddBookToBookshelf extends React.Component {
   state = { input: { title: '', author: '', state: 'to-read', rating: 0 }, active: 'to-read', errors: [] }
 
   handleFieldChange = (e, { value }) => {
+    if(e.target.value.length >= 3){
+      this.autoComplete
+    }
+    console.log(  e.target.value.length)
     const input = this.state.input;
     const inputName = e.target.id;
     input[inputName] = e.target.value;
@@ -122,7 +126,10 @@ class AddBookToBookshelf extends React.Component {
     };
     createBookMutation(this.props.relay.environment, variables, this.onCompletedCreateBook, this.setErrors);
   }
-
+  // const titleOptions = this.props.viewer.books.map(function(x)  {
+    //   console.log(x.title)
+    //   return(  {key: x.title}));
+    // }
   onCompletedCreateBook = (error, data) => {
     const refetchVariables = fragmentVariables => ({
       title: this.state.input.title,
@@ -136,6 +143,15 @@ class AddBookToBookshelf extends React.Component {
       console.error(error);
       return;
     }
+    console.log("CompletedRefetch")
+    console.log(this.props.viewer)
+
+
+    const titleOptions = this.props.viewer.books.map((x) => ({key: x.title, value: x.id, text: x.title}))
+    const authorOptions = this.props.viewer.books.map((x) => ({key: x.author, value: x.id, text: x.author}))
+
+    console.log(authorOptions)
+
     const { rating, state } = this.state.input;
     const { book, user } = this.props.viewer;
 
@@ -162,7 +178,19 @@ class AddBookToBookshelf extends React.Component {
   }
 
 
+  autoComplete(){
+    const titleOptions = this.props.viewer.books.map((x) => ({key: x.title, value: x.id, text: x.title}))
+    const authorOptions = this.props.viewer.books.map((x) => ({key: x.author, value: x.id, text: x.author}))
+    console.log("autoComplete")
+    console.log(titleOptions)
+    return(titleOptions)
+  }
+
+
+
   render() {
+
+    const titleOptions = this.props.viewer.books.map((x) => ({key: x.title, value: x.id, text: x.title}))
     const { input, erros } = this.state;
     const title = 'Add Book to Bookshelf';
 
@@ -253,7 +281,7 @@ class AddBookToBookshelf extends React.Component {
             </Button>
 
             <div>
-              <AutoComplete data={stateOptions} />
+              <AutoComplete data={titleOptions} />
             </div>
 
 
@@ -269,7 +297,6 @@ class AddBookToBookshelf extends React.Component {
 
 export default createRefetchContainer(
   withAuth(AddBookToBookshelf),
-
   {
     viewer: graphql`
       fragment AddBookToBookshelf_viewer on Viewer
@@ -283,6 +310,11 @@ export default createRefetchContainer(
         }
         user{
           id
+        }
+        books{
+          id
+          title
+          author
         }
       }
       `,
