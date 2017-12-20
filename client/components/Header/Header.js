@@ -41,7 +41,12 @@ class Header extends React.Component {
                     <Dropdown.Item as={Link} to={this.urlFromGroup(m.node.group)} key={m.node.group.id}>
                       { m.node.group.name }
                     </Dropdown.Item>
-                  )}
+                    )}
+                    <Dropdown.Item className={styles.createGroupLink}>
+                      <Button basic as={Link} to='/create' fluid color='green'>
+                        CREATE GROUP
+                      </Button>
+                    </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
               <Dropdown scrolling floating pointing='top right' icon={null} trigger={
@@ -51,7 +56,6 @@ class Header extends React.Component {
                 }>
                 <Dropdown.Menu id={styles.dropdownMenu}>
                   <Dropdown.Item id={styles.nameItem}>{ `${user.firstName} ${user.lastName}` }</Dropdown.Item>
-                  <Dropdown.Item as={Link} to='/create'>Create group</Dropdown.Item>
                   <Dropdown.Item as={Link} to='/profile'>Settings</Dropdown.Item>
                   <Dropdown.Item onClick={() => { logoutViewer(); }}>Log out</Dropdown.Item>
                 </Dropdown.Menu>

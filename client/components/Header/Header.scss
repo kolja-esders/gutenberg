@@ -55,6 +55,12 @@
     padding-bottom: 7px;
   }
 
+  .createGroupLink {
+    &:hover {
+      background-color: #fff!important;
+    }
+  }
+
   #dropdownMenu {
     width: 200px!important;
     z-index: 999999;
