@@ -1,14 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { DropTarget } from 'react-dnd';
+import { Icon, Header } from 'semantic-ui-react';
 
-const style = {
-  border: '1px solid gray',
-  height: '15rem',
-  width: '15rem',
-  padding: '2rem',
-  textAlign: 'center',
-};
+import styles from './DropTargetArea.scss';
 
 const boxTarget = {
   drop(props, monitor) {
@@ -37,8 +32,11 @@ export default class TargetBox extends Component {
     const isActive = canDrop && isOver;
 
     return connectDropTarget(
-      <div style={style}>
-        {isActive ? 'Release to drop' : 'Drag file here'}
+      <div className={styles.container}>
+        <Icon className={styles.imageIcon} name='file image outline' size='massive' />
+        <div className={styles.descWrapper}>
+          <h3>{isActive ? 'Release to drop' : 'Drag file here'}</h3>
+        </div>
       </div>,
     );
   }
