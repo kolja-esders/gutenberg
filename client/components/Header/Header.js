@@ -58,7 +58,7 @@ class Header extends React.Component {
               </Dropdown>
             </div>
           ) : (
-            <div>
+            <div className={styles.loggedOutView}>
               <Button basic as={Link} to='/login' className={styles.item}>Log in</Button>
               <Button color='green' as={Link} to='/signup' className={styles.item}>Sign up</Button>
             </div>
