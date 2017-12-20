@@ -2,7 +2,6 @@
 
 .root {
   height: 100px;
-  line-height: 100px;
   width: $contentWidth;
   margin: 0 auto;
 
@@ -24,6 +23,7 @@
   .nav {
     float: right;
     text-align: right;
+    margin-top: 25px;
 
     .item {
       margin-left: 10px;
@@ -31,8 +31,33 @@
 
   }
 
+  #nameItem {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding-top: 22px!important;
+    padding-bottom: 22px!important;
+    color: #fefefe;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.7);
+      cursor: default!important;
+    }
+  }
+
+  .profileImage {
+    width: 50px!important;
+    height: 50px!important;
+    margin-left: 5px;
+    margin-bottom: 3px;
+  }
+
   #dropdownMenu {
     width: 200px!important;
+    z-index: 999999;
+
+    &::after {
+      display: none;
+    
+    }
   }
 
 }

@@ -1,10 +1,11 @@
 import React from 'react';
 import { Link } from 'found';
-import { Button, Popup, Dropdown } from 'semantic-ui-react';
+import { Image, Button, Popup, Dropdown } from 'semantic-ui-react';
 import { graphql, createFragmentContainer } from 'react-relay';
 import { logoutViewer } from 'modules/auth/jwtUtils';
 import { isAuthenticated } from 'modules/auth/utils';
 import styles from './Header.scss';
+import profileImage from '../../assets/raising_hand_emoji.png';
 
 class Header extends React.Component {
 
@@ -20,7 +21,7 @@ class Header extends React.Component {
     const loggedIn = this.props.isAuthenticated;
     const memberships = this.props.viewer.user.groups.edges;
     const user = this.props.viewer.user;
-    const bookshelfText = 'Bookshelf';
+    const bookshelfText = 'My books';
     const dropdownText = this.props.activeGroup ? this.props.activeGroup : bookshelfText;
 
     return (
@@ -30,11 +31,9 @@ class Header extends React.Component {
         </h1>
         <nav className={styles.nav}>
           { loggedIn ? (
-            <div>
-              <Dropdown scrolling floating text={dropdownText} className='basic' button>
+          <div>
+              <Dropdown scrolling className='basic' pointing='top right' text={dropdownText} button floating>
                 <Dropdown.Menu id={styles.dropdownMenu}>
-                  <Dropdown.Header content={user.firstName} />
-                  <Dropdown.Divider />
                   <Dropdown.Item as={Link} to='/'>{ bookshelfText }</Dropdown.Item>
                   <Dropdown.Header content='Groups' />
                   <Dropdown.Divider />
@@ -45,16 +44,18 @@ class Header extends React.Component {
                   )}
                 </Dropdown.Menu>
               </Dropdown>
-              <Popup
-                trigger={<Button as={Link} to='/create' icon='add' color='green' basic />}
-                content='Create group'
-                inverted
-              />
-              <Popup
-                trigger={<Button onClick={() => { logoutViewer(); }} icon='sign out' basic />}
-                content='Log out'
-                inverted
-              />
+              <Dropdown scrolling floating pointing='top right' icon={null} trigger={
+                <span>
+                  <Image src={profileImage} className={styles.profileImage} avatar />
+                </span>
+                }>
+                <Dropdown.Menu id={styles.dropdownMenu}>
+                  <Dropdown.Item id={styles.nameItem}>{ `${user.firstName} ${user.lastName}` }</Dropdown.Item>
+                  <Dropdown.Item as={Link} to='/create'>Create group</Dropdown.Item>
+                  <Dropdown.Item as={Link} to='/profile'>Settings</Dropdown.Item>
+                  <Dropdown.Item onClick={() => { logoutViewer(); }}>Log out</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
             </div>
           ) : (
             <div>
@@ -75,6 +76,7 @@ export default createFragmentContainer(
       id
       user {
         firstName
+        lastName
         email
         groups {
           edges {
