@@ -1,0 +1,21 @@
+.container {
+  border: 2px dashed rgba(0, 0, 0, 0.2);
+  border-radius: 0.28571429rem;
+  padding: 50px;
+  text-align: center;
+
+  .imageIcon {
+    color: rgba(0, 0, 0, 0.2);
+  }
+
+  .descWrapper {
+    display: inline;
+
+    h3 {
+      display: inline;
+      vertical-align: top;
+    }
+  
+  }
+
+}
