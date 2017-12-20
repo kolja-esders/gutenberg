@@ -236,6 +236,24 @@ class CreateBookshelfEntry(graphene.Mutation):
         bookshelf_entry.save()
         return CreateBookshelfEntry(bookshelf_entry=bookshelf_entry)
 
+class UpdateUser(graphene.Mutation):
+    class Arguments:
+        user_id = graphene.ID(required=True)
+        first_name = graphene.String(required=True)
+        last_name = graphene.String(required=True)
+
+    user = graphene.Field(User)
+
+    def mutate(self, info, **args):
+        get_node = graphene.Node.get_node_from_global_id
+        user = get_node(info, args['user_id'])
+        first_name = args['first_name']
+        last_name = args['last_name']
+        user.first_name = first_name
+        user.last_name = last_name
+        user.save()
+        return UpdateUser(user=user)
+
 class CreateMembership(graphene.Mutation):
     class Arguments:
         user_id = graphene.ID(required=True)
@@ -279,6 +297,7 @@ class CoreMutations:
     create_group = CreateGroup.Field()
     create_group_invite = CreateGroupInvite.Field()
     accept_group_invite = AcceptGroupInvite.Field()
+    update_user = UpdateUser.Field()
 
 
 class Viewer(ObjectType, CoreQueries):
