@@ -255,7 +255,6 @@ class AddBookToBookshelf extends React.Component {
                  search
                  selection
                  fluid
-                 scrolling
                  onSearchChange={this.handleTitleDropdownChange}
                  onChange={this.handleDropdownFinalChange}
                  placeholder='book title'
