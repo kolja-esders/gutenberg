@@ -6,7 +6,7 @@ import { graphql, createRefetchContainer } from 'react-relay';
 import createBookMutation from '../mutations/CreateBook';
 import createBookshelfEntryMutation from '../mutations/CreateBookshelfEntry';
 import styles from './AddBookToBookshelf.scss';
-import AutoComplete from 'components/AutoComplete/AutoComplete';
+
 
 
 const stateOptions = [{ key: 'toread', value: 'toread', text: 'to read' },
@@ -226,7 +226,7 @@ class AddBookToBookshelf extends React.Component {
 
   autoComplete = () => {
     console.log("autoComplete")
-    const bookOptions = this.props.viewer.booksAutocompleted.map((x) => ({key: x.title, value: x.author, text: x.title+" by "+x.author}))
+    const bookOptions = this.props.viewer.booksAutocompleted.map((x) => ({key: x.id, value: x.author, text: x.title+" by "+x.author}))
     this.setState({ ...this.state, bookOptions });
     console.log(this.state.bookOptions)
 
@@ -255,6 +255,7 @@ class AddBookToBookshelf extends React.Component {
                  search
                  selection
                  fluid
+                 scrolling
                  onSearchChange={this.handleTitleDropdownChange}
                  onChange={this.handleDropdownFinalChange}
                  placeholder='book title'
