@@ -129,9 +129,6 @@ class AddBookToBookshelf extends React.Component {
     this.setState({ ...this.state, input });
   }
 
-
-
-
   handleButtonChange = (e, data) => {
     e.preventDefault();
     const input = this.state.input;
@@ -242,16 +239,10 @@ class AddBookToBookshelf extends React.Component {
 
   autoComplete = () => {
     console.log("autoComplete")
+    const bookOptions = this.props.viewer.booksAutocompleted.map((x) => ({key: x.title, value: x.author, text: x.title+" by "+x.author}))
+    this.setState({ ...this.state, bookOptions });
+    console.log(this.state.bookOptions)
 
-    const titleOptions = this.props.viewer.booksAutocompleted.map((x) => ({key: x.title, value: x.title, text: x.title}))
-    const authorOptions = this.props.viewer.booksAutocompleted.map((x) => ({key: x.title, value: x.author, text: x.title+" by "+x.author}))
-
-
-    this.setState({ ...this.state, titleOptions });
-    this.setState({ ...this.state, authorOptions });
-
-    console.log(this.state.titleOptions)
-    console.log(this.state.authorOptions)
   }
 
 
@@ -273,7 +264,7 @@ class AddBookToBookshelf extends React.Component {
             <Dropdown
                  id="title"
                  className={styles.nameField}
-                 options={this.state.authorOptions}
+                 options={this.state.bookOptions}
                  search
                  selection
                  fluid
