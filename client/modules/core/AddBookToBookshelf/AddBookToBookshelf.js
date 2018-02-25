@@ -97,14 +97,10 @@ class AddBookToBookshelf extends React.Component {
   }
 
   handleTitleDropdownChange = (e, data) => {
-    console.log("titledropdown")
-
     const input = this.state.input;
     const inputName = "title";
     input[inputName] = data;
     this.setState({ ...this.state, input });
-
-    console.log(this.state.input.title.length)
 
     if (this.state.input.title.length >= 3) {
       const refetchVariables = fragmentVariables => ({
@@ -154,9 +150,6 @@ class AddBookToBookshelf extends React.Component {
   onCompletedSubmit = (ev) => {
     ev.preventDefault();
     console.log("onCompleted")
-    console.log(this.state.input.title)
-    console.log(this.state.input.author)
-
     const { input, errors } = validateInput(this.state.input);
     if (errors) {
       this.setErrors(errors);
@@ -175,10 +168,6 @@ class AddBookToBookshelf extends React.Component {
   }
 
   checkIfBookExists = (error) => {
-    console.log("CHECK")
-    console.log(this.state.input.title)
-    console.log(this.state.input.author)
-    console.log(this.state.input.book)
     if(this.props.viewer.book == null){
       const variables = {
         titleInput: this.state.input.title,
@@ -187,7 +176,7 @@ class AddBookToBookshelf extends React.Component {
       createBookMutation(this.props.relay.environment, variables, this.onCompletedCreateBook, this.setErrors);
 
     } else {
-      console.log("exists")
+      console.log("book already exists")
       this.onCompletedRefetch();
     }
   }
@@ -207,8 +196,6 @@ class AddBookToBookshelf extends React.Component {
       return;
     }
     console.log("CompletedRefetch")
-    console.log(this.props.viewer)
-    console.log(this.props.books)
 
 
     const { rating, state } = this.state.input;
