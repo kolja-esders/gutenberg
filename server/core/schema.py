@@ -1,4 +1,5 @@
 import graphene
+import sql
 from django.contrib.auth import get_user_model
 from graphql import GraphQLError
 from graphene_django.filter import DjangoFilterConnectionField
@@ -71,6 +72,7 @@ class User(DjangoObjectType):
 class CoreQueries:
     book = graphene.Field(Book, id=graphene.ID(), title=graphene.String(), author=graphene.String())
     books = graphene.List(Book)
+    books_autocompleted = graphene.List(Book, title=graphene.String())
     all_books = DjangoFilterConnectionField(Book)
 
     bookshelf_entry = graphene.Node.Field(BookshelfEntry)
@@ -109,6 +111,9 @@ class CoreQueries:
     def resolve_books(self, info, **args):
         books = BookModal.objects.all()
         return books
+
+    def resolve_books_autocompleted(self, info, **args):
+         return BookModal.objects.filter(title__icontains=args['title'])
 
     def resolve_bookshelf_entries(self, info, **args):
         bookshelf_entries = BookshelfEntryModal.objects.all()

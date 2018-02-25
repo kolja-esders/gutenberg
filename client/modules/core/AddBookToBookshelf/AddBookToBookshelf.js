@@ -8,6 +8,7 @@ import createBookshelfEntryMutation from '../mutations/CreateBookshelfEntry';
 import styles from './AddBookToBookshelf.scss';
 
 
+
 const stateOptions = [{ key: 'toread', value: 'toread', text: 'to read' },
                         { key: 'read', value: 'read', text: 'read' },
                         { key: 'reading', value: 'reading', text: 'reading' },
@@ -69,63 +70,122 @@ function validateInput(input) {
 class AddBookToBookshelf extends React.Component {
   state = { input: { title: '', author: '', state: 'to-read', rating: 0 }, active: 'to-read', errors: [] }
 
+  handleTitleFieldChange = (e, { value }) => {
+    const input = this.state.input;
+    const inputName = e.target.id;
+    input[inputName] = e.target.value;
+    this.setState({ ...this.state, input });
+
+
+    if (this.state.input.title.length >= 3) {
+      const refetchVariables = fragmentVariables => ({
+        title: " ",
+        author: " ",
+        input: this.state.input.title
+      });
+      this.props.relay.refetch(refetchVariables, null, this.autoComplete);
+    }
+  }
+
+
   handleFieldChange = (e, { value }) => {
     const input = this.state.input;
     const inputName = e.target.id;
     input[inputName] = e.target.value;
-    this.setState({ input });
+    this.setState({ ...this.state, input });
+
   }
 
-  handleDropdownChange = (e, data) => {
+  handleTitleDropdownChange = (e, data) => {
     const input = this.state.input;
-    const inputName = data.id;
+    const inputName = "title";
+    input[inputName] = data;
+    this.setState({ ...this.state, input });
+
+    if (this.state.input.title.length >= 3) {
+      const refetchVariables = fragmentVariables => ({
+        title: " ",
+        author: " ",
+        input: this.state.input.title
+      });
+      this.props.relay.refetch(refetchVariables, null, this.autoComplete);
+  }
+  }
+  handleAuthorDropdownChange = (e, data) => {
+    const input = this.state.input;
+    const inputName = "author";
     input[inputName] = data.value;
-    this.setState({ input });
+    this.setState({ ...this.state, input });
   }
 
+  handleDropdownFinalChange = (e, data) => {
+    const input = this.state.input;
+    const inputName = "author";
+    input[inputName] = data.value;
+    this.setState({ ...this.state, input });
+  }
 
   handleButtonChange = (e, data) => {
     e.preventDefault();
     const input = this.state.input;
     const inputName = data.type;
     input[inputName] = data.id;
-    this.setState({ input });
-    this.setState({ active: data.id });
+    this.setState({ ...this.state, input });
+    this.setState({ ...this.state, active: data.id });
   }
 
   handleRatingChange = (e, data) => {
     const input = this.state.input;
     const inputName = data.id;
     input[inputName] = data.rating;
-    this.setState({ input });
+    this.setState({ ...this.state, input });
   }
 
 
   setErrors = (errors) => {
-    this.setState({ errors });
+    this.setState({ ...this.state, errors });
   }
 
 
   onCompletedSubmit = (ev) => {
     ev.preventDefault();
-
+    console.log("onCompleted")
     const { input, errors } = validateInput(this.state.input);
     if (errors) {
       this.setErrors(errors);
       return;
     }
 
-    const variables = {
-      titleInput: input.title,
-      authorInput: input.author
-    };
-    createBookMutation(this.props.relay.environment, variables, this.onCompletedCreateBook, this.setErrors);
+    //Check if book already exists
+    const refetchVariables = fragmentVariables => ({
+      title: input.title,
+      author: input.author,
+      input: input.title
+    });
+
+
+    this.props.relay.refetch(refetchVariables, null, this.checkIfBookExists);
+  }
+
+  checkIfBookExists = (error) => {
+    if(this.props.viewer.book == null){
+      const variables = {
+        titleInput: this.state.input.title,
+        authorInput: this.state.input.author,
+      };
+      createBookMutation(this.props.relay.environment, variables, this.onCompletedCreateBook, this.setErrors);
+
+    } else {
+      console.log("book already exists")
+      this.onCompletedRefetch();
+    }
   }
 
   onCompletedCreateBook = (error, data) => {
     const refetchVariables = fragmentVariables => ({
       title: this.state.input.title,
-      author: this.state.input.author
+      author: this.state.input.author,
+      input: this.state.input.title
     });
     this.props.relay.refetch(refetchVariables, null, this.onCompletedRefetch);
   }
@@ -135,6 +195,9 @@ class AddBookToBookshelf extends React.Component {
       console.error(error);
       return;
     }
+    console.log("CompletedRefetch")
+
+
     const { rating, state } = this.state.input;
     const { book, user } = this.props.viewer;
 
@@ -161,7 +224,17 @@ class AddBookToBookshelf extends React.Component {
   }
 
 
+  autoComplete = () => {
+    console.log("autoComplete")
+    const bookOptions = this.props.viewer.booksAutocompleted.map((x) => ({key: x.id, value: x.author, text: x.title+" by "+x.author}))
+    this.setState({ ...this.state, bookOptions });
+    console.log(this.state.bookOptions)
+
+  }
+
+
   render() {
+
     const { input, erros } = this.state;
     const title = 'Add Book to Bookshelf';
 
@@ -175,30 +248,17 @@ class AddBookToBookshelf extends React.Component {
               className={styles.form}
             >
 
-
-            <Input
-              id='title'
-              className={styles.nameField}
-              onChange={this.handleFieldChange}
-              value={input.title}
-              type='text'
-              size='large'
-              fluid
-              required
-              placeholder='book title'
-            />
-
-            <Input
-              id='author'
-              className={styles.authorField}
-              onChange={this.handleFieldChange}
-              value={input.author}
-              type='text'
-              size='large'
-              fluid
-              required
-              placeholder='author'
-            />
+            <Dropdown
+                 id="title"
+                 className={styles.nameField}
+                 options={this.state.bookOptions}
+                 search
+                 selection
+                 fluid
+                 onSearchChange={this.handleTitleDropdownChange}
+                 onChange={this.handleDropdownFinalChange}
+                 placeholder='book title'
+               />
 
 
 
@@ -211,6 +271,7 @@ class AddBookToBookshelf extends React.Component {
                 <div className={styles.toReadIcon} />
                 to-read
               </Button>
+
               <Button type='state'
                 onClick={this.handleButtonChange}
                 active={this.state.active == "reading"}
@@ -219,6 +280,7 @@ class AddBookToBookshelf extends React.Component {
                 <div className={styles.readingIcon} />
                 reading
               </Button>
+
               <Button type='state'
                 onClick={this.handleButtonChange}
                 active={this.state.active == "read"}
@@ -238,8 +300,6 @@ class AddBookToBookshelf extends React.Component {
                 id = 'rating'/>
             </div>
 
-
-
            <Button
              color='green'
               fluid
@@ -250,7 +310,6 @@ class AddBookToBookshelf extends React.Component {
             >
               Add book
             </Button>
-
 
           </form>
         </Segment>
@@ -263,13 +322,13 @@ class AddBookToBookshelf extends React.Component {
 
 export default createRefetchContainer(
   withAuth(AddBookToBookshelf),
-
   {
     viewer: graphql`
       fragment AddBookToBookshelf_viewer on Viewer
       @argumentDefinitions(
         title: {type: "String"},
-        author: {type: "String"}
+        author: {type: "String"},
+        input: {type: "String"}
       ){
         ...Page_viewer
         book(title: $title, author: $author) {
@@ -277,6 +336,12 @@ export default createRefetchContainer(
         }
         user{
           id
+        }
+
+        booksAutocompleted(title: $input){
+          id
+          title
+          author
         }
       }
       `,
@@ -290,14 +355,14 @@ export default createRefetchContainer(
     `,
   },
 
+
   graphql`
-    query AddBookToBookshelfRefetchQuery($title: String!, $author: String!){
+    query AddBookToBookshelfRefetchQuery($title: String!, $author: String!, $input: String!){
       viewer {
-        ...AddBookToBookshelf_viewer @arguments(title: $title, author: $author)
+        ...AddBookToBookshelf_viewer @arguments(title: $title, author: $author, input: $input)
         ...AddBookToBookshelf_user
+
       }
     }
     `,
-
-
 );
