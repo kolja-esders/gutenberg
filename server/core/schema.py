@@ -1,5 +1,4 @@
 import graphene
-import sql
 from django.contrib.auth import get_user_model
 from graphql import GraphQLError
 from graphene_django.filter import DjangoFilterConnectionField
