@@ -53,6 +53,7 @@ class User(DjangoObjectType):
             'is_staff',
             'is_active',
             'date_joined',
+            'profile_image',
         )
         interfaces = (graphene.Node, TokensInterface)
         filter_fields = []
