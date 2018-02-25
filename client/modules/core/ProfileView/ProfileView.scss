@@ -60,11 +60,42 @@
     h1 {
       margin-top: 0;
     }
+  }
 
+}
 
-    .profileInfo {
-      //margin-top: 22px;
+.saveImage {
+  float: right;
+  margin-top: 21px!important;
+  margin-right: 0!important;
+}
 
+.dropzone {
+  border: 2px dashed rgba(0, 0, 0, 0.1);
+  border-radius: 0.28571429rem;
+  padding: 50px;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.3);
+
+  &:hover {
+    background-color: #fafafa;
+    color: #444;
+    cursor: pointer;
+  }
+
+  .imageIcon {
+    color: rgba(0, 0, 0, 0.1);
+  }
+
+  .descWrapper {
+    display: inline;
+
+    span {
+      font-weight: normal;
+      display: inline;
+      vertical-align: top;
+      font-size: 1.3rem;
     }
+  
   }
 }

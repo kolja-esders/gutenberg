@@ -2,12 +2,10 @@ import Page from 'components/Page/Page';
 import { withAuth } from 'modules/auth/utils';
 import React from 'react';
 import { createFragmentContainer, graphql, commitMutation } from 'react-relay';
-import { DragDropContext, DragDropContextProvider } from 'react-dnd';
-import HTML5Backend, { NativeTypes } from 'react-dnd-html5-backend';
 import PropTypes from 'prop-types';
 import { Label, Modal, Icon, Button, Image, Menu, Segment, Header, Form } from 'semantic-ui-react';
-import DropTargetArea from 'components/DropTargetArea/DropTargetArea';
-import profileImage from '../../../assets/raising_hand_emoji.png';
+import Dropzone from 'react-dropzone'
+import { hasValidJwtToken } from 'modules/auth/jwtUtils';
 
 import styles from './ProfileView.scss';
 
@@ -23,12 +21,11 @@ const UpdateUserMutation = graphql`
   }
 `;
 
-@DragDropContext(HTML5Backend)
 class ProfileView extends React.Component {
   static propTypes = {
     viewer: PropTypes.object.isRequired
   }
-  state = { user: { email: this.props.viewer.user.email, firstName: this.props.viewer.user.firstName, lastName: this.props.viewer.user.lastName }, droppedFiles: [], success: false }
+  state = { user: { email: this.props.viewer.user.email, firstName: this.props.viewer.user.firstName, lastName: this.props.viewer.user.lastName }, droppedFiles: [], success: false, accept: '', files: [], dropzoneActive: false, uploading: false }
 
   handleChange = (e, { value }) => {
     const name = e.target.name;
@@ -37,7 +34,7 @@ class ProfileView extends React.Component {
     this.setState({ ...this.state, user });
   }
 
-  handleSave = (e) => {
+  handleSave = () => {
     const { user } = this.props.viewer;
     const variables = {
       userIdInput: user.id,
@@ -60,16 +57,43 @@ class ProfileView extends React.Component {
     });
   }
 
-  handleFileDrop = (item, monitor) => {
-    if (monitor) {
-      const droppedFiles = monitor.getItem().files;
-      this.setState({ ...this.state, droppedFiles });
-    }
+  onDragEnter = () => {
+    this.setState({ ...this.state, dropzoneActive: true });
+  }
+
+  onDragLeave = () => {
+    this.setState({ ...this.state, dropzoneActive: false });
+  }
+
+  onDrop = (files) => {
+    this.setState({ ...this.state, files });
+  }
+
+  handleProfileImageSave = () => {
+    const file = this.state.files[0];
+    window.URL.revokeObjectURL(file.preview);
+
+    const data = new FormData();
+    data.append('file', file);
+    fetch('/upload', {
+      method: 'post',
+      credentials: 'same-origin',
+      headers: {
+        Authorization: `Bearer ${hasValidJwtToken().token}`,
+      },
+      body: data
+    }).then(res => {
+      this.setState({ ...this.state, uploading: false })
+      // TODO(kolja): Fix this
+      window.location.reload()
+    });
+    this.setState({ ...this.state, uploading: true })
   }
 
   render() {
     const { user } = this.state;
-    const { FILE } = NativeTypes;
+    const dbUser = this.props.viewer.user;
+    const profileImage = require(`../../../assets/${dbUser.profileImage}`);
 
     return (
       <Page title='Gutenberg' viewer={this.props.viewer}>
@@ -101,12 +125,22 @@ class ProfileView extends React.Component {
                 >
                   <Modal.Header>Change Image</Modal.Header>
                   <Modal.Content>
-                    <DragDropContextProvider backend={HTML5Backend}>
-                      <div>
-                      <DropTargetArea accepts={[FILE]} onDrop={this.handleFileDrop} />
-                      <Button className={styles.saveImage} color='green'>Update image</Button>
-                      </div>
-                    </DragDropContextProvider>
+                    <div className={styles.clearfix}>
+                      <Dropzone
+                        accept='image/jpeg,image/png'
+                        multiple={false}
+                        onDrop={this.onDrop}
+                        onDragEnter={this.onDragEnter}
+                        onDragLeave={this.onDragLeave}
+                        className={styles.dropzone}
+                      >
+                        { this.state.files.length > 0 ?
+                          <img width='200' className={styles.profileImagePreview} alt='Profile preview' src={this.state.files[0].preview} />
+                        :
+                        this.state.dropzoneActive ? 'Release to drop' : 'Click or drop image here' }
+                      </Dropzone>
+                      <Button className={styles.saveImage} onClick={this.handleProfileImageSave} color='green' loading={this.state.uploading}>Update image</Button>
+                    </div>
                   </Modal.Content>
                 </Modal>
               </div>
@@ -146,6 +180,7 @@ export default createFragmentContainer(withAuth(ProfileView), graphql`
       lastName
       dateJoined
       email
+      profileImage
     }
   }
 `);
