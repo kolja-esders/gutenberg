@@ -238,12 +238,6 @@ class AddBookToBookshelf extends React.Component {
       const matchAuthors = this.state.matchAuthors;
       const key = this.props.viewer.booksAutocompleted[i].id;
       matchAuthors[key] = this.props.viewer.booksAutocompleted[i];
-      //matchAuthors[key] = this.props.viewer.booksAutocompleted[i].author;
-      //console.log(matchAuthors);
-    //this.state.matchAuthors.Add(key: this.props.viewer.booksAutocompleted[i].id) // title: this.props.viewer.booksAutocompleted[i].title, author: this.props.viewer.booksAutocompleted[i].author)
-
-
-      //console.log(this.props.viewer.booksAutocompleted[0])
       this.setState({ ...this.state, matchAuthors});
     };
     this.setState({ ...this.state, bookOptions });
