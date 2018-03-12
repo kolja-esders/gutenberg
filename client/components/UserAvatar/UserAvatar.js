@@ -12,8 +12,13 @@ export default class UserAvatar extends React.Component {
       id: PropTypes.string.isRequired,
       firstName: PropTypes.string.isRequired,
       lastName: PropTypes.string.isRequired,
-      profileImage: PropTypes.string.isRequired
+      profileImage: PropTypes.string.isRequired,
     }),
+    size: PropTypes.number
+  }
+
+  static defaultProps = {
+    size: 50
   }
 
   render() {
@@ -24,8 +29,8 @@ export default class UserAvatar extends React.Component {
         position='top center'
         inverted
         trigger={
-          <Link to='/' className={styles.link} >
-            <Image src={require(`../../assets/${user.profileImage}`)} avatar />
+          <Link to='/' className={styles.link} style={{height: this.props.size, width: this.props.size}} >
+            <Image src={require(`../../assets/${user.profileImage}`)} avatar style={{height: this.props.size, width: this.props.size}} />
           </Link>
         }
       >
