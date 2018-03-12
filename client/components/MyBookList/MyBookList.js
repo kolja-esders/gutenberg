@@ -2,8 +2,34 @@ import React from 'react';
 import { graphql, createFragmentContainer } from 'react-relay';
 import { Table, Rating } from 'semantic-ui-react';
 import styles from './MyBookList.scss';
+import updateRatingMutation from '../../modules/core/mutations/UpdateRating';
 
 class MyBookList extends React.Component {
+  state = {input: {rating: 0}, errors: []};
+
+  handleRatingChange = (e, data) => {
+    e.preventDefault();
+    const input = this.state.input;
+    const inputName = 'rating'
+    input[inputName] = data.rating;
+    this.setState({ ...this.state, input});
+
+    //TODO: Create Mutation to change rating
+    const variables = {
+      bookshelfEntryId: data.id,
+      rating: data.rating
+    }
+    console.log(variables)
+
+
+  updateRatingMutation(this.props.relay.environment, variables, this.setErrors)
+
+  }
+
+  setErrors = (errors) => {
+    this.setState({ ...this.state, errors });
+  }
+
   render() {
     const bookshelfEntries = this.props.books.edges;
     return (
@@ -24,7 +50,9 @@ class MyBookList extends React.Component {
                 <Table.Cell>{e.node.book.title}</Table.Cell>
                 <Table.Cell>{e.node.book.author}</Table.Cell>
                 <Table.Cell>
-                  <Rating defaultRating={e.node.rating} maxRating={5} />
+                  <Rating defaultRating={e.node.rating} maxRating={5}
+                    onRate={this.handleRatingChange}
+                    id ={e.node.id}/>
                 </Table.Cell>
               </Table.Row>)}
             }
