@@ -34,6 +34,7 @@ class CustomUser(AbstractEmailUser):
     username = models.CharField(max_length=31, blank=True)
     first_name = models.CharField(max_length=31, blank=True)
     last_name = models.CharField(max_length=31, blank=True)
+    profile_image = models.CharField(max_length=128, blank=True, default='default.png')
     groups = models.ManyToManyField(Group, through='Membership', symmetrical=False, related_name='members')
     books = models.ManyToManyField(Book, through='BookshelfEntry', symmetrical=False, related_name='users')
     created_at = models.DateTimeField(default=timezone.now)

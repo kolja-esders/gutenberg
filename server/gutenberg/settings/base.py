@@ -36,7 +36,8 @@ INSTALLED_APPS = [
     'graphene_django',
     'custom_user',
     'gutenberg',
-    'core'
+    'core',
+    'rest_framework'
 ]
 
 AUTH_USER_MODEL = 'core.CustomUser'
