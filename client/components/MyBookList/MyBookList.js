@@ -11,22 +11,23 @@ class MyBookList extends React.Component {
         <Table singleLine className={styles.books}>
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell>Title</Table.HeaderCell>
-              <Table.HeaderCell>Author</Table.HeaderCell>
-              <Table.HeaderCell>Rating</Table.HeaderCell>
+              <Table.HeaderCell className={styles.title}>Title</Table.HeaderCell>
+              <Table.HeaderCell className={styles.author}>Author</Table.HeaderCell>
+              <Table.HeaderCell className={styles.rating}>Rating</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
 
           <Table.Body>
 
-            {bookshelfEntries.map(e =>
+            {bookshelfEntries.map(e => {if (e.node.state == this.props.state){ return(
               <Table.Row key={e.node.id}>
                 <Table.Cell>{e.node.book.title}</Table.Cell>
                 <Table.Cell>{e.node.book.author}</Table.Cell>
                 <Table.Cell>
                   <Rating defaultRating={e.node.rating} maxRating={5} />
                 </Table.Cell>
-              </Table.Row>
+              </Table.Row>)}
+            }
             )}
 
           </Table.Body>
@@ -48,6 +49,7 @@ export default createFragmentContainer(
           author
         }
         rating
+        state
       }
     }
   }`
