@@ -4,9 +4,11 @@ import React from 'react';
 import { createFragmentContainer, graphql } from 'react-relay';
 import PropTypes from 'prop-types';
 import { Link } from 'found';
-import { Segment, Button, Header, Table, Rating } from 'semantic-ui-react';
+import { Segment, Button, Header, Table, Rating, Image, Grid } from 'semantic-ui-react';
 
 import styles from './GroupView.scss';
+
+import UserAvatar from '../../../components/UserAvatar/UserAvatar.js';
 
 class GroupView extends React.Component {
   static propTypes = {
@@ -15,32 +17,35 @@ class GroupView extends React.Component {
 
   render() {
     const { group, user } = this.props.viewer;
-    console.log(group)
     const inviteLink = `/group/${group.nameUrl}/invite`;
     const members = group.members.edges;
 
     return (
       <Page title='Gutenberg' viewer={this.props.viewer} activeGroup={group.name}>
         <section className={styles.container}>
-              <Segment attached='top' padded='very'>
-                { members.length === 1 ?
-                  <div className={styles.inviteNudge}>
-                    <Header className={styles.text} size='huge'>{user.firstName}, it's only you.<span className={styles.emoji}></span></Header>
-                    <Button className={styles.btn} size='massive' as={Link} to={inviteLink} primary>Invite friends</Button>
-                  </div>
-                :
+          <Segment attached='top' padded='very'>
+            {members.length === 1 ?
+              <div className={styles.inviteNudge}>
+                <Header className={styles.text} size='huge'>{user.firstName}, it's only you.<span className={styles.emoji}></span></Header>
+                <Button className={styles.btn} size='massive' as={Link} to={inviteLink} primary>Invite friends</Button>
+              </div>
+              :
               <div>
-                <div className={styles.groupInfo}>
-                  <Header as='h1'>{ group.name }</Header>
-                  <Button.Group basic>
-                    <Button active>Books</Button>
-                    <Button>Members</Button>
-                    <Button>Invites</Button>
-                  </Button.Group>
-                </div>
-              <Header as='h1'>Members</Header>
-              <p>{ members.map(m => `${m.node.firstName} ${m.node.lastName}`).join(', ') }</p>
-              <Header as='h1'>Books</Header>
+                <Grid>
+                  <Grid.Column floated="left" width={4}>
+                    <div className={styles.groupInfo}>
+                      <Header as='h1'>{group.name}</Header>
+                    </div>
+                  </Grid.Column>
+                  <Grid.Column floated="right" width={12}>
+                    <div className={styles.memberAvatars}>
+                      {members.map(m =>
+                        <UserAvatar key={m.node.id} user={m.node} />
+                      )}
+                    </div>
+                  </Grid.Column>
+                </Grid>
+                <Header as='h1'>Books</Header>
                 <Table singleLine className={styles.books}>
                   <Table.Header>
                     <Table.Row>
@@ -52,7 +57,7 @@ class GroupView extends React.Component {
                   </Table.Header>
                   <Table.Body>
 
-                    { members.map(m =>
+                    {members.map(m =>
                       m.node.books &&
                       m.node.books.edges.map(e =>
                         <Table.Row key={e.node.id}>
@@ -88,8 +93,10 @@ export default createFragmentContainer(withAuth(GroupView), graphql`
         members {
           edges {
             node {
+              id
               firstName
               lastName
+              profileImage
               books {
                 edges {
                   node {
