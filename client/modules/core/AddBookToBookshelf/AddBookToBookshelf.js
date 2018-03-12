@@ -68,7 +68,7 @@ function validateInput(input) {
 }
 
 class AddBookToBookshelf extends React.Component {
-  state = { input: { title: '', author: '', state: 'to-read', rating: 0 }, active: 'to-read', errors: [] }
+  state = { input: { title: '', author: '', state: 'to-read', rating: 0 }, active: 'to-read', matchAuthors: {key: {title: '', author: ''}}, errors: [] }
 
   handleTitleFieldChange = (e, { value }) => {
     const input = this.state.input;
@@ -118,10 +118,14 @@ class AddBookToBookshelf extends React.Component {
     this.setState({ ...this.state, input });
   }
 
+
   handleDropdownFinalChange = (e, data) => {
+    console.log(data)
+    console.log(this.props.viewer)
     const input = this.state.input;
-    const inputName = "author";
-    input[inputName] = data.value;
+
+    input["author"] = this.state.matchAuthors[data.value].author;
+    input["title"] = this.state.matchAuthors[data.value].title;
     this.setState({ ...this.state, input });
   }
 
@@ -226,9 +230,24 @@ class AddBookToBookshelf extends React.Component {
 
   autoComplete = () => {
     console.log("autoComplete")
-    const bookOptions = this.props.viewer.booksAutocompleted.map((x) => ({key: x.id, value: x.author, text: x.title+" by "+x.author}))
+    const bookOptions = this.props.viewer.booksAutocompleted.map((x) => ({key: x.id, value: x.id, text: x.title+" by "+x.author}))
+
+
+
+    for (var i=0; i < this.props.viewer.booksAutocompleted.length; i++){
+      const matchAuthors = this.state.matchAuthors;
+      const key = this.props.viewer.booksAutocompleted[i].id;
+      matchAuthors[key] = this.props.viewer.booksAutocompleted[i];
+      //matchAuthors[key] = this.props.viewer.booksAutocompleted[i].author;
+      //console.log(matchAuthors);
+    //this.state.matchAuthors.Add(key: this.props.viewer.booksAutocompleted[i].id) // title: this.props.viewer.booksAutocompleted[i].title, author: this.props.viewer.booksAutocompleted[i].author)
+
+
+      //console.log(this.props.viewer.booksAutocompleted[0])
+      this.setState({ ...this.state, matchAuthors});
+    };
     this.setState({ ...this.state, bookOptions });
-    console.log(this.state.bookOptions)
+
 
   }
 
