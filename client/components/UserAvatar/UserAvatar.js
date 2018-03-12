@@ -29,9 +29,7 @@ export default class UserAvatar extends React.Component {
         position='top center'
         inverted
         trigger={
-          <Link to='/' className={styles.link} style={{height: this.props.size, width: this.props.size}} >
-            <Image src={require(`../../assets/${user.profileImage}`)} avatar style={{height: this.props.size, width: this.props.size}} />
-          </Link>
+          <Image src={require(`../../assets/${user.profileImage}`)} avatar style={{ height: this.props.size, width: this.props.size }} />
         }
       >
         <Popup.Header className={styles.tooltipHeader}>
