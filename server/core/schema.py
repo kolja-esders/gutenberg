@@ -241,6 +241,23 @@ class CreateBookshelfEntry(graphene.Mutation):
         bookshelf_entry.save()
         return CreateBookshelfEntry(bookshelf_entry=bookshelf_entry)
 
+
+class UpdateRating(graphene.Mutation):
+    class Arguments:
+        bookshelf_entry_id = graphene.ID(required=True)
+        rating = graphene.Int(required=True)
+
+    bookshelf_entry = graphene.Field(BookshelfEntry)
+
+    def mutate(self, info, **args):
+        get_node = graphene.Node.get_node_from_global_id
+        bookshelf_entry = get_node(info, args['bookshelf_entry_id'])
+        rating = args['rating']
+        bookshelf_entry.rating = rating
+        bookshelf_entry.save()
+        return UpdateRating(bookshelf_entry = bookshelf_entry)
+
+
 class UpdateUser(graphene.Mutation):
     class Arguments:
         user_id = graphene.ID(required=True)
@@ -303,6 +320,7 @@ class CoreMutations:
     create_group_invite = CreateGroupInvite.Field()
     accept_group_invite = AcceptGroupInvite.Field()
     update_user = UpdateUser.Field()
+    update_rating = UpdateRating.Field()
 
 
 class Viewer(ObjectType, CoreQueries):
