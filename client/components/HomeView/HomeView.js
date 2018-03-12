@@ -18,7 +18,21 @@ class HomeView extends React.Component {
               <Header floated='left' as='h1'>Bookshelf</Header>
               <Button floated='right' basic color='green' as={Link} to='/add-book' className={styles.upperText} floated='right'>Add book</Button>
             </div>
-            <MyBookList books={this.props.viewer.user.books}/>
+
+            <div className={styles.reading}>
+              <Header floated='left' as='h2'>Reading</Header>
+              <MyBookList books={this.props.viewer.user.books} state='reading'/>
+            </div>
+
+            <div className={styles.read}>
+              <Header floated='left' as='h2'>Read</Header>
+              <MyBookList books={this.props.viewer.user.books} state='read'/>
+            </div>
+
+            <div className={styles.to_read}>
+              <Header floated='left' as='h2'>To-Read</Header>
+              <MyBookList books={this.props.viewer.user.books} state='to-read'/>
+            </div>
           </Segment>
       </section>
       </Page>

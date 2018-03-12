@@ -1,2 +1,15 @@
 .root {
+  .table{
+    width: 100%;
+    table-layout: fixed;
+  }
+  .title{
+    width: 30%;
+  }
+  .author{
+    width: 40%;
+  }
+  .rating{
+    width: 20%;
+  }
 }
