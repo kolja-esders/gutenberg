@@ -56,6 +56,7 @@ if (process.env.NODE_ENV === 'production') {
     'react-hot-loader/patch',
     `webpack-dev-server/client?http://localhost:${devServerPort}`,
     'webpack/hot/only-dev-server',
+    'babel-polyfill',
     './client/index.js'
     ];
     publicPath = `http://localhost:${devServerPort}/assets/bundles/`; // Tell django to use this URL to load packages and not use STATIC_URL + bundle_name

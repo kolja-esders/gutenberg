@@ -69,31 +69,52 @@ class ProfileView extends React.Component {
     this.setState({ ...this.state, files });
   }
 
-  handleProfileImageSave = () => {
+  // Wrapping of async arrow function needs to happen since 'this' won't be resolved
+  // correctly caused by a bug in react-hot-loader.
+  handleProfileImageSave = () => (async () => {
     const file = this.state.files[0];
     window.URL.revokeObjectURL(file.preview);
 
-    const data = new FormData();
-    data.append('file', file);
-    fetch('/upload', {
-      method: 'post',
+    this.setState({ ...this.state, uploading: true })
+
+    // Acquire presigned url from backend.
+    let response = await fetch(`/s3/sign?localName=${file.name}`, {
+      method: 'get',
       credentials: 'same-origin',
       headers: {
         Authorization: `Bearer ${hasValidJwtToken().token}`,
       },
-      body: data
-    }).then(res => {
-      this.setState({ ...this.state, uploading: false })
-      // TODO(kolja): Fix this
-      window.location.reload()
     });
-    this.setState({ ...this.state, uploading: true })
-  }
+    let payload = await response.json();
+
+    // Upload image to S3.
+    response = await fetch(payload.url, {
+      method: 'put',
+      body: file
+    });
+
+    // Register uploaded image with backend.
+    response = await fetch(`/s3/register?assetName=${payload.filename}`, {
+      method: 'get',
+      credentials: 'same-origin',
+      headers: {
+        Authorization: `Bearer ${hasValidJwtToken().token}`,
+      },
+    });
+
+    const filename = payload.filename;
+
+    if (response.status == 200) {
+      this.setState({ ...this.state, uploading: false })
+    }
+
+    //window.location.reload()
+  })();
 
   render() {
     const { user } = this.state;
     const dbUser = this.props.viewer.user;
-    const profileImage = require(`../../../assets/${dbUser.profileImage}`);
+    const profileImage = `https://s3-eu-west-1.amazonaws.com/gutenberg-images/profile/${dbUser.profileImage}`;
 
     return (
       <Page title='Gutenberg' viewer={this.props.viewer}>

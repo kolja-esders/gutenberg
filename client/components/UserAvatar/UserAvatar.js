@@ -23,13 +23,14 @@ export default class UserAvatar extends React.Component {
 
   render() {
     const { user } = this.props;
+    const profileImage = `https://s3-eu-west-1.amazonaws.com/gutenberg-images/profile/${user.profileImage}`;
     return (
       <Popup
         className={styles.root}
         position='top center'
         inverted
         trigger={
-          <Image src={require(`../../assets/${user.profileImage}`)} avatar style={{ height: this.props.size, width: this.props.size }} />
+          <Image src={profileImage} avatar centered style={{ height: this.props.size, width: this.props.size }} />
         }
       >
         <Popup.Header className={styles.tooltipHeader}>

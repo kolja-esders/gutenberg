@@ -23,10 +23,9 @@ class Header extends React.Component {
     const bookshelfText = 'My books';
     const dropdownText = this.props.activeGroup ? this.props.activeGroup : bookshelfText;
 
-    // TODO(kolja): Assign proper default avatar
     let profileImage = '';
     if (loggedIn) {
-      profileImage = require(`../../assets/${user.profileImage}`);
+      profileImage = `https://s3-eu-west-1.amazonaws.com/gutenberg-images/profile/${user.profileImage}`;
     }
 
     return (
