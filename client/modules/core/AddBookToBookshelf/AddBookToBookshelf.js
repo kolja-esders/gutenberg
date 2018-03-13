@@ -205,12 +205,15 @@ class AddBookToBookshelf extends React.Component {
     const { rating, state } = this.state.input;
     const { book, user } = this.props.viewer;
 
+
+
     const variables = {
       userIdInput: user.id,
       bookIdInput: book.id,
       ratingInput: rating,
       stateInput: state
     };
+    console.log(variables)
     console.log("create")
     createBookshelfEntryMutation(this.props.relay.environment, variables, this.onCompletedBookshelfEntry, this.setErrors);
   }
@@ -232,12 +235,11 @@ class AddBookToBookshelf extends React.Component {
     console.log("autoComplete")
     const bookOptions = this.props.viewer.booksAutocompleted.map((x) => ({key: x.id, value: x.id, text: x.title+" by "+x.author}))
 
-
-
     for (var i=0; i < this.props.viewer.booksAutocompleted.length; i++){
       const matchAuthors = this.state.matchAuthors;
       const key = this.props.viewer.booksAutocompleted[i].id;
       matchAuthors[key] = this.props.viewer.booksAutocompleted[i];
+
       this.setState({ ...this.state, matchAuthors});
     };
     this.setState({ ...this.state, bookOptions });

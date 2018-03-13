@@ -1,8 +1,9 @@
 import React from 'react';
 import { graphql, createFragmentContainer } from 'react-relay';
-import { Table, Rating } from 'semantic-ui-react';
+import { Table, Rating, Button } from 'semantic-ui-react';
 import styles from './MyBookList.scss';
 import updateRatingMutation from '../../modules/core/mutations/UpdateRating';
+import updateStateMutation from '../../modules/core/mutations/UpdateState';
 
 class MyBookList extends React.Component {
   state = {input: {rating: 0}, errors: []};
@@ -14,16 +15,20 @@ class MyBookList extends React.Component {
     input[inputName] = data.rating;
     this.setState({ ...this.state, input});
 
-    //TODO: Create Mutation to change rating
+
     const variables = {
       bookshelfEntryId: data.id,
       rating: data.rating
     }
-    console.log(variables)
+    updateRatingMutation(this.props.relay.environment, variables, this.setErrors)
+  }
 
-
-  updateRatingMutation(this.props.relay.environment, variables, this.setErrors)
-
+  onCompletedReading = (data) => {
+    const variables = {
+      bookshelfEntryId: data,
+      state: 'read'
+    }
+      updateStateMutation(this.props.relay.environment, variables, this.setErrors)
   }
 
   setErrors = (errors) => {
@@ -49,11 +54,39 @@ class MyBookList extends React.Component {
               <Table.Row key={e.node.id}>
                 <Table.Cell>{e.node.book.title}</Table.Cell>
                 <Table.Cell>{e.node.book.author}</Table.Cell>
-                <Table.Cell>
-                  <Rating defaultRating={e.node.rating} maxRating={5}
-                    onRate={this.handleRatingChange}
-                    id ={e.node.id}/>
-                </Table.Cell>
+
+                {this.props.state == "to-read" &&
+                  <Table.Cell>
+                      <Rating defaultRating={e.node.rating}  maxRating={5} disabled/>
+                  </Table.Cell>
+                }
+
+                {this.props.state == "reading" &&
+                  <div>
+                    <Table.Cell>
+                      <Rating defaultRating={e.node.rating} maxRating={5}
+                        onRate={this.handleRatingChange}
+                        id ={e.node.id}/>
+                    </Table.Cell>
+                    <Table.Cell>
+                      <Button
+                        basic color='light gray'
+                        className={styles.done_button}
+                        onClick = {() => this.onCompletedReading(e.node.id)}
+                        >
+                        Done
+                      </Button>
+                    </Table.Cell>
+                  </div>
+                }
+
+                {this.props.state == "read" &&
+                  <Table.Cell>
+                    <Rating defaultRating={e.node.rating} maxRating={5}
+                      onRate={this.handleRatingChange}
+                      id ={e.node.id}/>
+                  </Table.Cell>
+                }
               </Table.Row>)}
             }
             )}
