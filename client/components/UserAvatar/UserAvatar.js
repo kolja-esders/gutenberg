@@ -6,6 +6,10 @@ import styles from './UserAvatar.scss';
 
 export default class UserAvatar extends React.Component {
 
+  static S3_BASE_URL = 'https://s3-eu-west-1.amazonaws.com';
+  static S3_BUCKET = 'gutenberg-images';
+  static S3_KEY_PREFIX = 'profile';
+
   static propTypes = {
     user: PropTypes.shape({
       firstName: PropTypes.string.isRequired,
@@ -25,7 +29,7 @@ export default class UserAvatar extends React.Component {
 
   render() {
     const { user } = this.props;
-    const profileImage = `https://s3-eu-west-1.amazonaws.com/gutenberg-images/profile/${user.profileImage}`;
+    const profileImage = `${UserAvatar.S3_BASE_URL}/${UserAvatar.S3_BUCKET}/${UserAvatar.S3_KEY_PREFIX}/${user.profileImage}`;
 
     if (!this.props.showPopup) {
       return <div className={[styles.image, this.props.className].join(' ')} style={{ backgroundImage: `url(${profileImage})`, height: this.props.size, width: this.props.size }} />;
