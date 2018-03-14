@@ -12,36 +12,9 @@ import boto3
 from botocore.client import Config
 import urllib
 from hashlib import blake2b
+from django.conf import settings
 
-s3_client = boto3.client('s3',  region_name='eu-west-1')
-
-class ProfileImageUploadView(APIView):
-    parser_classes = (MultiPartParser, )
-
-    BASE_IMAGE_PATH = '/Users/kolja/Projects/gutenberg/client/assets/'
-
-    def post(self, request, format=None):
-        # TODO(kolja): Error handling here
-        user = get_token_user({}, request)
-
-        file_payload = request.data['file']
-        _, ext = os.path.splitext(file_payload.name)
-
-        filename = str(user.id) + ext
-        print(filename)
-
-        with open(self.BASE_IMAGE_PATH + filename, 'wb+') as destination:
-            for chunk in file_payload.chunks():
-                destination.write(chunk)
-
-        if user.profile_image != 'default.png':
-            os.remove(self.BASE_IMAGE_PATH + user.profile_image)
-
-        user.profile_image = filename
-        user.save()
-
-        return Response(status=status.HTTP_201_CREATED)
-
+s3_client = boto3.client('s3',  region_name=settings.S3_REGION_NAME)
 
 def sign_s3_upload(request):
     try:
@@ -62,8 +35,8 @@ def sign_s3_upload(request):
     url = s3_client.generate_presigned_url(
         ClientMethod='put_object',
         Params={
-            'Bucket': 'gutenberg-images',
-            'Key': 'profile/' + filename,
+            'Bucket': settings.S3_BUCKET_PROFILE_IMAGES,
+            'Key': settings.S3_KEY_PREFIX_PROFILE_IMAGES + filename,
             'ACL': 'public-read',
             'ContentType': mime_type
         }
@@ -81,9 +54,12 @@ def register_profile_image(request):
         return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
     asset_name = request.GET['assetName']
 
-    if user.profile_image != 'default.png':
+    if user.profile_image != settings.S3_DEFAULT_PROFILE_IMAGE:
         # os.remove(self.BASE_IMAGE_PATH + user.profile_image)
-        s3_client.delete_object(Bucket='gutenberg-images', Key='profile/' + user.profile_image)
+        s3_client.delete_object(
+            Bucket=settings.S3_BUCKET_PROFILE_IMAGES,
+            Key=settings.S3_KEY_PREFIX_PROFILE_IMAGES + user.profile_image
+        )
 
     user.profile_image = asset_name
     user.save()
