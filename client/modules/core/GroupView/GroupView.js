@@ -40,7 +40,7 @@ class GroupView extends React.Component {
                   <Grid.Column floated="right" width={12}>
                     <div className={styles.memberAvatars}>
                       {members.map(m =>
-                        <UserAvatar key={m.node.id} user={m.node} />
+                        <UserAvatar key={m.node.id} user={m.node} showPopup />
                       )}
                     </div>
                   </Grid.Column>
