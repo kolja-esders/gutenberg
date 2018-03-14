@@ -8,7 +8,6 @@ export default class UserAvatar extends React.Component {
 
   static propTypes = {
     user: PropTypes.shape({
-      id: PropTypes.string.isRequired,
       firstName: PropTypes.string.isRequired,
       lastName: PropTypes.string.isRequired,
       profileImage: PropTypes.string.isRequired,
@@ -45,6 +44,6 @@ export default class UserAvatar extends React.Component {
           {`${user.firstName} ${user.lastName}`}
         </Popup.Header>
       </Popup>
-    )
+    );
   }
 }
