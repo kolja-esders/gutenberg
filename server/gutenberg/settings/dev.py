@@ -16,3 +16,5 @@ DATABASES = {
 }
 
 SELENIUM_HOST = env('SELENIUM_HOST', default="")
+
+S3_KEY_PREFIX_PROFILE_IMAGES = 'dev/profile/'

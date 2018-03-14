@@ -18,3 +18,5 @@ DATABASES = {
 # https://warehouse.python.org/project/whitenoise/
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
+S3_KEY_PREFIX_PROFILE_IMAGES = 'profile/'
