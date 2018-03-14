@@ -3,9 +3,11 @@ import { withAuth } from 'modules/auth/utils';
 import React from 'react';
 import { createFragmentContainer, graphql, commitMutation } from 'react-relay';
 import PropTypes from 'prop-types';
-import { Label, Modal, Icon, Button, Image, Menu, Segment, Header, Form } from 'semantic-ui-react';
-import Dropzone from 'react-dropzone'
+import { Label, Modal, Icon, Button, Menu, Segment, Header, Form } from 'semantic-ui-react';
+import Dropzone from 'react-dropzone';
 import { hasValidJwtToken } from 'modules/auth/jwtUtils';
+
+import UserAvatar from '../../../components/UserAvatar/UserAvatar';
 
 import styles from './ProfileView.scss';
 
@@ -23,9 +25,22 @@ const UpdateUserMutation = graphql`
 
 class ProfileView extends React.Component {
   static propTypes = {
-    viewer: PropTypes.object.isRequired
+    viewer: PropTypes.object.isRequired,
+    relay: PropTypes.object.isRequired
   }
-  state = { user: { email: this.props.viewer.user.email, firstName: this.props.viewer.user.firstName, lastName: this.props.viewer.user.lastName }, droppedFiles: [], success: false, accept: '', files: [], dropzoneActive: false, uploading: false }
+  state = { user: Object.assign({}, this.props.viewer.user), droppedFiles: [], success: false, accept: '', files: [], dropzoneActive: false, uploading: false }
+
+  onDragEnter = () => {
+    this.setState({ ...this.state, dropzoneActive: true });
+  }
+
+  onDragLeave = () => {
+    this.setState({ ...this.state, dropzoneActive: false });
+  }
+
+  onDrop = (files) => {
+    this.setState({ ...this.state, files });
+  }
 
   handleChange = (e, { value }) => {
     const name = e.target.name;
@@ -57,25 +72,13 @@ class ProfileView extends React.Component {
     });
   }
 
-  onDragEnter = () => {
-    this.setState({ ...this.state, dropzoneActive: true });
-  }
-
-  onDragLeave = () => {
-    this.setState({ ...this.state, dropzoneActive: false });
-  }
-
-  onDrop = (files) => {
-    this.setState({ ...this.state, files });
-  }
-
   // Wrapping of async arrow function needs to happen since 'this' won't be resolved
   // correctly caused by a bug in react-hot-loader.
   handleProfileImageSave = () => (async () => {
     const file = this.state.files[0];
     window.URL.revokeObjectURL(file.preview);
 
-    this.setState({ ...this.state, uploading: true })
+    this.setState({ ...this.state, uploading: true });
 
     // Acquire presigned url from backend.
     let response = await fetch(`/s3/sign?localName=${file.name}`, {
@@ -85,7 +88,7 @@ class ProfileView extends React.Component {
         Authorization: `Bearer ${hasValidJwtToken().token}`,
       },
     });
-    let payload = await response.json();
+    const payload = await response.json();
 
     // Upload image to S3.
     response = await fetch(payload.url, {
@@ -104,17 +107,15 @@ class ProfileView extends React.Component {
 
     const filename = payload.filename;
 
-    if (response.status == 200) {
-      this.setState({ ...this.state, uploading: false })
+    if (response.status === 200) {
+      const { user } = this.state;
+      user.profileImage = filename;
+      this.setState({ ...this.state, uploading: false, user });
     }
-
-    //window.location.reload()
   })();
 
   render() {
     const { user } = this.state;
-    const dbUser = this.props.viewer.user;
-    const profileImage = `https://s3-eu-west-1.amazonaws.com/gutenberg-images/profile/${dbUser.profileImage}`;
 
     return (
       <Page title='Gutenberg' viewer={this.props.viewer}>
@@ -134,7 +135,7 @@ class ProfileView extends React.Component {
             </section>
             <section className={styles.content}>
               <div className={styles.overlayContainer}>
-                <Image src={profileImage} className={styles.profileImage} size='small' avatar />
+                <UserAvatar user={user} size={200} />
                 <Modal
                   size='small'
                   dimmer='blurring'
