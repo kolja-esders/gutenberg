@@ -6,6 +6,8 @@ import { logoutViewer } from 'modules/auth/jwtUtils';
 import { isAuthenticated } from 'modules/auth/utils';
 import styles from './Header.scss';
 
+import UserAvatar from '../UserAvatar/UserAvatar.js';
+
 class Header extends React.Component {
 
   logOut() {
@@ -35,8 +37,8 @@ class Header extends React.Component {
         </h1>
         <nav className={styles.nav}>
           { loggedIn ? (
-          <div>
-            <Dropdown scrolling className='basic' pointing='top right' text={dropdownText} button floating>
+          <div className={styles.loggedInView}>
+            <Dropdown scrolling floating pointing='top right' className={[styles.menuDropdown, 'basic'].join(' ')} text={dropdownText} button>
               <Dropdown.Menu id={styles.dropdownMenu}>
                 <Dropdown.Item as={Link} to='/'>{ bookshelfText }</Dropdown.Item>
                 <Dropdown.Header content='Groups' />
@@ -59,9 +61,8 @@ class Header extends React.Component {
               pointing='top right'
               icon={null}
               trigger={
-                <span>
-                  <Image src={profileImage} className={styles.profileImage} avatar />
-                </span>}
+                <UserAvatar user={user} size={50} className={styles.profileImage} />
+                }
             >
               <Dropdown.Menu id={styles.dropdownMenu}>
                 <Dropdown.Item id={styles.nameItem}>{ `${user.firstName} ${user.lastName}` }</Dropdown.Item>
