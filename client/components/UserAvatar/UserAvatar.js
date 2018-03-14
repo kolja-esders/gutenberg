@@ -8,7 +8,7 @@ export default class UserAvatar extends React.Component {
 
   static S3_BASE_URL = 'https://s3-eu-west-1.amazonaws.com';
   static S3_BUCKET = 'gutenberg-images';
-  static S3_KEY_PREFIX = 'profile';
+  static S3_KEY_PREFIX = process.env.NODE_ENV === 'prod' ? 'profile' : 'dev/profile';
 
   static propTypes = {
     user: PropTypes.shape({
