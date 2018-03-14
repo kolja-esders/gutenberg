@@ -132,3 +132,7 @@ JWT_LEEWAY = 0
 JWT_EXPIRATION_DELTA = datetime.timedelta(hours=1)
 JWT_ALLOW_REFRESH = False
 JWT_REFRESH_EXPIRATION_DELTA = datetime.timedelta(days=7)
+
+S3_BUCKET_PROFILE_IMAGES = 'gutenberg-images'
+S3_DEFAULT_PROFILE_IMAGE = 'default.png'
+S3_REGION_NAME = 'eu-west-1'
