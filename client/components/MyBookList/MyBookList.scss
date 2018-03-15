@@ -17,12 +17,16 @@
   .finished{
     width: 30%;
   }
-  .done_button{
-      text-transform: uppercase!important;
-
-      &:hover{
-        color: rgba(255, 255, 255, 1);
-      }
+  .popup_button{
+    margin-top: 10px;
   }
-
+  .check{
+    &:hover{
+      background-color: green;
+    }
+  }
+}
+.ratingModal{
+  text-align: center!important;
+  margin: 0 auto!important;
 }

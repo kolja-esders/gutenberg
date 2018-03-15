@@ -1,12 +1,15 @@
 import React from 'react';
 import { graphql, createFragmentContainer } from 'react-relay';
-import { Table, Rating, Button } from 'semantic-ui-react';
+import { Table, Rating, Button, Popup, Icon, Modal } from 'semantic-ui-react';
 import styles from './MyBookList.scss';
 import updateRatingMutation from '../../modules/core/mutations/UpdateRating';
 import updateStateMutation from '../../modules/core/mutations/UpdateState';
 
 class MyBookList extends React.Component {
-  state = {input: {rating: 0}, errors: []};
+  state = {input: {rating: 0}, errors: [], modalOpen: false};
+
+  openModal = () => this.setState({open: true})
+  closeModal = () => this.setState({open: false})
 
   handleRatingChange = (e, data) => {
     e.preventDefault();
@@ -24,11 +27,12 @@ class MyBookList extends React.Component {
   }
 
   onCompletedReading = (data) => {
+    this.closeModal()
     const variables = {
       bookshelfEntryId: data,
       state: 'read'
     }
-      updateStateMutation(this.props.relay.environment, variables, this.setErrors)
+    updateStateMutation(this.props.relay.environment, variables, this.setErrors)
   }
 
   setErrors = (errors) => {
@@ -45,7 +49,7 @@ class MyBookList extends React.Component {
               <Table.HeaderCell className={styles.title}>Title</Table.HeaderCell>
               <Table.HeaderCell className={styles.author}>Author</Table.HeaderCell>
               {this.props.state == "reading" ?
-                <Table.HeaderCell className={styles.finished}>Done</Table.HeaderCell>
+                <Table.HeaderCell className={styles.finished}></Table.HeaderCell>
                 :
                 <Table.HeaderCell className={styles.rating}>Rating</Table.HeaderCell>
               }
@@ -68,13 +72,41 @@ class MyBookList extends React.Component {
 
                 {this.props.state =="reading" &&
                 <Table.Cell>
-                  <Button
-                    basic
-                    className={styles.done_button}
-                    onClick = {() => this.onCompletedReading(e.node.id)}
-                    >
-                    Done
-                  </Button>
+
+                <Popup
+                  trigger={
+                    <Button icon className={styles.check} onClick={() => this.openModal()}>
+                      <Icon name="check circle" size="large"/>
+                    </Button>}
+                  content="Mark as read"
+                />
+                <Modal size="mini" open={this.state.open} onClose={this.close}>
+                  <Modal.Header>
+                    How did you like {e.node.book.title}?
+                  </Modal.Header>
+                  <Modal.Content>
+                    <div className={styles.ratingModal}>
+                      <Rating
+                        size="huge"
+                        defaultRating={e.node.rating}
+                        maxRating={5}
+                        onRate={this.handleRatingChange}
+                        id ={e.node.id}
+                      />
+                    </div>
+                  </Modal.Content>
+                  <Modal.Actions>
+                    <Button basic onClick={() => this.closeModal()}>
+                      Close
+                    </Button>
+                    <Button positive icon='checkmark'
+                      content='Done'
+                      onClick = {() => this.onCompletedReading(e.node.id)}
+                    />
+                  </Modal.Actions>
+                </Modal>
+
+
                 </Table.Cell>
               }
 
