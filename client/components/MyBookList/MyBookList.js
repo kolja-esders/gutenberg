@@ -26,13 +26,13 @@ class MyBookList extends React.Component {
     updateRatingMutation(this.props.relay.environment, variables, this.setErrors)
   }
 
-  onCompletedReading = (data) => {
+  onCompletedReading = (data, state) => {
     this.closeModal()
     const variables = {
       bookshelfEntryId: data,
-      state: 'read'
+      state: state
     }
-    updateStateMutation(this.props.relay.environment, variables, this.setErrors)
+   updateStateMutation(this.props.relay.environment, variables, this.setErrors)
   }
 
   setErrors = (errors) => {
@@ -48,9 +48,13 @@ class MyBookList extends React.Component {
             <Table.Row>
               <Table.HeaderCell className={styles.title}>Title</Table.HeaderCell>
               <Table.HeaderCell className={styles.author}>Author</Table.HeaderCell>
-              {this.props.state == "reading" ?
+              {this.props.state == "reading" &&
                 <Table.HeaderCell className={styles.finished}></Table.HeaderCell>
-                :
+              }
+              {this.props.state == "to-read" &&
+                <Table.HeaderCell className={styles.rating}></Table.HeaderCell>
+              }
+              {this.props.state == "read" &&
                 <Table.HeaderCell className={styles.rating}>Rating</Table.HeaderCell>
               }
             </Table.Row>
@@ -63,7 +67,14 @@ class MyBookList extends React.Component {
 
                 {this.props.state == "to-read" &&
                   <Table.Cell>
-                      <Rating defaultRating={e.node.rating}  maxRating={5} disabled/>
+                    <div>
+                      <Popup
+                        trigger={<Button icon floated="right" onClick={() => this.onCompletedReading(e.node.id, "reading")}>
+                          <Icon name="book" size="large"/>
+                        </Button>}
+                        content="Mark as reading"
+                      />
+                    </div>
                   </Table.Cell>
             }
 
@@ -99,7 +110,7 @@ class MyBookList extends React.Component {
                     </Button>
                     <Button positive icon='checkmark'
                       content='Done'
-                      onClick = {() => this.onCompletedReading(e.node.id)}
+                      onClick = {() => this.onCompletedReading(e.node.id, "read")}
                     />
                   </Modal.Actions>
                 </Modal>
@@ -108,9 +119,11 @@ class MyBookList extends React.Component {
 
                 {this.props.state == "read" &&
                   <Table.Cell>
+                  <div className={styles.check}>
                     <Rating defaultRating={e.node.rating} maxRating={5}
                       onRate={this.handleRatingChange}
                       id ={e.node.id}/>
+                  </div>
                   </Table.Cell>
                 }
               </Table.Row>)}
