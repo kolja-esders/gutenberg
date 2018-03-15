@@ -62,7 +62,7 @@ class Email:
 class EmailBuilder:
 
     @staticmethod
-    def build_invitation_email(invite, host, invitee):
+    def build_new_user_invitation_email(invite, host, invitee):
         email = {
             'subject': '{}, you got invited by {} {} to join a Gutenberg group'.format(invitee['first_name'], host['first_name'], host['last_name']),
             'text': '{},\n\n{} {} invited you to join {}. Click the following link to join:\n\nhttp://gutenberg.kolja.es/accept/{}\n\nAll the best\nGutenberg'.format(invitee['first_name'], host['first_name'],host['last_name'], invite['group_name'], invite['verification_token'])
@@ -70,3 +70,10 @@ class EmailBuilder:
 
         return email
 
+    def build_existing_user_invitation_email(invite, host, invitee):
+        email = {
+            'subject': '{}, you got invited by {} {} to join a Gutenberg group'.format(invitee['first_name'], host['first_name'], host['last_name']),
+            'text': '{},\n\n{} {} invited you to join {}. Click the following link to join:\n\nhttp://gutenberg.kolja.es/accept/{}\n\nYou can also accept the invitation at a later time from your account.\n\nAll the best\nGutenberg'.format(invitee['first_name'], host['first_name'],host['last_name'], invite['group_name'], invite['verification_token'])
+        }
+
+        return email
