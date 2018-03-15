@@ -120,9 +120,12 @@ class MyBookList extends React.Component {
                 {this.props.state == "read" &&
                   <Table.Cell>
                   <div className={styles.check}>
-                    <Rating defaultRating={e.node.rating} maxRating={5}
+                   <Popup
+                    trigger={<Rating defaultRating={e.node.rating} maxRating={5}
                       onRate={this.handleRatingChange}
-                      id ={e.node.id}/>
+                      id ={e.node.id}/>}
+                    content="Change rating"
+                    />
                   </div>
                   </Table.Cell>
                 }
