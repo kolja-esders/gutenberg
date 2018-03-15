@@ -4,11 +4,12 @@ import React from 'react';
 import { createFragmentContainer, graphql } from 'react-relay';
 import PropTypes from 'prop-types';
 import { Link } from 'found';
-import { Segment, Button, Header, Table, Rating, Image, Grid } from 'semantic-ui-react';
+import { Segment, Button, Header, Table, Rating, Grid } from 'semantic-ui-react';
 
 import styles from './GroupView.scss';
 
 import UserAvatar from '../../../components/UserAvatar/UserAvatar.js';
+import GroupInvitationButton from '../../../components/GroupInvitationButton/GroupInvitationButton.js';
 
 class GroupView extends React.Component {
   static propTypes = {
@@ -39,8 +40,9 @@ class GroupView extends React.Component {
                   </Grid.Column>
                   <Grid.Column floated="right" width={12}>
                     <div className={styles.memberAvatars}>
+                      <GroupInvitationButton onClick={() => this.props.router.push(inviteLink)} />
                       {members.map(m =>
-                        <UserAvatar key={m.node.id} user={m.node} showPopup />
+                        <UserAvatar key={m.node.id} user={m.node} showPopup className={styles.avatar} />
                       )}
                     </div>
                   </Grid.Column>
