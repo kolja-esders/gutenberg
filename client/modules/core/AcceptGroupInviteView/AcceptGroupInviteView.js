@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/href-no-hash */
 import Page from 'components/Page/Page';
 import React from 'react';
+import { routerShape } from 'found/lib/PropTypes';
 import { createFragmentContainer, graphql, commitMutation } from 'react-relay';
 import PropTypes from 'prop-types';
 import { Button, Input, Grid, Message } from 'semantic-ui-react';
@@ -38,7 +39,7 @@ class AcceptGroupInviteView extends React.Component {
     viewer: PropTypes.object.isRequired,
     relay: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
-    router: PropTypes.object.isRequired
+    router: routerShape.isRequired
   }
 
   state = { input: { }, showError: false, errors: [] }
