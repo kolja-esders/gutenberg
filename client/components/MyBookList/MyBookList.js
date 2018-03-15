@@ -55,9 +55,7 @@ class MyBookList extends React.Component {
               }
             </Table.Row>
           </Table.Header>
-
           <Table.Body>
-
             {bookshelfEntries.map(e => {if (e.node.state == this.props.state){ return(
               <Table.Row key={e.node.id}>
                 <Table.Cell>{e.node.book.title}</Table.Cell>
@@ -67,17 +65,17 @@ class MyBookList extends React.Component {
                   <Table.Cell>
                       <Rating defaultRating={e.node.rating}  maxRating={5} disabled/>
                   </Table.Cell>
-                }
-
+            }
 
                 {this.props.state =="reading" &&
                 <Table.Cell>
 
                 <Popup
                   trigger={
-                    <Button icon className={styles.check} onClick={() => this.openModal()}>
-                      <Icon name="check circle" size="large"/>
-                    </Button>}
+
+                      <Button icon floated="right" onClick={() => this.openModal()}>
+                        <Icon name="check circle" size="large"/>
+                      </Button>}
                   content="Mark as read"
                 />
                 <Modal size="mini" open={this.state.open} onClose={this.close}>
@@ -105,8 +103,6 @@ class MyBookList extends React.Component {
                     />
                   </Modal.Actions>
                 </Modal>
-
-
                 </Table.Cell>
               }
 
