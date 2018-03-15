@@ -41,12 +41,12 @@ export default class UserAvatar extends React.Component {
         position='top center'
         inverted
         trigger={
-          <div className={styles.image} style={{ backgroundImage: `url(${profileImage})`, height: this.props.size, width: this.props.size }} />
+          <div className={[styles.image, this.props.className].join(' ')} style={{ backgroundImage: `url(${profileImage})`, height: this.props.size, width: this.props.size }} />
         }
       >
-        <Popup.Header className={styles.tooltipHeader}>
+        <Popup.Content className={styles.tooltipHeader}>
           {`${user.firstName} ${user.lastName}`}
-        </Popup.Header>
+        </Popup.Content>
       </Popup>
     );
   }
