@@ -27,7 +27,7 @@ def sign_s3_upload(request):
     mime_type = mimetypes.types_map[ext]
 
     salt = os.urandom(blake2b.SALT_SIZE)
-    hash_gen = blake2b(digest_size=32, person=str.encode(user.email), salt=salt)
+    hash_gen = blake2b(digest_size=32, person=bytes([user.id]), salt=salt)
     hash_gen.update(str.encode(local_name))
 
     filename = hash_gen.hexdigest() + ext

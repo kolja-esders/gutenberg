@@ -159,6 +159,7 @@ class CreateGroupInvite(graphene.Mutation):
         first_name = args['invitee_first_name']
         last_name = args['invitee_last_name']
         verification_token = Utils.generate_verification_token(group, email)
+        invitee_has_account = get_user_model().objects.filter(email=email).exists()
 
         group_invite = None
         try:
@@ -170,7 +171,8 @@ class CreateGroupInvite(graphene.Mutation):
                 verification_token=verification_token,
                 created_by=host,
                 consumed=False,
-                email_sent=False
+                email_sent=False,
+                has_account=invitee_has_account
             )
             group_invite.save()
         except Exception:
@@ -179,7 +181,11 @@ class CreateGroupInvite(graphene.Mutation):
         host = {'first_name': host.first_name, 'last_name': host.last_name}
         invitee = {'first_name': first_name, 'last_name': last_name}
         invite = {'group_name': group.name, 'verification_token': verification_token}
-        content = EmailBuilder.build_invitation_email(invite, host, invitee)
+
+        if invitee_has_account:
+            content = EmailBuilder.build_existing_user_invitation_email(invite, host, invitee)
+        else:
+            content = EmailBuilder.build_new_user_invitation_email(invite, host, invitee)
 
         try:
             Email().recipient('kolja.esders@gmail.com').sender(email).subject(content['subject']).text(content['text']).send()

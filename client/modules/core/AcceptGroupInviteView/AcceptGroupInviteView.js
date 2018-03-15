@@ -47,10 +47,43 @@ class AcceptGroupInviteView extends React.Component {
   componentWillMount = () => {
     const input = this.state.input;
     const invite = this.props.viewer.groupInvite;
+    const user = this.props.viewer.user;
     input.email = invite.email;
     input.firstName = invite.firstName;
     input.lastName = invite.lastName;
     this.setState({ input });
+
+    if (user.email === invite.email) {
+      let variables = {
+        inviteIdInput: invite.id,
+        verificationTokenInput: this.props.params.verificationToken
+      };
+
+      commitMutation(this.props.relay.environment, {
+        mutation: AcceptInviteMutation,
+        variables,
+        onCompleted: (response) => {
+          const obj = response.acceptGroupInvite;
+          if (!obj.success) {
+            this.setState({ ...this.state, showError: true, errors: [obj.reason] });
+            return;
+          }
+
+          variables = {
+            groupId: invite.group.id,
+            userId: user.id,
+            inviteId: invite.id
+          };
+          commitMutation(this.props.relay.environment, {
+            mutation: CreateMembershipMutation,
+            variables,
+            onError: () => {
+              this.setErrors(['Unable to add user to group. Try again later.']);
+            }
+          });
+        }
+      });
+    }
   }
 
   onSubmitHandler = (ev) => {
@@ -118,6 +151,28 @@ class AcceptGroupInviteView extends React.Component {
   render() {
     const { input } = this.state;
     const invite = this.props.viewer.groupInvite;
+    const { user } = this.props.viewer;
+
+    if (user.email === invite.email) {
+      return (
+        <Page viewer={this.props.viewer} title='Accept invite'>
+          <div className={styles.container}>
+            <Message hidden={this.state.showError} size='massive' positive>You accepted the invite.</Message>
+            <Message negative size='massive' list={this.state.errors} hidden={!this.state.showError} />
+          </div>
+        </Page>
+      );
+    }
+
+    if (invite.hasAccount) {
+      return (
+        <Page viewer={this.props.viewer} title='Accept invite'>
+          <div className={styles.container}>
+            <Message size='massive' positive>Please log in to accept the invite.</Message>
+          </div>
+        </Page>
+      );
+    }
 
     return (
       <Page viewer={this.props.viewer} title='Accept invite'>
@@ -213,6 +268,10 @@ class AcceptGroupInviteView extends React.Component {
 export default createFragmentContainer(AcceptGroupInviteView, graphql`
     fragment AcceptGroupInviteView_viewer on Viewer {
       ...Page_viewer
+      user {
+        id
+        email
+      }
       groupInvite(verificationToken: $verificationToken) {
         id
         group {
@@ -227,6 +286,7 @@ export default createFragmentContainer(AcceptGroupInviteView, graphql`
           lastName
         }
         email
+        hasAccount
       }
     }
   `);

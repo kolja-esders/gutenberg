@@ -61,6 +61,7 @@ class GroupInvite(models.Model):
     created_by = models.ForeignKey(CustomUser, default=None)
     consumed = models.BooleanField(default=False)
     email_sent = models.BooleanField(default=False)
+    has_account = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = AutoDateTimeField(default=timezone.now)
 
