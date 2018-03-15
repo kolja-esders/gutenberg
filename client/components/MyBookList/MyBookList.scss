@@ -14,10 +14,14 @@
   .rating{
     width: 30%;
   }
+  .finished{
+    width: 30%;
+  }
   .done_button{
       text-transform: uppercase!important;
-      & :hover{
-        background: green;
+
+      &:hover{
+        color: rgba(255, 255, 255, 1);
       }
   }
 

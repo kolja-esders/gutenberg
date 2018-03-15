@@ -44,7 +44,11 @@ class MyBookList extends React.Component {
             <Table.Row>
               <Table.HeaderCell className={styles.title}>Title</Table.HeaderCell>
               <Table.HeaderCell className={styles.author}>Author</Table.HeaderCell>
-              <Table.HeaderCell className={styles.rating}>Rating</Table.HeaderCell>
+              {this.props.state == "reading" ?
+                <Table.HeaderCell className={styles.finished}>Done</Table.HeaderCell>
+                :
+                <Table.HeaderCell className={styles.rating}>Rating</Table.HeaderCell>
+              }
             </Table.Row>
           </Table.Header>
 
@@ -61,24 +65,18 @@ class MyBookList extends React.Component {
                   </Table.Cell>
                 }
 
-                {this.props.state == "reading" &&
-                  <div>
-                    <Table.Cell>
-                      <Rating defaultRating={e.node.rating} maxRating={5}
-                        onRate={this.handleRatingChange}
-                        id ={e.node.id}/>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <Button
-                        basic color='light gray'
-                        className={styles.done_button}
-                        onClick = {() => this.onCompletedReading(e.node.id)}
-                        >
-                        Done
-                      </Button>
-                    </Table.Cell>
-                  </div>
-                }
+
+                {this.props.state =="reading" &&
+                <Table.Cell>
+                  <Button
+                    basic
+                    className={styles.done_button}
+                    onClick = {() => this.onCompletedReading(e.node.id)}
+                    >
+                    Done
+                  </Button>
+                </Table.Cell>
+              }
 
                 {this.props.state == "read" &&
                   <Table.Cell>
