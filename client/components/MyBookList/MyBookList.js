@@ -1,12 +1,15 @@
 import React from 'react';
 import { graphql, createFragmentContainer } from 'react-relay';
-import { Table, Rating, Button } from 'semantic-ui-react';
+import { Table, Rating, Button, Popup, Icon, Modal } from 'semantic-ui-react';
 import styles from './MyBookList.scss';
 import updateRatingMutation from '../../modules/core/mutations/UpdateRating';
 import updateStateMutation from '../../modules/core/mutations/UpdateState';
 
 class MyBookList extends React.Component {
-  state = {input: {rating: 0}, errors: []};
+  state = {input: {rating: 0}, errors: [], modalOpen: false};
+
+  openModal = () => this.setState({open: true})
+  closeModal = () => this.setState({open: false})
 
   handleRatingChange = (e, data) => {
     e.preventDefault();
@@ -23,12 +26,13 @@ class MyBookList extends React.Component {
     updateRatingMutation(this.props.relay.environment, variables, this.setErrors)
   }
 
-  onCompletedReading = (data) => {
+  onCompletedReading = (data, state) => {
+    this.closeModal()
     const variables = {
       bookshelfEntryId: data,
-      state: 'read'
+      state: state
     }
-      updateStateMutation(this.props.relay.environment, variables, this.setErrors)
+   updateStateMutation(this.props.relay.environment, variables, this.setErrors)
   }
 
   setErrors = (errors) => {
@@ -44,12 +48,18 @@ class MyBookList extends React.Component {
             <Table.Row>
               <Table.HeaderCell className={styles.title}>Title</Table.HeaderCell>
               <Table.HeaderCell className={styles.author}>Author</Table.HeaderCell>
-              <Table.HeaderCell className={styles.rating}>Rating</Table.HeaderCell>
+              {this.props.state == "reading" &&
+                <Table.HeaderCell className={styles.finished}></Table.HeaderCell>
+              }
+              {this.props.state == "to-read" &&
+                <Table.HeaderCell className={styles.rating}></Table.HeaderCell>
+              }
+              {this.props.state == "read" &&
+                <Table.HeaderCell className={styles.rating}>Rating</Table.HeaderCell>
+              }
             </Table.Row>
           </Table.Header>
-
           <Table.Body>
-
             {bookshelfEntries.map(e => {if (e.node.state == this.props.state){ return(
               <Table.Row key={e.node.id}>
                 <Table.Cell>{e.node.book.title}</Table.Cell>
@@ -57,34 +67,66 @@ class MyBookList extends React.Component {
 
                 {this.props.state == "to-read" &&
                   <Table.Cell>
-                      <Rating defaultRating={e.node.rating}  maxRating={5} disabled/>
+                    <div>
+                      <Popup
+                        trigger={<Button icon floated="right" onClick={() => this.onCompletedReading(e.node.id, "reading")}>
+                          <Icon name="book" size="large"/>
+                        </Button>}
+                        content="Mark as reading"
+                      />
+                    </div>
                   </Table.Cell>
-                }
+            }
 
-                {this.props.state == "reading" &&
-                  <div>
-                    <Table.Cell>
-                      <Rating defaultRating={e.node.rating} maxRating={5}
+                {this.props.state =="reading" &&
+                <Table.Cell>
+
+                <Popup
+                  trigger={
+
+                      <Button icon floated="right" onClick={() => this.openModal()}>
+                        <Icon name="check circle" size="large"/>
+                      </Button>}
+                  content="Mark as read"
+                />
+                <Modal size="mini" open={this.state.open} onClose={this.close}>
+                  <Modal.Header>
+                    How did you like {e.node.book.title}?
+                  </Modal.Header>
+                  <Modal.Content>
+                    <div className={styles.ratingModal}>
+                      <Rating
+                        size="huge"
+                        defaultRating={e.node.rating}
+                        maxRating={5}
                         onRate={this.handleRatingChange}
-                        id ={e.node.id}/>
-                    </Table.Cell>
-                    <Table.Cell>
-                      <Button
-                        basic color='light gray'
-                        className={styles.done_button}
-                        onClick = {() => this.onCompletedReading(e.node.id)}
-                        >
-                        Done
-                      </Button>
-                    </Table.Cell>
-                  </div>
-                }
+                        id ={e.node.id}
+                      />
+                    </div>
+                  </Modal.Content>
+                  <Modal.Actions>
+                    <Button basic onClick={() => this.closeModal()}>
+                      Close
+                    </Button>
+                    <Button positive icon='checkmark'
+                      content='Done'
+                      onClick = {() => this.onCompletedReading(e.node.id, "read")}
+                    />
+                  </Modal.Actions>
+                </Modal>
+                </Table.Cell>
+              }
 
                 {this.props.state == "read" &&
                   <Table.Cell>
-                    <Rating defaultRating={e.node.rating} maxRating={5}
+                  <div className={styles.check}>
+                   <Popup
+                    trigger={<Rating defaultRating={e.node.rating} maxRating={5}
                       onRate={this.handleRatingChange}
-                      id ={e.node.id}/>
+                      id ={e.node.id}/>}
+                    content="Change rating"
+                    />
+                  </div>
                   </Table.Cell>
                 }
               </Table.Row>)}

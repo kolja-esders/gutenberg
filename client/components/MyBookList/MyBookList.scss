@@ -6,19 +6,26 @@
     table-layout: fixed;
   }
   .title{
-    width: 30%;
+    width: 40%;
   }
   .author{
     width: 40%;
   }
   .rating{
-    width: 30%;
+    width: 20%;
+    text-align: right!important;
   }
-  .done_button{
-      text-transform: uppercase!important;
-      & :hover{
-        background: green;
-      }
+  .finished{
+    width: 20%;
   }
-
+  .popup_button{
+    margin-top: 10px;
+  }
+  .check{
+    text-align: right;
+  }
+}
+.ratingModal{
+  text-align: center!important;
+  margin: 0 auto!important;
 }

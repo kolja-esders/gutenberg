@@ -202,10 +202,15 @@ class AddBookToBookshelf extends React.Component {
     console.log("CompletedRefetch")
 
 
-    const { rating, state } = this.state.input;
+    var { rating, state } = this.state.input;
     const { book, user } = this.props.viewer;
 
-
+    if (state != "read") {
+      rating = 0;
+      const input = this.state.input;
+      input["rating"] = rating;
+      this.setState({ ...this.state, input });
+    }
 
     const variables = {
       userIdInput: user.id,
