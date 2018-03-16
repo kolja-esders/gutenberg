@@ -7,10 +7,20 @@ import { withAuth } from 'modules/auth/utils';
 import styles from './ProfileInvitesTab.scss';
 
 class ProfileInvitesTab extends React.Component {
-  static defaultProps = {};
-  static propTypes = {};
+  static defaultProps = {
+    visible: true
+  };
+  static propTypes = {
+    visible: PropTypes.bool
+  };
 
   render() {
+    const { visible } = this.props;
+
+    if (!visible) {
+      return null;
+    }
+
     return (
       <Tab.Pane className={styles.root}>
         ProfileInvitesTab

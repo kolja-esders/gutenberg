@@ -41,7 +41,8 @@ class ProfileView extends React.Component {
               </VerticalNav.Item>
             </VerticalNav>
             <div className={styles.content}>
-              <ProfileSettingsTab viewer={this.props.viewer} />
+              <ProfileSettingsTab visible={activeItem === 'profile'} viewer={this.props.viewer} />
+              <ProfileInvitesTab visible={activeItem === 'invites'}viewer={this.props.viewer} />
             </div>
           </Segment>
         </div>

@@ -23,11 +23,14 @@ const UpdateUserMutation = graphql`
 `;
 
 class ProfileSettingsTab extends React.Component {
-  static defaultProps = {};
+  static defaultProps = {
+    visible: true
+  };
 
   static propTypes = {
     viewer: PropTypes.object.isRequired,
-    relay: PropTypes.object.isRequired
+    relay: PropTypes.object.isRequired,
+    visible: PropTypes.bool
   }
 
   state = { user: Object.assign({}, this.props.viewer.user), droppedFiles: [], success: false, accept: '', files: [], dropzoneActive: false, uploading: false }
@@ -118,6 +121,10 @@ class ProfileSettingsTab extends React.Component {
 
   render() {
     const { user } = this.state;
+    const { visible } = this.props;
+    if (!visible) {
+      return null;
+    }
 
     return (
       <div className={styles.root}>
