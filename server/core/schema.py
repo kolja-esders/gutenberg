@@ -30,7 +30,7 @@ class Group(DjangoObjectType):
 class GroupInvite(DjangoObjectType):
     class Meta:
         model = GroupInviteModal
-        filter_fields = ['group']
+        filter_fields = ['group', 'email']
         interfaces = (graphene.Node, )
 
 class Membership(DjangoObjectType):
