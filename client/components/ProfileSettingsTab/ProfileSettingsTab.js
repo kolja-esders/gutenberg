@@ -153,7 +153,6 @@ class ProfileSettingsTab extends React.Component {
             </Modal.Content>
           </Modal>
         </div>
-        <Header as='h1'>Profile</Header>
         <Form className={styles.profileInfo}>
           <Form.Group>
             <Form.Input placeholder='First name' label='First name' name='firstName' value={user.firstName} onChange={this.handleChange} />
