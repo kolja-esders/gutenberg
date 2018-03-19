@@ -183,7 +183,7 @@ class ProfileSettingsTab extends React.Component {
   }
 }
 
-export default createFragmentContainer(withAuth(ProfileSettingsTab), graphql`
+export default createFragmentContainer(ProfileSettingsTab, graphql`
   fragment ProfileSettingsTab_viewer on Viewer {
     user {
       id
