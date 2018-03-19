@@ -30,7 +30,7 @@ class Group(DjangoObjectType):
 class GroupInvite(DjangoObjectType):
     class Meta:
         model = GroupInviteModal
-        filter_fields = ['group', 'email']
+        filter_fields = ['group', 'email', 'consumed']
         interfaces = (graphene.Node, )
 
 class Membership(DjangoObjectType):
@@ -54,6 +54,8 @@ class User(DjangoObjectType):
             'is_active',
             'date_joined',
             'profile_image',
+            'sent_invites',
+            'received_invites'
         )
         interfaces = (graphene.Node, TokensInterface)
         filter_fields = []
@@ -159,7 +161,10 @@ class CreateGroupInvite(graphene.Mutation):
         first_name = args['invitee_first_name']
         last_name = args['invitee_last_name']
         verification_token = Utils.generate_verification_token(group, email)
-        invitee_has_account = get_user_model().objects.filter(email=email).exists()
+        if get_user_model().objects.filter(email=email).exists():
+            invitee = get_user_model().objects.get(email=email)
+        else:
+            invitee = None
 
         group_invite = None
         try:
@@ -172,20 +177,20 @@ class CreateGroupInvite(graphene.Mutation):
                 created_by=host,
                 consumed=False,
                 email_sent=False,
-                has_account=invitee_has_account
+                invitee=invitee
             )
             group_invite.save()
         except Exception:
             raise GraphQLError('Invite was already sent to this email.')
 
-        host = {'first_name': host.first_name, 'last_name': host.last_name}
-        invitee = {'first_name': first_name, 'last_name': last_name}
-        invite = {'group_name': group.name, 'verification_token': verification_token}
+        host_fields = {'first_name': host.first_name, 'last_name': host.last_name}
+        invitee_fields = {'first_name': first_name, 'last_name': last_name}
+        invite_fields = {'group_name': group.name, 'verification_token': verification_token}
 
-        if invitee_has_account:
-            content = EmailBuilder.build_existing_user_invitation_email(invite, host, invitee)
+        if invitee:
+            content = EmailBuilder.build_existing_user_invitation_email(invite_fields, host_fields, invitee_fields)
         else:
-            content = EmailBuilder.build_new_user_invitation_email(invite, host, invitee)
+            content = EmailBuilder.build_new_user_invitation_email(invite_fields, host_fields, invitee_fields)
 
         try:
             Email().recipient('kolja.esders@gmail.com').sender(email).subject(content['subject']).text(content['text']).send()

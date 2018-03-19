@@ -58,10 +58,10 @@ class GroupInvite(models.Model):
     first_name = models.CharField(max_length=31, blank=True)
     last_name = models.CharField(max_length=31, blank=True)
     verification_token = models.CharField(max_length=64, unique=True)
-    created_by = models.ForeignKey(CustomUser, default=None)
+    created_by = models.ForeignKey(CustomUser, related_name='sent_invites')
     consumed = models.BooleanField(default=False)
     email_sent = models.BooleanField(default=False)
-    has_account = models.BooleanField(default=False)
+    invitee = models.ForeignKey(CustomUser, related_name='received_invites', default=None, null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = AutoDateTimeField(default=timezone.now)
 
