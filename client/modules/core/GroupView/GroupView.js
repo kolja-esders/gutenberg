@@ -67,7 +67,7 @@ class GroupView extends React.Component {
                           <Table.Cell>{e.node.book.title}</Table.Cell>
                           <Table.Cell>{e.node.book.author}</Table.Cell>
                           <Table.Cell>
-                            <Rating defaultRating={e.node.rating} maxRating={5} />
+                            <Rating disabled rating={e.node.rating} maxRating={5} className={styles.rating}/>
                           </Table.Cell>
                         </Table.Row>
                       )
