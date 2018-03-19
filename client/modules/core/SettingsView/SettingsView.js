@@ -9,9 +9,9 @@ import VerticalNav from '../../../components/VerticalNav/VerticalNav';
 import ProfileSettingsTab from '../../../components/ProfileSettingsTab/ProfileSettingsTab';
 import ProfileInvitesTab from '../../../components/ProfileInvitesTab/ProfileInvitesTab';
 
-import styles from './ProfileView.scss';
+import styles from './SettingsView.scss';
 
-class ProfileView extends React.Component {
+class SettingsView extends React.Component {
   static propTypes = {
     viewer: PropTypes.object.isRequired,
   }
@@ -48,8 +48,8 @@ class ProfileView extends React.Component {
   }
 }
 
-export default createFragmentContainer(withAuth(ProfileView), graphql`
-  fragment ProfileView_viewer on Viewer {
+export default createFragmentContainer(withAuth(SettingsView), graphql`
+  fragment SettingsView_viewer on Viewer {
     ...Page_viewer
     ...ProfileSettingsTab_viewer
     ...ProfileInvitesTab_viewer
