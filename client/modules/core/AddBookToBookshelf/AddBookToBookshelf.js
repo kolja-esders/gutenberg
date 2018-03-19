@@ -243,12 +243,22 @@ class AddBookToBookshelf extends React.Component {
 
     // Fetch data from Goodreads
     // const url = new URL('https://www.goodreads.com/book/auto_complete?format=json&q=dan+ariely')
-    const url = new URL('https://www.goodreads.com/book/auto_complete');
+    // const url = new URL('https://www.goodreads.com/book/auto_complete');
+    let baseurl = 'https://www.goodreads.com/book/auto_complete?';
     const params = new URLSearchParams('format=json');
     params.set('q', this.state.input.title);
+    let finalurl = baseurl.concat(params.toString());
+    let proxyurl = 'https://cors-anywhere.herokuapp.com/';
 
-    console.log("Param>3")
+    console.log("Param>3");
+    console.log(finalurl);
     console.log(params.toString());
+    console.log(proxyurl + finalurl);
+
+    fetch(proxyurl + finalurl)
+    .then(response => response.text())
+    .then(contents => console.log(contents))
+    .catch(() => console.log("Can't access " + finalurl + "response. Blocked?"))
 
     const bookOptions = this.props.viewer.booksAutocompleted.map((x) => ({key: x.id, value: x.id, text: x.title+" by "+x.author}))
 
