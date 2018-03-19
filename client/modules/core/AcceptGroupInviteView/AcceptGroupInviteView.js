@@ -164,11 +164,11 @@ class AcceptGroupInviteView extends React.Component {
       );
     }
 
-    if (invite.hasAccount) {
+    if (invite.invitee) {
       return (
         <Page viewer={this.props.viewer} title='Accept invite'>
           <div className={styles.container}>
-            <Message size='massive' positive>Please log in to accept the invite.</Message>
+            <Message size='massive' info>Please log in to accept the invite.</Message>
           </div>
         </Page>
       );
@@ -286,7 +286,9 @@ export default createFragmentContainer(AcceptGroupInviteView, graphql`
           lastName
         }
         email
-        hasAccount
+        invitee {
+          id
+        }
       }
     }
   `);
