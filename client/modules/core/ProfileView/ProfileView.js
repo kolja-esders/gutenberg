@@ -3,7 +3,7 @@ import { withAuth } from 'modules/auth/utils';
 import React from 'react';
 import { createFragmentContainer, graphql } from 'react-relay';
 import PropTypes from 'prop-types';
-import { Segment, Label } from 'semantic-ui-react';
+import { Segment } from 'semantic-ui-react';
 
 import VerticalNav from '../../../components/VerticalNav/VerticalNav';
 import ProfileSettingsTab from '../../../components/ProfileSettingsTab/ProfileSettingsTab';
@@ -36,13 +36,10 @@ class ProfileView extends React.Component {
               <VerticalNav.Item name='invites' color='green' active={activeItem === 'invites'} onClick={this.onItemSelect}>
                 Invites
               </VerticalNav.Item>
-              <VerticalNav.Item name='test' color='blue' active={activeItem === 'test'} onClick={this.onItemSelect}>
-                Test
-              </VerticalNav.Item>
             </VerticalNav>
             <div className={styles.content}>
               <ProfileSettingsTab visible={activeItem === 'profile'} viewer={this.props.viewer} />
-              <ProfileInvitesTab visible={activeItem === 'invites'}viewer={this.props.viewer} />
+              <ProfileInvitesTab visible={activeItem === 'invites'} viewer={this.props.viewer} />
             </div>
           </Segment>
         </div>
