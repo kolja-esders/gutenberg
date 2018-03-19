@@ -6,6 +6,7 @@ import { graphql, createRefetchContainer } from 'react-relay';
 import createBookMutation from '../mutations/CreateBook';
 import createBookshelfEntryMutation from '../mutations/CreateBookshelfEntry';
 import styles from './AddBookToBookshelf.scss';
+import URLSearchParams from 'url-search-params'
 
 
 
@@ -76,15 +77,16 @@ class AddBookToBookshelf extends React.Component {
     input[inputName] = e.target.value;
     this.setState({ ...this.state, input });
 
-
     if (this.state.input.title.length >= 3) {
       const refetchVariables = fragmentVariables => ({
         title: " ",
         author: " ",
         input: this.state.input.title
       });
+
       this.props.relay.refetch(refetchVariables, null, this.autoComplete);
     }
+
   }
 
 
@@ -238,6 +240,16 @@ class AddBookToBookshelf extends React.Component {
 
   autoComplete = () => {
     console.log("autoComplete")
+
+    // Fetch data from Goodreads
+    // const url = new URL('https://www.goodreads.com/book/auto_complete?format=json&q=dan+ariely')
+    const url = new URL('https://www.goodreads.com/book/auto_complete');
+    const params = new URLSearchParams('format=json');
+    params.set('q', this.state.input.title);
+
+    console.log("Param>3")
+    console.log(params.toString());
+
     const bookOptions = this.props.viewer.booksAutocompleted.map((x) => ({key: x.id, value: x.id, text: x.title+" by "+x.author}))
 
     for (var i=0; i < this.props.viewer.booksAutocompleted.length; i++){
