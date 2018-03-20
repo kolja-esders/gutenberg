@@ -86,10 +86,12 @@ class AddBookToBookshelf extends React.Component {
        author: ''
       }
     },
-    errors: []
+    errors: [],
+    dropDownOpen: false
   }
 
-  handleTitleFieldChange = (e, { value }) => {
+
+  handleTitleFieldChange = (e, { value }) => { // not used
     const input = this.state.input;
     const inputName = e.target.id;
     input[inputName] = e.target.value;
@@ -104,7 +106,6 @@ class AddBookToBookshelf extends React.Component {
 
       this.props.relay.refetch(refetchVariables, null, this.autoComplete);
     }
-
   }
 
 
@@ -116,11 +117,18 @@ class AddBookToBookshelf extends React.Component {
 
   }
 
-  handleTitleDropdownChange = (e, data) => {
+
+  // Dropdown manipulations
+
+  handleDropdownInputChange = (e, data) => {
+    console.log('Dropdown title change.');
+
     const input = this.state.input;
     const inputName = "title";
     input[inputName] = data;
-    this.setState({ ...this.state, input });
+    const dropDownOpen = true;
+
+    this.setState({ ...this.state, input, dropDownOpen });
 
     if (this.state.input.title.length >= 3) {
       const refetchVariables = fragmentVariables => ({
@@ -129,8 +137,33 @@ class AddBookToBookshelf extends React.Component {
         input: this.state.input.title
       });
       this.props.relay.refetch(refetchVariables, null, this.autoComplete);
+    }
   }
+
+  handleDropdownClick = (e, data) => {
+    console.log('Dropdown click.');
+
+    const dropDownOpen = true;
+
+    this.setState({...this.state, dropDownOpen});
   }
+
+  handleDropdownOpen = (e,data) => {
+    console.log('Dropdown open.');
+
+    const dropDownOpen = true;
+
+    this.setState({...this.state, dropDownOpen});
+  }
+
+  handleDropdownClose = (e,data) => {
+    console.log('Dropdown close.');
+
+    const dropDownOpen = false;
+
+    this.setState({...this.state, dropDownOpen});
+  }
+
   handleAuthorDropdownChange = (e, data) => {
     const input = this.state.input;
     const inputName = "author";
@@ -140,13 +173,25 @@ class AddBookToBookshelf extends React.Component {
 
 
   handleDropdownFinalChange = (e, data) => {
+    console.log('Dropdown final change.')
     console.log(data)
     console.log(this.props.viewer)
+
     const input = this.state.input;
+    const dropDownOpen = true;
 
     input["author"] = this.state.matchAuthors[data.value].author;
     input["title"] = this.state.matchAuthors[data.value].title;
-    this.setState({ ...this.state, input });
+    this.setState({ ...this.state, input, dropDownOpen});
+  }
+
+  handleDropdownSelection = (e,data) => {
+    console.log(data);
+    console.log('Dropdown selection.');
+
+    const dropDownOpen = false;
+
+    this.setState({...this.state, dropDownOpen});
   }
 
   handleButtonChange = (e, data) => {
@@ -289,7 +334,12 @@ class AddBookToBookshelf extends React.Component {
               value: x.bookId,
               text: x.bookTitleBare,
               // text: x.bookTitleBare + " by " + x.author.name
-              content: <Header image={x.imageUrl} content={x.bookTitleBare} subheader={x.author.name} />,
+              content: <Header
+                image={x.imageUrl}
+                content={x.bookTitleBare}
+                subheader={x.author.name}
+                onClick={this.handleDropdownSelection}
+                />
             }))
 
           this.setState({ ...this.state, bookOptions });
@@ -338,9 +388,7 @@ class AddBookToBookshelf extends React.Component {
           <Segment padded='very'>
             <Header as='h1'>New book</Header>
 
-          <form
-              className={styles.form}
-            >
+          <form className={styles.form}>
 
             <Dropdown
                  id="title"
@@ -349,11 +397,14 @@ class AddBookToBookshelf extends React.Component {
                  search
                  selection
                  fluid
-                 onSearchChange={this.handleTitleDropdownChange}
-                 onChange={this.handleDropdownFinalChange}
                  placeholder='book title'
+                 open={this.state.dropDownOpen}
+                 onSearchChange={this.handleDropdownInputChange}
+                 onChange={this.handleDropdownFinalChange}
+                 onClick={this.state.handleDropdownClick}
+                 onOpen={this.state.handleDropdownOpen}
+                 onClose={this.state.handleDropdownClose}
                />
-
 
 
           <Button.Group className={styles.readingStatus} widths='3' basic>
