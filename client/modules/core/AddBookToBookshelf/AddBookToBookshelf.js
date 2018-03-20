@@ -6,6 +6,7 @@ import { graphql, createRefetchContainer } from 'react-relay';
 import createBookMutation from '../mutations/CreateBook';
 import createBookshelfEntryMutation from '../mutations/CreateBookshelfEntry';
 import styles from './AddBookToBookshelf.scss';
+import URLSearchParams from 'url-search-params'
 
 
 
@@ -68,7 +69,25 @@ function validateInput(input) {
 }
 
 class AddBookToBookshelf extends React.Component {
-  state = { input: { title: '', author: '', state: 'to-read', rating: 0 }, active: 'to-read', matchAuthors: {key: {title: '', author: ''}}, errors: [] }
+  state = {
+    input:
+    {
+      title: '',
+      author: '',
+      state: 'to-read',
+      rating: 0
+    },
+    active: 'to-read',
+    matchAuthors:
+    {
+     key:
+      {
+       title: '',
+       author: ''
+      }
+    },
+    errors: []
+  }
 
   handleTitleFieldChange = (e, { value }) => {
     const input = this.state.input;
@@ -76,15 +95,16 @@ class AddBookToBookshelf extends React.Component {
     input[inputName] = e.target.value;
     this.setState({ ...this.state, input });
 
-
     if (this.state.input.title.length >= 3) {
       const refetchVariables = fragmentVariables => ({
         title: " ",
         author: " ",
         input: this.state.input.title
       });
+
       this.props.relay.refetch(refetchVariables, null, this.autoComplete);
     }
+
   }
 
 
@@ -238,19 +258,73 @@ class AddBookToBookshelf extends React.Component {
 
   autoComplete = () => {
     console.log("autoComplete")
-    const bookOptions = this.props.viewer.booksAutocompleted.map((x) => ({key: x.id, value: x.id, text: x.title+" by "+x.author}))
 
-    for (var i=0; i < this.props.viewer.booksAutocompleted.length; i++){
+    // Fetch data from Goodreads
+    // const url = new URL('https://www.goodreads.com/book/auto_complete?format=json&q=dan+ariely')
+    // const url = new URL('https://www.goodreads.com/book/auto_complete');
+    let baseurl = 'https://www.goodreads.com/book/auto_complete?';
+    const params = new URLSearchParams('format=json');
+    params.set('q', this.state.input.title);
+    let finalurl = baseurl.concat(params.toString());
+    let proxyurl = 'https://cors-anywhere.herokuapp.com/';
+
+    let result;
+
+    // console.log(finalurl);
+    // console.log(params.toString());
+    console.log(proxyurl + finalurl);
+
+    fetch(proxyurl + finalurl)
+    .then(response => response.json()//{
+      // console.log(response.json());
+      // const bookdata = response.json()
+        .then(data => {
+          console.log(data)
+          console.log(data[0].bookTitleBare)
+          console.log(data[0].author.name)
+
+          const bookOptions = data.map((x) => (
+            {
+              key: x.bookId,
+              value: x.bookId,
+              text: x.bookTitleBare,
+              // text: x.bookTitleBare + " by " + x.author.name
+              content: <Header image={x.imageUrl} content={x.bookTitleBare} subheader={x.author.name} />,
+            }))
+
+          this.setState({ ...this.state, bookOptions });
+        })
+        .catch(() => console.log("Error"))
+    )
+
+      // update dropdown
+
+    // .then(contents => console.log(contents))
+    // .then(contents => result)
+    .catch(() => console.log("Can't access " + finalurl + " response."))
+
+    // console.log(result);
+
+    // const bookOptions = this.props.viewer.booksAutocompleted.map((x) => ({key: x.id, value: x.id, text: x.title+" by "+x.author}))
+
+    /*for (var i=0; i < this.props.viewer.booksAutocompleted.length; i++){
       const matchAuthors = this.state.matchAuthors;
       const key = this.props.viewer.booksAutocompleted[i].id;
       matchAuthors[key] = this.props.viewer.booksAutocompleted[i];
 
       this.setState({ ...this.state, matchAuthors});
     };
-    this.setState({ ...this.state, bookOptions });
-
-
+  */
+  //  this.setState({ ...this.state, bookOptions });
   }
+
+  /*autoComplete2 = () => {
+    console.log("autoComplete2")
+
+    const bookOptions = this.props.viewer.booksAutocompleted.map((x) => ({key: x.id, value: x.id, text: x.title+" by "+x.author});
+
+    this.setState({ ...this.state, bookOptions });
+  }*/
 
 
   render() {

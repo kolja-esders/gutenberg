@@ -84,6 +84,7 @@
     "semantic-ui-react": "^0.72.0",
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",
+    "url-search-params": "^0.10.0",
     "webpack": "^3.4.1",
     "webpack-bundle-tracker": "^0.2.0"
   },
