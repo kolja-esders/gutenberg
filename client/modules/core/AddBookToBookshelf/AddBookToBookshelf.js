@@ -283,7 +283,15 @@ class AddBookToBookshelf extends React.Component {
           console.log(data[0].bookTitleBare)
           console.log(data[0].author.name)
 
-          const bookOptions = data.map((x) => ({key: x.bookId, value: x.Id, text: x.bookTitleBare+" by "+x.author.name}))
+          const bookOptions = data.map((x) => (
+            {
+              key: x.bookId,
+              value: x.bookId,
+              text: x.bookTitleBare,
+              // text: x.bookTitleBare + " by " + x.author.name
+              content: <Header image={x.imageUrl} content={x.bookTitleBare} subheader={x.author.name} />,
+            }))
+
           this.setState({ ...this.state, bookOptions });
         })
         .catch(() => console.log("Error"))
