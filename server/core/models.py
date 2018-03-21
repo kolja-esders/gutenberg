@@ -3,22 +3,77 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from custom_user.models import AbstractEmailUser
 from django.utils import timezone
+from django.core.validators import MinLengthValidator
 
 class AutoDateTimeField(models.DateTimeField):
     def pre_save(self, model_instance, add):
         return timezone.now()
 
+class Language(models.Model):
+    alpha3 = models.CharField(max_length=3, validators=[MinLengthValidator(4)])
+    name = models.CharField(max_length=32, null=True)
+    english_name = models.CharField(max_length=32, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.english_name
+
+class Author(models.Model):
+    name = models.CharField(max_length=64)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.name
+
+class Genre(models.Model):
+    name = models.CharField(max_length=32)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.name
+
+class Edition(models.Model):
+    book = models.ForeignKey('Book', related_name='editions')
+    title = models.CharField(max_length=128)
+    num_edition = models.PositiveSmallIntegerField()
+    num_pages = models.PositiveSmallIntegerField(null=True)
+    abstract = models.TextField(null=True)
+    cover_image = models.CharField(max_length=128, null=True)
+    language = models.ForeignKey(Language, related_name='editions')
+    isbn10 = models.CharField(max_length=13, null=True, unique=True, validators=[MinLengthValidator(13)])
+    isbn13 = models.CharField(max_length=17, null=True, unique=True, validators=[MinLengthValidator(17)])
+    # publisher = models.ForeignKey(Publisher)
+    date_published = models.DateTimeField(null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.title
+
 class Book(models.Model):
-    title = models.CharField(max_length=255)
-    author = models.CharField(max_length=255)
+    author = models.ForeignKey(Author, related_name='books')
+    original_edition = models.ForeignKey(Edition, blank=True)
+    genres = models.ManyToManyField(Genre, related_name='books')
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = AutoDateTimeField(default=timezone.now)
 
     class Meta:
-        unique_together = ('title', 'author')
+        unique_together = ('author', 'original_edition')
 
-    def __str__(self):
-        return self.title + ' (' + self.author + ')'
+class EditionPlatformJoin(models.Model):
+    edition = models.ForeignKey(Edition)
+    # platform = models.ForeignKey(Platform)
+    # uid
+    # rating
+    # url
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = ('edition', 'platform')
 
 class Group(models.Model):
     name = models.CharField(max_length=32, unique=True)
