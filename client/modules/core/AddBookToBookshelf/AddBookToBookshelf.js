@@ -93,6 +93,8 @@ class AddBookToBookshelf extends React.Component {
 
 
   handleTitleFieldChange = (e, { value }) => { // not used
+    console.log('Dropdown titlefield change.');
+
     const input = this.state.input;
     const inputName = e.target.id;
     input[inputName] = e.target.value;
@@ -109,15 +111,15 @@ class AddBookToBookshelf extends React.Component {
     }
   }
 
+  handleFieldChange = (e, { value }) => { // not used
+    console.log('Dropdown field change.');
 
-  handleFieldChange = (e, { value }) => {
     const input = this.state.input;
     const inputName = e.target.id;
     input[inputName] = e.target.value;
     this.setState({ ...this.state, input });
 
   }
-
 
   // Dropdown manipulations
 
@@ -143,6 +145,14 @@ class AddBookToBookshelf extends React.Component {
 
   handleDropdownClick = (e, data) => {
     console.log('Dropdown click.');
+
+    const dropDownOpen = true;
+
+    this.setState({...this.state, dropDownOpen});
+  }
+
+  handleFieldChange = (e,data) => { // not used
+    console.log('Dropdown open.');
 
     const dropDownOpen = true;
 
@@ -410,6 +420,7 @@ class AddBookToBookshelf extends React.Component {
                  onSearchChange={this.handleDropdownInputChange}
                  onChange={this.handleDropdownFinalChange}
                  onClick={this.state.handleDropdownClick}
+                 // onOpen={this.state.handleFieldChange}
                  onOpen={this.state.handleDropdownOpen}
                  onClose={this.state.handleDropdownClose}
                />
