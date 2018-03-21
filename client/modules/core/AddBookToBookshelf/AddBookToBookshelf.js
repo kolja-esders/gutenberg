@@ -1,5 +1,6 @@
 import React from 'react';
 import Page from 'components/Page/Page';
+import DropdownItem from 'components/DropdownItem/DropdownItem'
 import { withAuth } from 'modules/auth//utils';
 import { Input, Dropdown, Button, Rating, Grid, Segment, Header } from 'semantic-ui-react';
 import { graphql, createRefetchContainer } from 'react-relay';
@@ -182,7 +183,7 @@ class AddBookToBookshelf extends React.Component {
 
     input["author"] = this.state.matchAuthors[data.value].author;
     input["title"] = this.state.matchAuthors[data.value].title;
-    this.setState({ ...this.state, input, dropDownOpen});
+    this.setState({ ...this.state, input, dropDownOpen  });
   }
 
   handleDropdownSelection = (e,data) => {
@@ -334,12 +335,18 @@ class AddBookToBookshelf extends React.Component {
               value: x.bookId,
               text: x.bookTitleBare,
               // text: x.bookTitleBare + " by " + x.author.name
-              content: <Header
-                image={x.imageUrl}
-                content={x.bookTitleBare}
-                subheader={x.author.name}
-                onClick={this.handleDropdownSelection}
+              content: <DropdownItem
+                bookImage = {x.imageUrl}
+                bookTitle = {x.bookTitleBare}
+                bookAuthor = {x.author.name}
+                onClick = {this.handleDropdownSelection}
                 />
+                /*<Header
+                 image={x.imageUrl}
+                 content={x.bookTitleBare}
+                 subheader={x.author.name}
+                 onClick={this.handleDropdownSelection}
+                />*/
             }))
 
           this.setState({ ...this.state, bookOptions });
@@ -384,6 +391,7 @@ class AddBookToBookshelf extends React.Component {
 
     return (
       <Page viewer={this.props.viewer} title={title}>
+
         <div className={styles.container}>
           <Segment padded='very'>
             <Header as='h1'>New book</Header>

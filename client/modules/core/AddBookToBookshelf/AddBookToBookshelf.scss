@@ -11,7 +11,13 @@
       display: none;
     }
 
-    .nameField, .authorField, .dropDown, .readingStatus, .textFields, .ratingContainer {
+    .nameField {
+      display: flex;
+      margin-bottom: 10px;
+      flex-direction: row;
+    }
+
+    .authorField, .dropDown, .readingStatus, .textFields, .ratingContainer {
       margin-bottom: 10px;
     }
 
