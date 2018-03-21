@@ -27,6 +27,14 @@ class Author(models.Model):
     def __str__(self):
         return self.name
 
+class Publisher(models.Model):
+    name = models.CharField(max_length=64)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.name
+
 class Genre(models.Model):
     name = models.CharField(max_length=32)
     created_at = models.DateTimeField(default=timezone.now)
@@ -45,7 +53,7 @@ class Edition(models.Model):
     language = models.ForeignKey(Language, related_name='editions')
     isbn10 = models.CharField(max_length=13, null=True, unique=True, validators=[MinLengthValidator(13)])
     isbn13 = models.CharField(max_length=17, null=True, unique=True, validators=[MinLengthValidator(17)])
-    # publisher = models.ForeignKey(Publisher)
+    publisher = models.ForeignKey(Publisher, null=True)
     date_published = models.DateTimeField(null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = AutoDateTimeField(default=timezone.now)
@@ -53,9 +61,20 @@ class Edition(models.Model):
     def __str__(self):
         return self.title
 
+class Platform(models.Model):
+    name = models.CharField(max_length=32)
+    url = models.CharField(max_length=64)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.name
+
 class Book(models.Model):
     author = models.ForeignKey(Author, related_name='books')
-    original_edition = models.ForeignKey(Edition, blank=True)
+    # TODO(kolja): Figure out a way to make original_edition a one-way-street without a related_name.
+    # Could also remove this foreign key and add is_original to Edition.
+    original_edition = models.OneToOneField(Edition, blank=True, related_name='original_book')
     genres = models.ManyToManyField(Genre, related_name='books')
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = AutoDateTimeField(default=timezone.now)
@@ -65,10 +84,10 @@ class Book(models.Model):
 
 class EditionPlatformJoin(models.Model):
     edition = models.ForeignKey(Edition)
-    # platform = models.ForeignKey(Platform)
-    # uid
-    # rating
-    # url
+    platform = models.ForeignKey(Platform)
+    uid = models.CharField(max_length=64)
+    rating = models.FloatField()
+    url = models.CharField(max_length=128)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = AutoDateTimeField(default=timezone.now)
 
@@ -91,21 +110,33 @@ class CustomUser(AbstractEmailUser):
     last_name = models.CharField(max_length=31, blank=True)
     profile_image = models.CharField(max_length=128, blank=True, default='default.png')
     groups = models.ManyToManyField(Group, through='Membership', symmetrical=False, related_name='members')
-    books = models.ManyToManyField(Book, through='BookshelfEntry', symmetrical=False, related_name='users')
+    editions = models.ManyToManyField(Book, through='EditionUserJoin', symmetrical=False, related_name='users')
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = AutoDateTimeField(default=timezone.now)
 
 
-class BookshelfEntry(models.Model):
+class EditionUserJoin(models.Model):
+    edition = models.ForeignKey(Edition)
     user = models.ForeignKey(CustomUser)
     book = models.ForeignKey(Book)
-    state = models.CharField(max_length=31) # to-read, read, ...
+    state = models.CharField(max_length=16)
     rating = models.PositiveSmallIntegerField(null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = AutoDateTimeField(default=timezone.now)
 
     class Meta:
-        unique_together = ('user', 'book')
+        unique_together = ('edition', 'user')
+
+# class BookshelfEntry(models.Model):
+    # user = models.ForeignKey(CustomUser)
+    # book = models.ForeignKey(Book)
+    # state = models.CharField(max_length=31) # to-read, read, ...
+    # rating = models.PositiveSmallIntegerField(null=True)
+    # created_at = models.DateTimeField(default=timezone.now)
+    # updated_at = AutoDateTimeField(default=timezone.now)
+
+    # class Meta:
+        # unique_together = ('user', 'book')
 
 class GroupInvite(models.Model):
     group = models.ForeignKey(Group)
