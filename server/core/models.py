@@ -74,7 +74,7 @@ class Book(models.Model):
     author = models.ForeignKey(Author, related_name='books')
     # TODO(kolja): Figure out a way to make original_edition a one-way-street without a related_name.
     # Could also remove this foreign key and add is_original to Edition.
-    original_edition = models.OneToOneField(Edition, blank=True, related_name='original_book')
+    original_edition = models.OneToOneField(Edition, blank=True, related_name='original_book', null=True, default=None)
     genres = models.ManyToManyField(Genre, related_name='books')
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = AutoDateTimeField(default=timezone.now)
