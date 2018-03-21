@@ -20,7 +20,7 @@ class Footer extends React.Component {
       <div className={styles.root} onMouseEnter={this.onHover} onMouseLeave={this.onLeave}>
         <div className={styles.inner}>
           <span>
-            Made with <span hidden={hovered} className={styles.code}>{'{'}code{'}'}</span><span hidden={!hovered} className={styles.love}>love</span> in Karlsruhe.
+            Made with <span hidden={!hovered} className={styles.code}>{'{'}code{'}'}</span><span hidden={hovered} className={styles.love}>❤️</span> in Karlsruhe.
           </span>
         </div>
       </div>
