@@ -1,11 +1,15 @@
 @import "./global.scss";
 
 .container {
-  height: 600vh;
+  //height: 400vh;
   background-image: url('../../assets/space.jpg');
   background-size: 100%;
   background-repeat: no-repeat;
   background-color: #fff;
+
+  .emph {
+    font-style: italic;
+  }
 
   .header {
     height: 100px;
@@ -51,13 +55,10 @@
 
     h1 {
       font-weight: normal;
-      //margin-top: 200px;
-      //margin-bottom: 0px;
       font-size: 5.1rem;
     }
 
     h2 {
-      //margin-top: 0px;
       font-family: 'Lato';
       font-weight: 100;
       font-size: 2.32rem;
@@ -71,19 +72,26 @@
         margin: 0rem;
 
         .content{
-          padding: 40px 20px 40px 20px;
+          padding: 20px;
           min-height: 400px;
 
           .rating {
+            display: flex;
+            height: 50px;
             margin: 0 auto;
+            align-items: center;
+            justify-content: center;
 
             &> div {
               color: #FF0066;
+              outline: none;
+              flex-grow: 0;
             }
           }
 
           .desc {
-            color: #394b59;
+            font-size: 1.2rem;
+            font-weight: 300;
           }
         }
       }
@@ -94,16 +102,87 @@
     }
   }
 
-  #hero {
+  .hero {
+    margin-top: 200px;
+    margin-bottom: 300px;
+  }
+
+  .tileWrap {
     display: flex;
+    flex-direction: row;
     justify-content: center;
-    align-items: center;
-    height: calc(100vh - 200px);
+    margin-top: 200px;
+    margin-bottom: 500px;
+
+    .tile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0 30px;
+      flex: 1;
+    }
+
+    .tileHead {
+      font-size: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      color: #eee;
+      margin-bottom: 20px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+
+      .tileHeadText {
+        // Compensate for the dot at the end so that the digit is still roughly centered.
+        padding-left: 12px;
+        user-select: none;
+      }
+    }
+
+    .expl {
+      text-align: center;
+      padding: 10px 30px;
+      p {
+        font-size: 1.2rem;
+        font-weight: 300;
+        //text-align: center;
+        //width: 200px;
+      }
+
+    }
   }
 
-  .centeredContainer {
-    margin-top: -100px;
-  
+  .iconContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
   }
+
+  .friendsAIcon, .friendsBIcon, .friendsCIcon, .onePlaceIcon {
+    margin: 0 5px;
+    height: 50px;
+    width: 50px;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-color: #fff;
+  }
+
+  .friendsAIcon {
+    background-image: url('../../assets/female_factory_worker_emoji.png');
+  }
+
+  .friendsBIcon {
+    background-image: url('../../assets/male_mechanic_emoji.png');
+  }
+
+  .friendsCIcon {
+    background-image: url('../../assets/female_farm_worker_emoji.png');
+  }
+
+  .onePlaceIcon {
+    background-image: url('../../assets/exploding_head_emoji.png');
+  }
+
 }
-
