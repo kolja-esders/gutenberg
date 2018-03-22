@@ -6,7 +6,7 @@ import GroupView from 'modules/core/GroupView/GroupView';
 import GroupCreateView from 'modules/core/GroupCreateView/GroupCreateView';
 import GroupInviteView from 'modules/core/GroupInviteView/GroupInviteView';
 import AcceptGroupInviteView from 'modules/core/AcceptGroupInviteView/AcceptGroupInviteView';
-import ProfileView from 'modules/core/ProfileView/ProfileView';
+import SettingsView from 'modules/core/SettingsView';
 
 import { Route, makeRouteConfig } from 'found';
 import React from 'react';
@@ -78,10 +78,10 @@ const AcceptGroupInviteViewQuery = graphql`
   }
 `;
 
-const ProfileViewQuery = graphql`
-  query routes_ProfileView_Query {
+const SettingsViewQuery = graphql`
+  query routes_SettingsView_Query {
     viewer {
-      ...ProfileView_viewer
+      ...SettingsView_viewer
     }
   }
 `;
@@ -94,7 +94,7 @@ export default makeRouteConfig(
       <Route path='signup' />
     </Route>
     <Route path='add-book' Component={AddBookToBookshelf} query={AddBookToBookshelfQuery} />
-    <Route path='shared-books' Component={SharedBooks} query={SharedBooksQuery}/>
+    <Route path='shared-books' Component={SharedBooks} query={SharedBooksQuery} />
     <Route path='group/:nameUrl'>
       <Route Component={GroupView} query={GroupViewQuery} />
       <Route path='/invite' Component={GroupInviteView} query={GroupInviteViewQuery} />
@@ -102,6 +102,6 @@ export default makeRouteConfig(
 
     <Route path='create' Component={GroupCreateView} query={GroupCreateViewQuery} />
     <Route path='accept/:verificationToken' Component={AcceptGroupInviteView} query={AcceptGroupInviteViewQuery} />
-    <Route path='profile' Component={ProfileView} query={ProfileViewQuery} />
+    <Route path='settings' Component={SettingsView} query={SettingsViewQuery} />
   </Route>
 );

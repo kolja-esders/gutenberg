@@ -60,6 +60,7 @@
     "less": "^2.7.2",
     "less-loader": "^4.0.5",
     "lodash": "^4.17.2",
+    "moment": "^2.21.0",
     "node-sass": "^4.5.3",
     "normalize.css": "^5.0.0",
     "postcss-loader": "^1.2.0",
@@ -72,6 +73,7 @@
     "react-helmet": "^5.2.0",
     "react-hot-loader": "3.0.0-beta.6",
     "react-mdc-web": "^0.12.2",
+    "react-moment": "^0.7.0",
     "react-relay": "^1.4.0",
     "react-relay-network-layer": "^2.0.1",
     "recharts": "^1.0.0-alpha.2",
@@ -82,6 +84,7 @@
     "semantic-ui-react": "^0.72.0",
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",
+    "url-search-params": "^0.10.0",
     "webpack": "^3.4.1",
     "webpack-bundle-tracker": "^0.2.0"
   },

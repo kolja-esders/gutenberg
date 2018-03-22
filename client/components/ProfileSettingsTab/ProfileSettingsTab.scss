@@ -1,13 +1,6 @@
 @import "./global.scss";
 
-.container {
-  width: $contentWidth;
-  margin: 0 auto;
-
-  .nav {
-    float: left;
-  }
-
+.root {
   .overlayContainer {
     position: relative;
     float: right;
@@ -52,17 +45,8 @@
       cursor: pointer;
     }
   }
-
-  .content {
-    margin-left: 210px;
-    padding-left: 42px!important;
-
-    h1 {
-      margin-top: 0;
-    }
-  }
-
 }
+
 
 .saveImage {
   float: right;

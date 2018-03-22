@@ -1,11 +1,13 @@
 import React from 'react';
 import Page from 'components/Page/Page';
+import DropdownItem from 'components/DropdownItem/DropdownItem'
 import { withAuth } from 'modules/auth//utils';
 import { Input, Dropdown, Button, Rating, Grid, Segment, Header } from 'semantic-ui-react';
 import { graphql, createRefetchContainer } from 'react-relay';
 import createBookMutation from '../mutations/CreateBook';
 import createBookshelfEntryMutation from '../mutations/CreateBookshelfEntry';
 import styles from './AddBookToBookshelf.scss';
+import URLSearchParams from 'url-search-params'
 
 
 
@@ -68,14 +70,68 @@ function validateInput(input) {
 }
 
 class AddBookToBookshelf extends React.Component {
-  state = { input: { title: '', author: '', state: 'to-read', rating: 0 }, active: 'to-read', matchAuthors: {key: {title: '', author: ''}}, errors: [] }
+  state = {
+    input:
+    {
+      title: '',
+      author: '',
+      state: 'to-read',
+      rating: 0
+    },
+    active: 'to-read',
+    matchAuthors:
+    {
+     key:
+      {
+       title: '',
+       author: ''
+      }
+    },
+    errors: [],
+    dropDownOpen: false
+  }
 
-  handleTitleFieldChange = (e, { value }) => {
+
+  handleTitleFieldChange = (e, { value }) => { // not used
+    console.log('Dropdown titlefield change.');
+
     const input = this.state.input;
     const inputName = e.target.id;
     input[inputName] = e.target.value;
     this.setState({ ...this.state, input });
 
+    if (this.state.input.title.length >= 3) {
+      const refetchVariables = fragmentVariables => ({
+        title: " ",
+        author: " ",
+        input: this.state.input.title
+      });
+
+      this.props.relay.refetch(refetchVariables, null, this.autoComplete);
+    }
+  }
+
+  handleFieldChange = (e, { value }) => { // not used
+    console.log('Dropdown field change.');
+
+    const input = this.state.input;
+    const inputName = e.target.id;
+    input[inputName] = e.target.value;
+    this.setState({ ...this.state, input });
+
+  }
+
+  // Dropdown manipulations
+
+  handleDropdownInputChange = (e, data) => {
+    console.log('Dropdown title change.');
+
+    const input = this.state.input;
+    const inputName = "title";
+    input[inputName] = data;
+    const dropDownOpen = true;
+
+    this.setState({ ...this.state, input, dropDownOpen });
 
     if (this.state.input.title.length >= 3) {
       const refetchVariables = fragmentVariables => ({
@@ -87,30 +143,38 @@ class AddBookToBookshelf extends React.Component {
     }
   }
 
+  handleDropdownClick = (e, data) => {
+    console.log('Dropdown click.');
 
-  handleFieldChange = (e, { value }) => {
-    const input = this.state.input;
-    const inputName = e.target.id;
-    input[inputName] = e.target.value;
-    this.setState({ ...this.state, input });
+    const dropDownOpen = true;
 
+    this.setState({...this.state, dropDownOpen});
   }
 
-  handleTitleDropdownChange = (e, data) => {
-    const input = this.state.input;
-    const inputName = "title";
-    input[inputName] = data;
-    this.setState({ ...this.state, input });
+  handleFieldChange = (e,data) => { // not used
+    console.log('Dropdown open.');
 
-    if (this.state.input.title.length >= 3) {
-      const refetchVariables = fragmentVariables => ({
-        title: " ",
-        author: " ",
-        input: this.state.input.title
-      });
-      this.props.relay.refetch(refetchVariables, null, this.autoComplete);
+    const dropDownOpen = true;
+
+    this.setState({...this.state, dropDownOpen});
   }
+
+  handleDropdownOpen = (e,data) => {
+    console.log('Dropdown open.');
+
+    const dropDownOpen = true;
+
+    this.setState({...this.state, dropDownOpen});
   }
+
+  handleDropdownClose = (e,data) => {
+    console.log('Dropdown close.');
+
+    const dropDownOpen = false;
+
+    this.setState({...this.state, dropDownOpen});
+  }
+
   handleAuthorDropdownChange = (e, data) => {
     const input = this.state.input;
     const inputName = "author";
@@ -120,13 +184,25 @@ class AddBookToBookshelf extends React.Component {
 
 
   handleDropdownFinalChange = (e, data) => {
+    console.log('Dropdown final change.')
     console.log(data)
     console.log(this.props.viewer)
+
     const input = this.state.input;
+    const dropDownOpen = true;
 
     input["author"] = this.state.matchAuthors[data.value].author;
     input["title"] = this.state.matchAuthors[data.value].title;
-    this.setState({ ...this.state, input });
+    this.setState({ ...this.state, input, dropDownOpen  });
+  }
+
+  handleDropdownSelection = (e,data) => {
+    console.log(data);
+    console.log('Dropdown selection.');
+
+    const dropDownOpen = false;
+
+    this.setState({...this.state, dropDownOpen});
   }
 
   handleButtonChange = (e, data) => {
@@ -238,19 +314,84 @@ class AddBookToBookshelf extends React.Component {
 
   autoComplete = () => {
     console.log("autoComplete")
-    const bookOptions = this.props.viewer.booksAutocompleted.map((x) => ({key: x.id, value: x.id, text: x.title+" by "+x.author}))
 
-    for (var i=0; i < this.props.viewer.booksAutocompleted.length; i++){
+    // Fetch data from Goodreads
+    // const url = new URL('https://www.goodreads.com/book/auto_complete?format=json&q=dan+ariely')
+    // const url = new URL('https://www.goodreads.com/book/auto_complete');
+    let baseurl = 'https://www.goodreads.com/book/auto_complete?';
+    const params = new URLSearchParams('format=json');
+    params.set('q', this.state.input.title);
+    let finalurl = baseurl.concat(params.toString());
+    let proxyurl = 'https://cors-anywhere.herokuapp.com/';
+
+    let result;
+
+    // console.log(finalurl);
+    // console.log(params.toString());
+    console.log(proxyurl + finalurl);
+
+    fetch(proxyurl + finalurl)
+    .then(response => response.json()//{
+      // console.log(response.json());
+      // const bookdata = response.json()
+        .then(data => {
+          console.log(data)
+          console.log(data[0].bookTitleBare)
+          console.log(data[0].author.name)
+
+          const bookOptions = data.map((x) => (
+            {
+              key: x.bookId,
+              value: x.bookId,
+              text: x.bookTitleBare,
+              // text: x.bookTitleBare + " by " + x.author.name
+              content: <DropdownItem
+                bookImage = {x.imageUrl}
+                bookTitle = {x.bookTitleBare}
+                bookAuthor = {x.author.name}
+                onClick = {this.handleDropdownSelection}
+                />
+                /*<Header
+                 image={x.imageUrl}
+                 content={x.bookTitleBare}
+                 subheader={x.author.name}
+                 onClick={this.handleDropdownSelection}
+                />*/
+            }))
+
+          this.setState({ ...this.state, bookOptions });
+        })
+        .catch(() => console.log("Error"))
+    )
+
+      // update dropdown
+
+    // .then(contents => console.log(contents))
+    // .then(contents => result)
+    .catch(() => console.log("Can't access " + finalurl + " response."))
+
+    // console.log(result);
+
+    // const bookOptions = this.props.viewer.booksAutocompleted.map((x) => ({key: x.id, value: x.id, text: x.title+" by "+x.author}))
+
+    /*for (var i=0; i < this.props.viewer.booksAutocompleted.length; i++){
       const matchAuthors = this.state.matchAuthors;
       const key = this.props.viewer.booksAutocompleted[i].id;
       matchAuthors[key] = this.props.viewer.booksAutocompleted[i];
 
       this.setState({ ...this.state, matchAuthors});
     };
-    this.setState({ ...this.state, bookOptions });
-
-
+  */
+  //  this.setState({ ...this.state, bookOptions });
   }
+
+  /*autoComplete2 = () => {
+    console.log("autoComplete2")
+
+    const bookOptions = this.props.viewer.booksAutocompleted.map((x) => ({key: x.id, value: x.id, text: x.title+" by "+x.author});
+
+    this.setState({ ...this.state, bookOptions });
+  }*/
 
 
   render() {
@@ -260,13 +401,12 @@ class AddBookToBookshelf extends React.Component {
 
     return (
       <Page viewer={this.props.viewer} title={title}>
+
         <div className={styles.container}>
           <Segment padded='very'>
             <Header as='h1'>New book</Header>
 
-          <form
-              className={styles.form}
-            >
+          <form className={styles.form}>
 
             <Dropdown
                  id="title"
@@ -275,11 +415,15 @@ class AddBookToBookshelf extends React.Component {
                  search
                  selection
                  fluid
-                 onSearchChange={this.handleTitleDropdownChange}
-                 onChange={this.handleDropdownFinalChange}
                  placeholder='book title'
+                 open={this.state.dropDownOpen}
+                 onSearchChange={this.handleDropdownInputChange}
+                 onChange={this.handleDropdownFinalChange}
+                 onClick={this.state.handleDropdownClick}
+                 // onOpen={this.state.handleFieldChange}
+                 onOpen={this.state.handleDropdownOpen}
+                 onClose={this.state.handleDropdownClose}
                />
-
 
 
           <Button.Group className={styles.readingStatus} widths='3' basic>
