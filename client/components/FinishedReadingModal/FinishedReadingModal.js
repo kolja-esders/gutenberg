@@ -18,7 +18,7 @@ constructor(props){
   }
 }
 
-openModal = () => {this.setState({modalOpen: true}); console.log("DA"); console.log(this.state)}
+openModal = () => this.setState({modalOpen: true})
 closeModal = () => this.setState({modalOpen: false})
 
 addFriend = (error, data) => {
