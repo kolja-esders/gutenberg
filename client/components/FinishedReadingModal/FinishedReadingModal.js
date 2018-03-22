@@ -10,7 +10,7 @@ class FinishedReadingModal extends React.Component{
 constructor(props){
   super(props);
   this.state = {
-    input: {rating: 0},
+    input: {rating: 0, state:''},
     errors: [],
     modalOpen: false,
     friendEmails: [],
@@ -44,21 +44,28 @@ handleRatingChange = (e, data) => {
   input[inputName] = data.rating;
   this.setState({ ...this.state, input});
 
-
-  const variables = {
-    bookshelfEntryId: data.id,
-    rating: data.rating
-  }
-  updateRatingMutation(this.props.relay.environment, variables, this.setErrors)
 }
 
-onCompletedReading = (data, state) => {
-  this.closeModal()
+onCompletedModal = (state) => {
+  const input = this.state.input;
+  input['state'] = state;
+  this.setState({ ...this.state, input});
+
+  console.log(this.state.input)
   const variables = {
-    bookshelfEntryId: data,
-    state: state
+    bookshelfEntryId: this.props.id,
+    rating: this.state.input.rating
   }
- updateStateMutation(this.props.relay.environment, variables, this.setErrors)
+  updateRatingMutation(this.props.relay.environment, variables, this.onCompletedUpdateRatingMutation, this.setErrors)
+}
+
+onCompletedUpdateRatingMutation = (error, data) => {
+
+  const variables = {
+    bookshelfEntryId: this.props.id,
+    state: this.state.input.state
+  }
+ updateStateMutation(this.props.relay.environment, variables, this.closeModal(), this.setErrors)
 }
 
 render(){
@@ -86,8 +93,8 @@ render(){
             size="huge"
             defaultRating={this.props.rating}
             maxRating={5}
-            onRate={this.handleRatingChange}
             id ={this.props.id}
+            onRate={this.handleRatingChange}
           />
         </div>
         <div>
@@ -120,7 +127,7 @@ render(){
         </Button>
         <Button positive icon='checkmark'
           content='Done'
-          onClick = {() => this.onCompletedReading(this.props.id, "read")}
+          onClick = {() => this.onCompletedModal("read")}
         />
       </Modal.Actions>
     </Modal>
