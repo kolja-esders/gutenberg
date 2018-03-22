@@ -2,16 +2,14 @@ import React from 'react';
 import { graphql, createFragmentContainer } from 'react-relay';
 import { Table, Rating, Button, Popup, Icon, Modal, Input, Label, Form } from 'semantic-ui-react';
 import styles from './MyBookList.scss';
+import FinishedReadingModal from 'components/FinishedReadingModal/FinishedReadingModal';
 import updateRatingMutation from '../../modules/core/mutations/UpdateRating';
 import updateStateMutation from '../../modules/core/mutations/UpdateState';
 
 
 class MyBookList extends React.Component {
 
-  state = {input: {rating: 0}, errors: [], modalOpen: false, friendEmails: [], friendEmail:''};
-
-  openModal = () => this.setState({open: true})
-  closeModal = () => this.setState({open: false})
+  state = {input: {rating: 0}, errors: []};
 
   handleRatingChange = (e, data) => {
     e.preventDefault();
@@ -28,29 +26,12 @@ class MyBookList extends React.Component {
     updateRatingMutation(this.props.relay.environment, variables, this.setErrors)
   }
 
-  onCompletedReading = (data, state) => {
-    this.closeModal()
+changeReadingState = (data, state) => {
     const variables = {
       bookshelfEntryId: data,
       state: state
     }
    updateStateMutation(this.props.relay.environment, variables, this.setErrors)
-  }
-
-  addFriend = (error, data) => {
-    var friendEmail = data.value;
-    this.setState({...this.state, friendEmail});
-  }
-
-  nextFriend = () => {
-    var friendEmails = this.state.friendEmails;
-    var friendEmail = this.state.friendEmail;
-    friendEmails[friendEmails.length-1] = friendEmail;
-    friendEmail = '';
-
-    friendEmails.push(friendEmail);
-    this.setState({...this.state, friendEmails});
-    this.setState({...this.state, friendEmail});
   }
 
   setErrors = (errors) => {
@@ -59,8 +40,6 @@ class MyBookList extends React.Component {
 
   render() {
     const bookshelfEntries = this.props.books.edges;
-    const friendEmails = this.state.friendEmails;
-
 
     return (
       <div className={styles.root}>
@@ -90,7 +69,7 @@ class MyBookList extends React.Component {
                   <Table.Cell>
                     <div>
                       <Popup
-                        trigger={<Button icon floated="right" onClick={() => this.onCompletedReading(e.node.id, "reading")}>
+                        trigger={<Button icon floated="right" onClick={() => this.changeReadingState(e.node.id, "reading")}>
                           <Icon name="book" size="large"/>
                         </Button>}
                         content="Mark as reading"
@@ -102,62 +81,8 @@ class MyBookList extends React.Component {
                 {this.props.state =="reading" &&
                 <Table.Cell>
 
-                <Popup
-                  trigger={
+                  <FinishedReadingModal bookTitle={e.node.book.title} rating={e.node.rating} id={e.node.id}/>
 
-                      <Button icon floated="right" onClick={() => this.openModal()}>
-                        <Icon name="check circle" size="large"/>
-                      </Button>}
-                  content="Mark as read"
-                />
-                <Modal size="mini" open={this.state.open} onClose={this.close}>
-                  <Modal.Header>
-                    How did you like {e.node.book.title}?
-                  </Modal.Header>
-                  <Modal.Content>
-                    <div className={styles.ratingModal}>
-                      <Rating
-                        size="huge"
-                        defaultRating={e.node.rating}
-                        maxRating={5}
-                        onRate={this.handleRatingChange}
-                        id ={e.node.id}
-                      />
-                    </div>
-                    <div>
-                        <br />
-                      Recommend {e.node.book.title} to
-                        <br />
-                        {friendEmails.map(e => {if (e != "") { return( <Label>{e}</Label>)}})}
-                          <br />
-
-                      <Input id="friend"
-                        icon="at"
-                        iconPosition="left"
-                        placeholder="email"
-                        value={this.state.friendEmail}
-                        onChange={this.addFriend}>
-
-                      </Input>
-                      <Button
-                        icon="plus"
-                        type="submit"
-                        onClick={() => this.nextFriend()}/>
-
-
-
-                    </div>
-                  </Modal.Content>
-                  <Modal.Actions>
-                    <Button basic onClick={() => this.closeModal()}>
-                      Close
-                    </Button>
-                    <Button positive icon='checkmark'
-                      content='Done'
-                      onClick = {() => this.onCompletedReading(e.node.id, "read")}
-                    />
-                  </Modal.Actions>
-                </Modal>
                 </Table.Cell>
               }
 
