@@ -29,10 +29,10 @@ addFriend = (error, data) => {
 nextFriend = () => {
   var friendEmails = this.state.friendEmails;
   var friendEmail = this.state.friendEmail;
-  friendEmails[friendEmails.length-1] = friendEmail;
+
+  friendEmails[friendEmails.length] = friendEmail;
   friendEmail = '';
 
-  friendEmails.push(friendEmail);
   this.setState({...this.state, friendEmails});
   this.setState({...this.state, friendEmail});
 }
@@ -116,8 +116,6 @@ render(){
             icon="plus"
             type="submit"
             onClick={() => this.nextFriend()}/>
-
-
 
         </div>
       </Modal.Content>
