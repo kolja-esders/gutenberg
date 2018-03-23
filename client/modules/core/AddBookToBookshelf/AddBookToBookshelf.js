@@ -230,6 +230,7 @@ class AddBookToBookshelf extends React.Component {
   onCompletedSubmit = (ev) => {
     ev.preventDefault();
     console.log("onCompleted")
+    console.log(this.state.input)
     const { input, errors } = validateInput(this.state.input);
     if (errors) {
       this.setErrors(errors);
@@ -311,6 +312,14 @@ class AddBookToBookshelf extends React.Component {
     return [];
   }
 
+//intermediary solution
+setArguments = (bookTitle, authorName) => {
+  const input = this.state.input
+  input['author']  = authorName
+  input['title']  = bookTitle
+  this.setState({ ...this.state, input})
+
+}
 
   autoComplete = () => {
     console.log("autoComplete")
@@ -338,6 +347,8 @@ class AddBookToBookshelf extends React.Component {
           console.log(data)
           console.log(data[0].bookTitleBare)
           console.log(data[0].author.name)
+
+          this.setArguments(data[0].bookTitleBare, data[0].author.name)
 
           const bookOptions = data.map((x) => (
             {
