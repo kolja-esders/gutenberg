@@ -21,17 +21,17 @@ class HomeView extends React.Component {
 
             <div className={styles.reading}>
               <Header floated='left' as='h2'>Reading</Header>
-              <MyBookList books={this.props.viewer.user.books} state='reading'/>
+              <MyBookList books={this.props.viewer.user.books} state='reading' userID={this.props.viewer.id}/>
             </div>
 
             <div className={styles.read}>
               <Header floated='left' as='h2'>Read</Header>
-              <MyBookList books={this.props.viewer.user.books} state='read'/>
+              <MyBookList books={this.props.viewer.user.books} state='read' userID={this.props.viewer.id}/>
             </div>
 
             <div className={styles.to_read}>
               <Header floated='left' as='h2'>To-Read</Header>
-              <MyBookList books={this.props.viewer.user.books} state='to-read'/>
+              <MyBookList books={this.props.viewer.user.books} state='to-read' userID={this.props.viewer.id}/>
             </div>
           </Segment>
       </section>

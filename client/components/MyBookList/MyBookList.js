@@ -81,7 +81,7 @@ changeReadingState = (data, state) => {
                 {this.props.state =="reading" &&
                 <Table.Cell>
 
-                  <FinishedReadingModal bookTitle={e.node.book.title} rating={e.node.rating} id={e.node.id}/>
+                  <FinishedReadingModal book={e.node.book} rating={e.node.rating} id={e.node.id} userID={this.props.userID}/>
 
                 </Table.Cell>
               }

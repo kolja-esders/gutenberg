@@ -4,6 +4,7 @@ import { Rating, Button, Icon, Modal, Input, Label, Popup } from 'semantic-ui-re
 import styles from './FinishedReadingModal.scss';
 import updateRatingMutation from '../../modules/core/mutations/UpdateRating';
 import updateStateMutation from '../../modules/core/mutations/UpdateState';
+import createBookRecommendationForFriendMutation from '../../modules/core/mutations/CreateBookRecommendationForFriend';
 
 class FinishedReadingModal extends React.Component{
 
@@ -18,7 +19,7 @@ constructor(props){
   }
 }
 
-openModal = () => this.setState({modalOpen: true})
+openModal = () =>   this.setState({modalOpen: true})
 closeModal = () => this.setState({modalOpen: false})
 
 addFriend = (error, data) => {
@@ -65,7 +66,20 @@ onCompletedUpdateRatingMutation = (error, data) => {
     bookshelfEntryId: this.props.id,
     state: this.state.input.state
   }
- updateStateMutation(this.props.relay.environment, variables, this.closeModal(), this.setErrors)
+ updateStateMutation(this.props.relay.environment, variables, this.onCompletedUpdateStateMutation, this.setErrors)
+}
+
+onCompletedUpdateStateMutation = (error, data) => {
+
+  const variables = {
+    hostId: this.props.userID,
+    bookTitle: this.props.book.title,
+    bookAuthor: this.props.book.author,
+    friendEmail: "asd@fdsf.com",
+    firstName: "asdsz",
+    lastName: "dsfd"
+  }
+  createBookRecommendationForFriendMutation(this.props.relay.environment, variables, this.closeModal(), this.setErrors)
 }
 
 render(){
@@ -85,7 +99,7 @@ render(){
         />
       }>
       <Modal.Header>
-        How did you like {this.props.bookTitle}?
+        How did you like {this.props.book.title}?
       </Modal.Header>
       <Modal.Content>
         <div className={styles.ratingModal}>
@@ -99,10 +113,10 @@ render(){
         </div>
         <div>
             <br />
-          Recommend {this.props.bookTitle} to
+            Recommend {this.props.book.title} to
             <br />
             {friendEmails.map(e => {if (e != "") { return( <Label>{e}</Label>)}})}
-              <br />
+            <br />
 
           <Input id="friend"
             icon="at"
