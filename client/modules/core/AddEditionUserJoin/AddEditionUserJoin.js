@@ -4,9 +4,9 @@ import DropdownItem from 'components/DropdownItem/DropdownItem'
 import { withAuth } from 'modules/auth//utils';
 import { Input, Dropdown, Button, Rating, Grid, Segment, Header } from 'semantic-ui-react';
 import { graphql, createRefetchContainer } from 'react-relay';
-import createBookMutation from '../mutations/CreateBook';
-import createBookshelfEntryMutation from '../mutations/CreateBookshelfEntry';
-import styles from './AddBookToBookshelf.scss';
+import createEditionMutation from '../mutations/CreateEdition';
+import createEditionUserJoinMutation from '../mutations/CreateEditionUserJoin';
+import styles from './AddEditionUserJoin.scss';
 import URLSearchParams from 'url-search-params'
 
 
@@ -69,7 +69,7 @@ function validateInput(input) {
   return { input, errors };
 }
 
-class AddBookToBookshelf extends React.Component {
+class AddEditionUserJoin extends React.Component {
   state = {
     input:
     {
@@ -230,6 +230,7 @@ class AddBookToBookshelf extends React.Component {
   onCompletedSubmit = (ev) => {
     ev.preventDefault();
     console.log("onCompleted")
+    console.log(this.state.input)
     const { input, errors } = validateInput(this.state.input);
     if (errors) {
       this.setErrors(errors);
@@ -253,7 +254,7 @@ class AddBookToBookshelf extends React.Component {
         titleInput: this.state.input.title,
         authorInput: this.state.input.author,
       };
-      createBookMutation(this.props.relay.environment, variables, this.onCompletedCreateBook, this.setErrors);
+      createEditionMutation(this.props.relay.environment, variables, this.onCompletedCreateEdition, this.setErrors);
 
     } else {
       console.log("book already exists")
@@ -261,7 +262,7 @@ class AddBookToBookshelf extends React.Component {
     }
   }
 
-  onCompletedCreateBook = (error, data) => {
+  onCompletedCreateEdition = (error, data) => {
     const refetchVariables = fragmentVariables => ({
       title: this.state.input.title,
       author: this.state.input.author,
@@ -296,10 +297,10 @@ class AddBookToBookshelf extends React.Component {
     };
     console.log(variables)
     console.log("create")
-    createBookshelfEntryMutation(this.props.relay.environment, variables, this.onCompletedBookshelfEntry, this.setErrors);
+    createEditionUserJoinMutation(this.props.relay.environment, variables, this.onCompletedEditionUserJoin, this.setErrors);
   }
 
-  onCompletedBookshelfEntry = (error, data) => {
+  onCompletedEditionUserJoin = (error, data) => {
     this.props.router.push("/")
   }
 
@@ -311,6 +312,14 @@ class AddBookToBookshelf extends React.Component {
     return [];
   }
 
+//intermediary solution
+setArguments = (bookTitle, authorName) => {
+  const input = this.state.input
+  input['author']  = authorName
+  input['title']  = bookTitle
+  this.setState({ ...this.state, input})
+
+}
 
   autoComplete = () => {
     console.log("autoComplete")
@@ -338,6 +347,8 @@ class AddBookToBookshelf extends React.Component {
           console.log(data)
           console.log(data[0].bookTitleBare)
           console.log(data[0].author.name)
+
+          this.setArguments(data[0].bookTitleBare, data[0].author.name)
 
           const bookOptions = data.map((x) => (
             {
@@ -485,10 +496,10 @@ class AddBookToBookshelf extends React.Component {
 }
 
 export default createRefetchContainer(
-  withAuth(AddBookToBookshelf),
+  withAuth(AddEditionUserJoin),
   {
     viewer: graphql`
-      fragment AddBookToBookshelf_viewer on Viewer
+      fragment AddEditionUserJoin_viewer on Viewer
       @argumentDefinitions(
         title: {type: "String"},
         author: {type: "String"},
@@ -511,7 +522,7 @@ export default createRefetchContainer(
       `,
 
     user: graphql`
-     fragment AddBookToBookshelf_user on Viewer {
+     fragment AddEditionUserJoin_user on Viewer {
           user{
            id
          }
@@ -521,10 +532,10 @@ export default createRefetchContainer(
 
 
   graphql`
-    query AddBookToBookshelfRefetchQuery($title: String!, $author: String!, $input: String!){
+    query AddEditionUserJoinRefetchQuery($title: String!, $author: String!, $input: String!){
       viewer {
-        ...AddBookToBookshelf_viewer @arguments(title: $title, author: $author, input: $input)
-        ...AddBookToBookshelf_user
+        ...AddEditionUserJoin_viewer @arguments(title: $title, author: $author, input: $input)
+        ...AddEditionUserJoin_user
 
       }
     }

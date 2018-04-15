@@ -1,7 +1,7 @@
 import LandingRedirectView from 'components/LandingRedirectView/LandingRedirectView';
 import Auth from 'modules/auth/Auth';
 import SharedBooks from 'modules/core/SharedBooks/SharedBooks';
-import AddBookToBookshelf from 'modules/core/AddBookToBookshelf/AddBookToBookshelf';
+import AddEditionUserJoin from 'modules/core/AddEditionUserJoin/AddEditionUserJoin';
 import GroupView from 'modules/core/GroupView/GroupView';
 import GroupCreateView from 'modules/core/GroupCreateView/GroupCreateView';
 import GroupInviteView from 'modules/core/GroupInviteView/GroupInviteView';
@@ -61,11 +61,11 @@ const GroupInviteViewQuery = graphql`
   }
 `;
 
-const AddBookToBookshelfQuery = graphql`
-  query routes_AddBookToBookshelf_Query {
+const AddEditionUserJoinQuery = graphql`
+  query routes_AddEditionUserJoin_Query {
     viewer {
-      ...AddBookToBookshelf_viewer
-      ...AddBookToBookshelf_user
+      ...AddEditionUserJoin_viewer
+      ...AddEditionUserJoin_user
     }
   }
 `;
@@ -93,7 +93,7 @@ export default makeRouteConfig(
       <Route path='login' />
       <Route path='signup' />
     </Route>
-    <Route path='add-book' Component={AddBookToBookshelf} query={AddBookToBookshelfQuery} />
+    <Route path='add-book' Component={AddEditionUserJoin} query={AddEditionUserJoinQuery} />
     <Route path='shared-books' Component={SharedBooks} query={SharedBooksQuery} />
     <Route path='group/:nameUrl'>
       <Route Component={GroupView} query={GroupViewQuery} />

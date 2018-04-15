@@ -1,15 +1,15 @@
 import React from 'react';
 import { graphql, createFragmentContainer } from 'react-relay';
-import { Table, Rating, Button, Popup, Icon, Modal } from 'semantic-ui-react';
+import { Table, Rating, Button, Popup, Icon, Modal, Input, Label, Form } from 'semantic-ui-react';
 import styles from './MyBookList.scss';
+import FinishedReadingModal from 'components/FinishedReadingModal/FinishedReadingModal';
 import updateRatingMutation from '../../modules/core/mutations/UpdateRating';
 import updateStateMutation from '../../modules/core/mutations/UpdateState';
 
-class MyBookList extends React.Component {
-  state = {input: {rating: 0}, errors: [], modalOpen: false};
 
-  openModal = () => this.setState({open: true})
-  closeModal = () => this.setState({open: false})
+class MyBookList extends React.Component {
+
+  state = {input: {rating: 0}, errors: []};
 
   handleRatingChange = (e, data) => {
     e.preventDefault();
@@ -20,16 +20,15 @@ class MyBookList extends React.Component {
 
 
     const variables = {
-      bookshelfEntryId: data.id,
+      editionUserJoinId: data.id,
       rating: data.rating
     }
     updateRatingMutation(this.props.relay.environment, variables, this.setErrors)
   }
 
-  onCompletedReading = (data, state) => {
-    this.closeModal()
+changeReadingState = (data, state) => {
     const variables = {
-      bookshelfEntryId: data,
+      editionUserJoinId: data,
       state: state
     }
    updateStateMutation(this.props.relay.environment, variables, this.setErrors)
@@ -40,7 +39,8 @@ class MyBookList extends React.Component {
   }
 
   render() {
-    const bookshelfEntries = this.props.books.edges;
+    const editionUserJoin = this.props.books.edges;
+
     return (
       <div className={styles.root}>
         <Table singleLine className={styles.books}>
@@ -60,7 +60,7 @@ class MyBookList extends React.Component {
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {bookshelfEntries.map(e => {if (e.node.state == this.props.state){ return(
+            {editionUserJoin.map(e => {if (e.node.state == this.props.state){ return(
               <Table.Row key={e.node.id}>
                 <Table.Cell>{e.node.book.title}</Table.Cell>
                 <Table.Cell>{e.node.book.author}</Table.Cell>
@@ -69,7 +69,7 @@ class MyBookList extends React.Component {
                   <Table.Cell>
                     <div>
                       <Popup
-                        trigger={<Button icon floated="right" onClick={() => this.onCompletedReading(e.node.id, "reading")}>
+                        trigger={<Button icon floated="right" onClick={() => this.changeReadingState(e.node.id, "reading")}>
                           <Icon name="book" size="large"/>
                         </Button>}
                         content="Mark as reading"
@@ -81,39 +81,8 @@ class MyBookList extends React.Component {
                 {this.props.state =="reading" &&
                 <Table.Cell>
 
-                <Popup
-                  trigger={
+                  <FinishedReadingModal book={e.node.book} rating={e.node.rating} id={e.node.id} userID={this.props.userID}/>
 
-                      <Button icon floated="right" onClick={() => this.openModal()}>
-                        <Icon name="check circle" size="large"/>
-                      </Button>}
-                  content="Mark as read"
-                />
-                <Modal size="mini" open={this.state.open} onClose={this.close}>
-                  <Modal.Header>
-                    How did you like {e.node.book.title}?
-                  </Modal.Header>
-                  <Modal.Content>
-                    <div className={styles.ratingModal}>
-                      <Rating
-                        size="huge"
-                        defaultRating={e.node.rating}
-                        maxRating={5}
-                        onRate={this.handleRatingChange}
-                        id ={e.node.id}
-                      />
-                    </div>
-                  </Modal.Content>
-                  <Modal.Actions>
-                    <Button basic onClick={() => this.closeModal()}>
-                      Close
-                    </Button>
-                    <Button positive icon='checkmark'
-                      content='Done'
-                      onClick = {() => this.onCompletedReading(e.node.id, "read")}
-                    />
-                  </Modal.Actions>
-                </Modal>
                 </Table.Cell>
               }
 
@@ -143,7 +112,7 @@ class MyBookList extends React.Component {
 export default createFragmentContainer(
   MyBookList,
   graphql`
-  fragment MyBookList_books on BookshelfEntryConnection {
+  fragment MyBookList_books on EditionUserJoinConnection {
     edges {
       node {
         id

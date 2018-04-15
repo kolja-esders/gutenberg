@@ -1,6 +1,6 @@
 import factory
 from django.contrib.auth import get_user_model
-from ..models import Book, BookshelfEntry
+from ..models import Book, EditionUserJoin
 
 
 
@@ -30,9 +30,9 @@ class BookFactory(factory.DjangoModelFactory):
     title = factory.Faker('word')
     author = factory.Faker('last_name')
 
-class BookshelfEntryFactory(factory.DjangoModelFactory):
+class EditionUserJoinFactory(factory.DjangoModelFactory):
     class Meta:
-        model = BookshelfEntry
+        model = EditionUserJoin
 
     user = get_user_model().objects.first()
     book = Book.objects.first()
@@ -53,7 +53,7 @@ def generate_fake_books(number_of_books=25):
         BookFactory()
 
 
-def generate_fake_bookshelf_entries(number_of_bookshelf_entries=25):
-    """Generate 25 fake bookshelf_entries"""
-    for _ in range(0, number_of_bookshelf_entries):
-        BookshelfEntryFactory()
+def generate_fake_edition_user_joins(number_of_edition_user_joins=25):
+    """Generate 25 fake edition_user_joins"""
+    for _ in range(0, number_of_edition_user_joins):
+        EditionUserJoinFactory()

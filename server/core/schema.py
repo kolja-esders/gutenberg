@@ -5,7 +5,7 @@ from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType, ObjectType
 from core.user_helper.jwt_util import get_token_user_id
 from core.user_helper.jwt_schema import TokensInterface
-from .models import Book as BookModal, BookshelfEntry as BookshelfEntryModal, Membership as MembershipModal, Group as GroupModal, GroupInvite as GroupInviteModal
+from .models import Book as BookModal, EditionUserJoin as EditionUserJoinModal, Membership as MembershipModal, Group as GroupModal, GroupInvite as GroupInviteModal
 from .utils import Utils
 from .email import Email, EmailBuilder
 
@@ -15,9 +15,9 @@ class Book(DjangoObjectType):
         filter_fields = ['author', 'title']
         interfaces = (graphene.Node, )
 
-class BookshelfEntry(DjangoObjectType):
+class EditionUserJoin(DjangoObjectType):
     class Meta:
-        model = BookshelfEntryModal
+        model = EditionUserJoinModal
         filter_fields = ['state', 'rating']
         interfaces = (graphene.Node, )
 
@@ -61,11 +61,11 @@ class User(DjangoObjectType):
         filter_fields = []
 
     # TODO(kolja): This is currently needed since M2M is still broken in Graphene 2.0.
-    books = DjangoFilterConnectionField(BookshelfEntry)
+    books = DjangoFilterConnectionField(EditionUserJoin)
     groups = DjangoFilterConnectionField(Membership)
 
     def resolve_books(self, info):
-        return self.bookshelfentry_set.all()
+        return self.editionuserjoin_set.all()
 
     def resolve_groups(self, info):
         return self.membership_set.all()
@@ -76,9 +76,9 @@ class CoreQueries:
     books_autocompleted = graphene.List(Book, title=graphene.String())
     all_books = DjangoFilterConnectionField(Book)
 
-    bookshelf_entry = graphene.Node.Field(BookshelfEntry)
-    bookshelf_entries = graphene.List(BookshelfEntry)
-    all_bookshelf_entries = DjangoFilterConnectionField(BookshelfEntry)
+    edition_user_join = graphene.Node.Field(EditionUserJoin)
+    edition_user_joins = graphene.List(EditionUserJoin)
+    all_edition_user_joins = DjangoFilterConnectionField(EditionUserJoin)
 
     membership = graphene.Node.Field(Membership)
     memberships = graphene.List(Membership)
@@ -116,16 +116,16 @@ class CoreQueries:
     def resolve_books_autocompleted(self, info, **args):
          return BookModal.objects.filter(title__icontains=args['title'])
 
-    def resolve_bookshelf_entries(self, info, **args):
-        bookshelf_entries = BookshelfEntryModal.objects.all()
-        return bookshelf_entries
+    def resolve_edition_user_joins(self, info, **args):
+        edition_user_joins = EditionUserJoinModal.objects.all()
+        return edition_user_joins
 
     def resolve_memberships(self, info, **args):
         memberships = MembershipModal.objects.all()
         return memberships
 
 
-class CreateBook(graphene.Mutation):
+class CreateEdition(graphene.Mutation):
     class Arguments:
         title = graphene.String(required=True)
         author = graphene.String(required=True)
@@ -140,7 +140,7 @@ class CreateBook(graphene.Mutation):
                 author = author
             )
         book.save()
-        return CreateBook(book=book)
+        return CreateEdition(book=book)
 
 class CreateGroupInvite(graphene.Mutation):
     class Arguments:
@@ -228,14 +228,14 @@ class AcceptGroupInvite(graphene.Mutation):
 
         return AcceptGroupInvite(success=success, reason=reason)
 
-class CreateBookshelfEntry(graphene.Mutation):
+class CreateEditionUserJoin(graphene.Mutation):
     class Arguments:
         user_id = graphene.ID(required=True)
         book_id = graphene.ID(required=True)
         state = graphene.String(required=True)
         rating = graphene.Int(required=True)
 
-    bookshelf_entry = graphene.Field(BookshelfEntry)
+    edition_user_join = graphene.Field(EditionUserJoin)
 
     def mutate(self, info, **args):
         get_node = graphene.Node.get_node_from_global_id
@@ -243,45 +243,45 @@ class CreateBookshelfEntry(graphene.Mutation):
         rating = args['rating']
         user = get_node(info, args['user_id'])
         book = get_node(info, args['book_id'])
-        bookshelf_entry = BookshelfEntryModal(
+        edition_user_join = EditionUserJoinModal(
                 user = user,
-                book= book,
+                book = book,
                 state = state,
                 rating = rating
             )
-        bookshelf_entry.save()
-        return CreateBookshelfEntry(bookshelf_entry=bookshelf_entry)
+        edition_user_join.save()
+        return CreateEditionUserJoin(edition_user_join=edition_user_join)
 
 
 class UpdateRating(graphene.Mutation):
     class Arguments:
-        bookshelf_entry_id = graphene.ID(required=True)
+        edition_user_join_id = graphene.ID(required=True)
         rating = graphene.Int(required=True)
 
-    bookshelf_entry = graphene.Field(BookshelfEntry)
+    edition_user_join = graphene.Field(EditionUserJoin)
 
     def mutate(self, info, **args):
         get_node = graphene.Node.get_node_from_global_id
-        bookshelf_entry = get_node(info, args['bookshelf_entry_id'])
+        edition_user_join = get_node(info, args['edition_user_join_id'])
         rating = args['rating']
-        bookshelf_entry.rating = rating
-        bookshelf_entry.save()
-        return UpdateRating(bookshelf_entry = bookshelf_entry)
+        edition_user_join.rating = rating
+        edition_user_join.save()
+        return UpdateRating(edition_user_join = edition_user_join)
 
 class UpdateState(graphene.Mutation):
     class Arguments:
-        bookshelf_entry_id = graphene.ID(required=True)
+        edition_user_join_id = graphene.ID(required=True)
         state = graphene.String(required=True)
 
-    bookshelf_entry = graphene.Field(BookshelfEntry)
+    edition_user_join = graphene.Field(EditionUserJoin)
 
     def mutate(self, info, **args):
         get_node = graphene.Node.get_node_from_global_id
-        bookshelf_entry = get_node(info, args['bookshelf_entry_id'])
+        edition_user_join = get_node(info, args['edition_user_join_id'])
         state = args['state']
-        bookshelf_entry.state = state
-        bookshelf_entry.save()
-        return UpdateState(bookshelf_entry = bookshelf_entry)
+        edition_user_join.state = state
+        edition_user_join.save()
+        return UpdateState(edition_user_join = edition_user_join)
 
 class UpdateUser(graphene.Mutation):
     class Arguments:
@@ -338,8 +338,8 @@ class CreateGroup(graphene.Mutation):
         return CreateGroup(group=group)
 
 class CoreMutations:
-    create_book = CreateBook.Field()
-    create_bookshelf_entry = CreateBookshelfEntry.Field()
+    create_edition = CreateEdition.Field()
+    create_edition_user_join = CreateEditionUserJoin.Field()
     create_membership = CreateMembership.Field()
     create_group = CreateGroup.Field()
     create_group_invite = CreateGroupInvite.Field()

@@ -9,10 +9,10 @@ import Link from 'found'
 
 class SharedBookList extends React.Component {
   render() {
-    const bookshelf_entries = this.props.viewer.bookshelfEntries;
+    const edition_user_joins = this.props.viewer.editionUserJoin;
     return (
       <div className={styles.root}>
-        { bookshelf_entries.length ? (
+        { edition_user_joins.length ? (
           <Table singleLine className={styles.books}>
             <Table.Header>
               <Table.Row>
@@ -23,7 +23,7 @@ class SharedBookList extends React.Component {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {bookshelf_entries.map((e) =>
+              {edition_user_joins.map((e) =>
                 <Table.Row key={e.id}>
                   <Table.Cell>{e.book.title}</Table.Cell>
                   <Table.Cell>{e.book.author}</Table.Cell>
@@ -49,7 +49,7 @@ class SharedBookList extends React.Component {
 
 export default createFragmentContainer(SharedBookList, graphql`
   fragment SharedBooksList_viewer on Viewer {
-    bookshelfEntries {
+    editionUserJoin {
       id
       book {
         title

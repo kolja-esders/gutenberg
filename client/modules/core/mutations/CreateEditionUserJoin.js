@@ -1,11 +1,11 @@
 import { commitMutation, graphql } from 'react-relay';
 
 const mutation = graphql`
-  mutation CreateBookshelfEntryMutation(
+  mutation CreateEditionUserJoinMutation(
     $userIdInput: ID!, $bookIdInput: ID!, $stateInput: String!, $ratingInput: Int!
   ) {
-    createBookshelfEntry(userId: $userIdInput, bookId: $bookIdInput, state: $stateInput, rating: $ratingInput) {
-      bookshelfEntry{
+    createEditionUserJoin(userId: $userIdInput, bookId: $bookIdInput, state: $stateInput, rating: $ratingInput) {
+      editionUserJoin{
         book {
           id
         }
@@ -19,7 +19,7 @@ const mutation = graphql`
   }
 `;
 
-export default function createBookshelfEntry(environment, variables, onCompleted = null, onError = null) {
+export default function createEditionUserJoin(environment, variables, onCompleted = null, onError = null) {
   commitMutation(
     environment,
     {

@@ -1,10 +1,10 @@
 import { commitMutation, graphql } from 'react-relay';
 
 const mutation = graphql`
-  mutation CreateBookMutation(
+  mutation CreateEditionMutation(
     $titleInput: String!, $authorInput: String!
   ) {
-    createBook(title: $titleInput, author: $authorInput) {
+    createEdition(title: $titleInput, author: $authorInput) {
       book {
         title
         author
@@ -13,7 +13,7 @@ const mutation = graphql`
   }
 `;
 
-export default function createBook(environment, variables, onCompleted = null, onError = null) {
+export default function createEdition(environment, variables, onCompleted = null, onError = null) {
   commitMutation(
     environment,
     {
