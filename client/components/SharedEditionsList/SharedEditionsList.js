@@ -3,17 +3,17 @@ import { graphql, createFragmentContainer, QueryRenderer } from 'react-relay';
 import Page from 'components/Page/Page';
 import { authenticatedRoute } from 'modules/auth/utils'
 import { Table, Dimmer, Loader, Rating, Segment, Button } from 'semantic-ui-react';
-import styles from './SharedBooksList.scss';
+import styles from './SharedEditionsList.scss';
 import { environment } from '../../utils/relay'
 import Link from 'found'
 
-class SharedBookList extends React.Component {
+class SharedEditionsList extends React.Component {
   render() {
     const edition_user_joins = this.props.viewer.editionUserJoin;
     return (
       <div className={styles.root}>
         { edition_user_joins.length ? (
-          <Table singleLine className={styles.books}>
+          <Table singleLine className={styles.editions}>
             <Table.Header>
               <Table.Row>
                 <Table.HeaderCell>Title</Table.HeaderCell>
@@ -34,7 +34,7 @@ class SharedBookList extends React.Component {
             </Table.Body>
           </Table>
         ) : (
-          <Segment padded='very' className={styles.booksMissing}>
+          <Segment padded='very' className={styles.editionsMissing}>
             <div className={styles.emoji}></div>
             <div className={styles.warning}>
               <h1>Your group has no books yet.</h1>
@@ -47,8 +47,10 @@ class SharedBookList extends React.Component {
   }
 }
 
-export default createFragmentContainer(SharedBookList, graphql`
-  fragment SharedBooksList_viewer on Viewer {
+export default createFragmentContainer(
+  SharedEditionsList,
+  graphql`
+  fragment SharedEditionsList_viewer on Viewer {
     editionUserJoins {
       id
       edition {
