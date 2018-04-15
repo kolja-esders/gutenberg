@@ -128,10 +128,10 @@ class CoreQueries:
     all_authors = DjangoFilterConnectionField(Author)
 
     platform = graphene.Node.Field(Platform)
-    all_platform = DjangoFilterConnectionField(Platform)
+    all_platforms = DjangoFilterConnectionField(Platform)
 
     edition = graphene.Node.Field(Edition)
-    all_edition = DjangoFilterConnectionField(Edition)
+    all_editions = DjangoFilterConnectionField(Edition)
 
     publisher = graphene.Node.Field(Publisher)
     all_publishers = DjangoFilterConnectionField(Publisher)
