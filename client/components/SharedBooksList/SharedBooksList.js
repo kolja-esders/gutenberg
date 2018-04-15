@@ -25,9 +25,9 @@ class SharedBookList extends React.Component {
             <Table.Body>
               {edition_user_joins.map((e) =>
                 <Table.Row key={e.id}>
-                  <Table.Cell>{e.book.title}</Table.Cell>
-                  <Table.Cell>{e.book.author}</Table.Cell>
-                  <Table.Cell>{e.user.firstName}</Table.Cell>
+                  <Table.Cell>{e.edition.title}</Table.Cell>
+                  <Table.Cell>{e.edition.book.author.name}</Table.Cell>
+                  <Table.Cell>{e.edition.firstName}</Table.Cell>
                   <Table.Cell><Rating disabled rating={e.rating} maxRating={5} /></Table.Cell>
                 </Table.Row>
               )}
@@ -49,11 +49,15 @@ class SharedBookList extends React.Component {
 
 export default createFragmentContainer(SharedBookList, graphql`
   fragment SharedBooksList_viewer on Viewer {
-    editionUserJoin {
+    editionUserJoins {
       id
-      book {
+      edition {
         title
-        author
+        book {
+          author {
+            name
+          }
+        }
       }
       user {
         firstName
