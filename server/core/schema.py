@@ -5,20 +5,73 @@ from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType, ObjectType
 from core.user_helper.jwt_util import get_token_user_id
 from core.user_helper.jwt_schema import TokensInterface
+<<<<<<< HEAD
 from .models import Book as BookModal, EditionUserJoin as EditionUserJoinModal, Membership as MembershipModal, Group as GroupModal, GroupInvite as GroupInviteModal
+=======
+from .models import Book as BookModal, Author as AuthorModal, Language as LanguageModal, Publisher as PublisherModal,  Membership as MembershipModal, Group as GroupModal, GroupInvite as GroupInviteModal, Genre as GenreModal, Edition as EditionModal, Platform as PlatformModal, EditionPlatformJoin as EditionPlatformJoinModal, EditionUserJoin as EditionUserJoinModal
+>>>>>>> 80f26f6105e3ab99a1e7e03af4887208f9da099d
 from .utils import Utils
 from .email import Email, EmailBuilder
 
 class Book(DjangoObjectType):
     class Meta:
         model = BookModal
-        filter_fields = ['author', 'title']
+        filter_fields = ['author', 'original_edition']
+        interfaces = (graphene.Node, )
+
+<<<<<<< HEAD
+class EditionUserJoin(DjangoObjectType):
+    class Meta:
+        model = EditionUserJoinModal
+        filter_fields = ['state', 'rating']
+=======
+class Author(DjangoObjectType):
+    class Meta:
+        model = AuthorModal
+        filter_fields = ['name']
+        interfaces = (graphene.Node, )
+
+class Language(DjangoObjectType):
+    class Meta:
+        model = LanguageModal
+        filter_fields = ['name', 'english_name', 'alpha3']
+        interfaces = (graphene.Node, )
+
+class Publisher(DjangoObjectType):
+    class Meta:
+        model = PublisherModal
+        filter_fields = ['name']
+        interfaces = (graphene.Node, )
+
+class Genre(DjangoObjectType):
+    class Meta:
+        model = GenreModal
+        filter_fields = ['name']
+        interfaces = (graphene.Node, )
+
+class Edition(DjangoObjectType):
+    class Meta:
+        model = EditionModal
+        filter_fields = ['book', 'title', 'num_edition', 'num_pages', 'language', 'isbn10', 'isbn13', 'publisher', 'date_published']
         interfaces = (graphene.Node, )
 
 class EditionUserJoin(DjangoObjectType):
     class Meta:
         model = EditionUserJoinModal
-        filter_fields = ['state', 'rating']
+        filter_fields = ['state', 'rating', 'book', 'edition', 'user']
+        interfaces = (graphene.Node, )
+
+class Platform(DjangoObjectType):
+    class Meta:
+        model = PlatformModal
+        filter_fields = ['name']
+        interfaces = (graphene.Node, )
+
+class EditionPlatformJoin(DjangoObjectType):
+    class Meta:
+        model = EditionPlatformJoinModal
+        filter_fields = ['rating', 'uid', 'edition', 'platform']
+>>>>>>> 80f26f6105e3ab99a1e7e03af4887208f9da099d
         interfaces = (graphene.Node, )
 
 class Group(DjangoObjectType):
@@ -73,12 +126,35 @@ class User(DjangoObjectType):
 class CoreQueries:
     book = graphene.Field(Book, id=graphene.ID(), title=graphene.String(), author=graphene.String())
     books = graphene.List(Book)
-    books_autocompleted = graphene.List(Book, title=graphene.String())
     all_books = DjangoFilterConnectionField(Book)
 
     edition_user_join = graphene.Node.Field(EditionUserJoin)
     edition_user_joins = graphene.List(EditionUserJoin)
     all_edition_user_joins = DjangoFilterConnectionField(EditionUserJoin)
+<<<<<<< HEAD
+=======
+
+    edition_platform_join = graphene.Node.Field(EditionPlatformJoin)
+    all_edition_platform_joins = DjangoFilterConnectionField(EditionPlatformJoin)
+
+    author = graphene.Node.Field(Author)
+    all_authors = DjangoFilterConnectionField(Author)
+
+    platform = graphene.Node.Field(Platform)
+    all_platform = DjangoFilterConnectionField(Platform)
+
+    edition = graphene.Node.Field(Edition)
+    all_edition = DjangoFilterConnectionField(Edition)
+
+    publisher = graphene.Node.Field(Publisher)
+    all_publishers = DjangoFilterConnectionField(Publisher)
+
+    genre = graphene.Node.Field(Genre)
+    all_genres = DjangoFilterConnectionField(Genre)
+
+    language = graphene.Node.Field(Language)
+    all_languages = DjangoFilterConnectionField(Language)
+>>>>>>> 80f26f6105e3ab99a1e7e03af4887208f9da099d
 
     membership = graphene.Node.Field(Membership)
     memberships = graphene.List(Membership)
