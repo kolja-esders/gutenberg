@@ -5,7 +5,7 @@ from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType, ObjectType
 from core.user_helper.jwt_util import get_token_user_id
 from core.user_helper.jwt_schema import TokensInterface
-from .models import Book as BookModal, BookshelfEntry as BookshelfEntryModal, Membership as MembershipModal, Group as GroupModal, GroupInvite as GroupInviteModal
+from .models import Book as BookModal, BookshelfEntry as BookshelfEntryModal, BookRecommendationForFriend as BookRecommendationForFriendModal, Membership as MembershipModal, Group as GroupModal, GroupInvite as GroupInviteModal
 from .utils import Utils
 from .email import Email, EmailBuilder
 
@@ -19,6 +19,12 @@ class BookshelfEntry(DjangoObjectType):
     class Meta:
         model = BookshelfEntryModal
         filter_fields = ['state', 'rating']
+        interfaces = (graphene.Node, )
+
+class BookRecommendationForFriend(DjangoObjectType):
+    class Meta:
+        model = BookRecommendationForFriendModal
+        filter_fields = []
         interfaces = (graphene.Node, )
 
 class Group(DjangoObjectType):
@@ -202,6 +208,41 @@ class CreateGroupInvite(graphene.Mutation):
 
         return CreateGroupInvite(group_invite=group_invite)
 
+class CreateBookRecommendationForFriend(graphene.Mutation):
+    class Arguments:
+        friend_email = graphene.String(required=True)
+        first_name = graphene.String()
+        last_name = graphene.String()
+        host_id = graphene.ID(required=True)
+        book_title = graphene.String(required=True)
+        book_author = graphene.String(required=True)
+
+
+    book_recommendation_for_friend = graphene.Field(BookRecommendationForFriend)
+
+    def mutate(self, info, **args):
+        get_node = graphene.Node.get_node_from_global_id
+        book_title = args['book_title']
+        book_author = args['book_author']
+        host_id = get_node(info, args['host_id'])
+        email = args['friend_email']
+        first_name = args['first_name']
+        last_name = args['last_name']
+        book_recommendation_for_friend = BookRecommendationForFriendModal(
+            created_by=host_id,
+            friend_email=email,
+            first_name=first_name,
+            last_name=last_name,
+            email_sent=False,
+            book_title=book_title,
+            book_author=book_author
+        )
+        book_recommendation_for_friend.save()
+
+        #TODO Patrick: Send recommendation email
+
+        return CreateBookRecommendationForFriend(book_recommendation_for_friend=book_recommendation_for_friend)
+
 class AcceptGroupInvite(graphene.Mutation):
     class Arguments:
         invite_id = graphene.ID(required=True)
@@ -245,7 +286,7 @@ class CreateBookshelfEntry(graphene.Mutation):
         book = get_node(info, args['book_id'])
         bookshelf_entry = BookshelfEntryModal(
                 user = user,
-                book= book,
+                book = book,
                 state = state,
                 rating = rating
             )
@@ -347,6 +388,7 @@ class CoreMutations:
     update_user = UpdateUser.Field()
     update_rating = UpdateRating.Field()
     update_state = UpdateState.Field()
+    create_book_recommendation_for_friend = CreateBookRecommendationForFriend.Field()
 
 
 class Viewer(ObjectType, CoreQueries):
