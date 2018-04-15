@@ -5,20 +5,56 @@ from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType, ObjectType
 from core.user_helper.jwt_util import get_token_user_id
 from core.user_helper.jwt_schema import TokensInterface
-from .models import Book as BookModal, BookshelfEntry as BookshelfEntryModal, Membership as MembershipModal, Group as GroupModal, GroupInvite as GroupInviteModal
+from .models import Book as BookModal, Author as AuthorModal, Language as LanguageModal, Publisher as PublisherModal,  Membership as MembershipModal, Group as GroupModal, GroupInvite as GroupInviteModal, Genre as GenreModal, Edition as EditionModal, Platform as PlatformModal, EditionPlatformJoin as EditionPlatformJoinModal
 from .utils import Utils
 from .email import Email, EmailBuilder
 
 class Book(DjangoObjectType):
     class Meta:
         model = BookModal
-        filter_fields = ['author', 'title']
+        filter_fields = ['author', 'original_edition']
         interfaces = (graphene.Node, )
 
-class BookshelfEntry(DjangoObjectType):
+class Author(DjangoObjectType):
     class Meta:
-        model = BookshelfEntryModal
-        filter_fields = ['state', 'rating']
+        model = AuthorModal
+        filter_fields = ['name']
+        interfaces = (graphene.Node, )
+
+class Language(DjangoObjectType):
+    class Meta:
+        model = LanguageModal
+        filter_fields = ['name', 'english_name', 'alpha3']
+        interfaces = (graphene.Node, )
+
+class Publisher(DjangoObjectType):
+    class Meta:
+        model = PublisherModal
+        filter_fields = ['name']
+        interfaces = (graphene.Node, )
+
+class Genre(DjangoObjectType):
+    class Meta:
+        model = GenreModal
+        filter_fields = ['name']
+        interfaces = (graphene.Node, )
+
+class Edition(DjangoObjectType):
+    class Meta:
+        model = EditionModal
+        filter_fields = ['book', 'title', 'num_edition', 'num_pages', 'language', 'isbn10', 'isbn13', 'publisher', 'date_published']
+        interfaces = (graphene.Node, )
+
+class Platform(DjangoObjectType):
+    class Meta:
+        model = PlatformModal
+        filter_fields = ['name']
+        interfaces = (graphene.Node, )
+
+class EditionPlatformJoin(DjangoObjectType):
+    class Meta:
+        model = EditionPlatformJoinModal
+        filter_fields = ['state', 'rating', 'book', 'edition', 'user']
         interfaces = (graphene.Node, )
 
 class Group(DjangoObjectType):
