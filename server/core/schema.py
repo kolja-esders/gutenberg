@@ -5,7 +5,7 @@ from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType, ObjectType
 from core.user_helper.jwt_util import get_token_user_id
 from core.user_helper.jwt_schema import TokensInterface
-from .models import Book as BookModal, Author as AuthorModal, Language as LanguageModal, Publisher as PublisherModal,  Membership as MembershipModal, Group as GroupModal, GroupInvite as GroupInviteModal, Genre as GenreModal, Edition as EditionModal, Platform as PlatformModal, EditionPlatformJoin as EditionPlatformJoinModal
+from .models import Book as BookModal, Author as AuthorModal, Language as LanguageModal, Publisher as PublisherModal,  Membership as MembershipModal, Group as GroupModal, GroupInvite as GroupInviteModal, Genre as GenreModal, Edition as EditionModal, Platform as PlatformModal, EditionPlatformJoin as EditionPlatformJoinModal, EditionUserJoin as EditionUserJoinModal
 from .utils import Utils
 from .email import Email, EmailBuilder
 
@@ -45,6 +45,12 @@ class Edition(DjangoObjectType):
         filter_fields = ['book', 'title', 'num_edition', 'num_pages', 'language', 'isbn10', 'isbn13', 'publisher', 'date_published']
         interfaces = (graphene.Node, )
 
+class EditionUserJoin(DjangoObjectType):
+    class Meta:
+        model = EditionUserJoinModal
+        filter_fields = ['state', 'rating', 'book', 'edition', 'user']
+        interfaces = (graphene.Node, )
+
 class Platform(DjangoObjectType):
     class Meta:
         model = PlatformModal
@@ -54,7 +60,7 @@ class Platform(DjangoObjectType):
 class EditionPlatformJoin(DjangoObjectType):
     class Meta:
         model = EditionPlatformJoinModal
-        filter_fields = ['state', 'rating', 'book', 'edition', 'user']
+        filter_fields = ['rating', 'uid', 'edition', 'platform']
         interfaces = (graphene.Node, )
 
 class Group(DjangoObjectType):
@@ -97,7 +103,7 @@ class User(DjangoObjectType):
         filter_fields = []
 
     # TODO(kolja): This is currently needed since M2M is still broken in Graphene 2.0.
-    books = DjangoFilterConnectionField(BookshelfEntry)
+    books = DjangoFilterConnectionField(EditionUserJoin)
     groups = DjangoFilterConnectionField(Membership)
 
     def resolve_books(self, info):
@@ -109,12 +115,32 @@ class User(DjangoObjectType):
 class CoreQueries:
     book = graphene.Field(Book, id=graphene.ID(), title=graphene.String(), author=graphene.String())
     books = graphene.List(Book)
-    books_autocompleted = graphene.List(Book, title=graphene.String())
     all_books = DjangoFilterConnectionField(Book)
 
-    bookshelf_entry = graphene.Node.Field(BookshelfEntry)
-    bookshelf_entries = graphene.List(BookshelfEntry)
-    all_bookshelf_entries = DjangoFilterConnectionField(BookshelfEntry)
+    edition_user_join = graphene.Node.Field(EditionUserJoin)
+    edition_user_joins = graphene.List(EditionUserJoin)
+    all_edition_user_joins = DjangoFilterConnectionField(EditionUserJoin)
+
+    edition_platform_join = graphene.Node.Field(EditionPlatformJoin)
+    all_edition_platform_joins = DjangoFilterConnectionField(EditionPlatformJoin)
+
+    author = graphene.Node.Field(Author)
+    all_authors = DjangoFilterConnectionField(Author)
+
+    platform = graphene.Node.Field(Platform)
+    all_platform = DjangoFilterConnectionField(Platform)
+
+    edition = graphene.Node.Field(Edition)
+    all_edition = DjangoFilterConnectionField(Edition)
+
+    publisher = graphene.Node.Field(Publisher)
+    all_publishers = DjangoFilterConnectionField(Publisher)
+
+    genre = graphene.Node.Field(Genre)
+    all_genres = DjangoFilterConnectionField(Genre)
+
+    language = graphene.Node.Field(Language)
+    all_languages = DjangoFilterConnectionField(Language)
 
     membership = graphene.Node.Field(Membership)
     memberships = graphene.List(Membership)
