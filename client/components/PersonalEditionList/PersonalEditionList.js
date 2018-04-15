@@ -1,13 +1,13 @@
 import React from 'react';
 import { graphql, createFragmentContainer } from 'react-relay';
 import { Table, Rating, Button, Popup, Icon, Modal, Input, Label, Form } from 'semantic-ui-react';
-import styles from './MyBookList.scss';
-import FinishedReadingModal from 'components/FinishedReadingModal/FinishedReadingModal';
+import styles from './PersonalEditionList.scss';
+//import FinishedReadingModal from 'components/FinishedReadingModal/FinishedReadingModal';
 import updateRatingMutation from '../../modules/core/mutations/UpdateRating';
 import updateStateMutation from '../../modules/core/mutations/UpdateState';
 
 
-class MyBookList extends React.Component {
+class PersonalEditionList extends React.Component {
 
   state = {input: {rating: 0}, errors: []};
 
@@ -81,7 +81,7 @@ changeReadingState = (data, state) => {
                 {this.props.state =="reading" &&
                 <Table.Cell>
 
-                  <FinishedReadingModal book={e.node.book} rating={e.node.rating} id={e.node.id} userID={this.props.userID}/>
+                //TODO: Patrick add FinishedReadingModal
 
                 </Table.Cell>
               }
@@ -110,9 +110,9 @@ changeReadingState = (data, state) => {
 }
 
 export default createFragmentContainer(
-  MyBookList,
+  PersonalEditionList,
   graphql`
-  fragment MyBookList_books on EditionUserJoinConnection {
+  fragment PersonalEditionList_books on EditionUserJoinConnection {
     edges {
       node {
         id
