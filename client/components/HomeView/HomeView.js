@@ -21,17 +21,17 @@ class HomeView extends React.Component {
 
             <div className={styles.reading}>
               <Header floated='left' as='h2'>Reading</Header>
-              <PersonalEditionList editions={this.props.viewer.user.books} state='reading'/>
+              <PersonalEditionList editions={this.props.viewer.user.editions} state='reading'/>
             </div>
 
             <div className={styles.read}>
               <Header floated='left' as='h2'>Read</Header>
-              <PersonalEditionList editions={this.props.viewer.user.books} state='read'/>
+              <PersonalEditionList editions={this.props.viewer.user.editions} state='read'/>
             </div>
 
             <div className={styles.to_read}>
               <Header floated='left' as='h2'>To-Read</Header>
-              <PersonalEditionList editions={this.props.viewer.user.books} state='to-read'/>
+              <PersonalEditionList editions={this.props.viewer.user.editions} state='to-read'/>
             </div>
           </Segment>
       </section>
@@ -47,8 +47,8 @@ export default createFragmentContainer(
       ...Page_viewer
       id
       user {
-        books {
-          ...PersonalEditionList_books
+        editions {
+          ...PersonalEditionList_editions
         }
       }
     }
