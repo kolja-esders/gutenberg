@@ -2,15 +2,15 @@
 import React from 'react';
 import { graphql, createFragmentContainer, QueryRenderer } from 'react-relay';
 import Page from 'components/Page/Page';
-import SharedBooksList from 'components/SharedBooksList/SharedBooksList';
+import SharedEditionsList from 'components/SharedEditionsList/SharedEditionsList';
 import { withAuth } from 'modules/auth/utils'
 
-class SharedBooks extends React.Component {
+class SharedEditions extends React.Component {
   render() {
     return (
       <div>
         <Page title='Books' viewer={this.props.viewer}>
-          <SharedBooksList viewer={this.props.viewer}/>
+          <SharedEditionsList viewer={this.props.viewer}/>
         </Page>
       </div>
     );
@@ -19,11 +19,11 @@ class SharedBooks extends React.Component {
 
 
 export default createFragmentContainer(
-  withAuth(SharedBooks),
+  withAuth(SharedEditions),
   graphql`
-    fragment SharedBooks_viewer on Viewer {
+    fragment SharedEditions_viewer on Viewer {
       ...Page_viewer
-      ...SharedBooksList_viewer
+      ...SharedEditionsList_viewer
     }
   `
 );
