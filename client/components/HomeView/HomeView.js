@@ -1,7 +1,7 @@
 import React from 'react';
 import { graphql, createFragmentContainer } from 'react-relay';
 import Page from 'components/Page/Page';
-import MyEditionList from 'components/PersonalEditionList/PersonalEditionList';
+import PersonalEditionList from 'components/PersonalEditionList/PersonalEditionList';
 import { withAuth } from 'modules/auth/utils';
 import { Button, Segment, Header } from 'semantic-ui-react';
 import { Link } from 'found';
