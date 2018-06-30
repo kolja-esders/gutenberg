@@ -5,7 +5,7 @@ from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType, ObjectType
 from core.user_helper.jwt_util import get_token_user_id
 from core.user_helper.jwt_schema import TokensInterface
-from .models import Book as BookModal, Author as AuthorModal, Language as LanguageModal, Publisher as PublisherModal,  Membership as MembershipModal, Group as GroupModal, GroupInvite as GroupInviteModal, Genre as GenreModal, Edition as EditionModal, Platform as PlatformModal, BookPlatformJoin as BookPlatformJoinModal, EditionUserJoin as EditionUserJoinModal, EditionPlatformJoin as EditionPlatformJoinModal
+from .models import Book as BookModal, Author as AuthorModal, Language as LanguageModal, Publisher as PublisherModal,  Membership as MembershipModal, Group as GroupModal, GroupInvite as GroupInviteModal, Genre as GenreModal, Edition as EditionModal, Platform as PlatformModal, BookPlatformJoin as BookPlatformJoinModal, EditionUserJoin as EditionUserJoinModal, EditionPlatformJoin as EditionPlatformJoinModal, AuthorPlatformJoin as AuthorPlatformJoinModal
 from .utils import Utils
 from .email import Email, EmailBuilder
 
@@ -237,7 +237,7 @@ class CreateEdition(graphene.Mutation):
         edition.save()
         return CreateEdition(edition=edition)
 
-class CreateBookAndEditionFromGoodreadsAutocomplete(graphene.Mutation):
+class CreateBookAndEditionFromGoodreads(graphene.Mutation):
     class Arguments:
         title = graphene.String(required=True)
         author_id = graphene.String(required=True)
@@ -272,7 +272,27 @@ class CreateBookAndEditionFromGoodreadsAutocomplete(graphene.Mutation):
             book=book
         )
         edition.save()
-        return CreateBookAndEditionFromGoodreadsAutocomplete(edition=edition)
+        return CreateBookAndEditionFromGoodreads(edition=edition)
+
+class CreateAuthorFromGoodreads(graphene.Mutation):
+    class Arguments:
+        name = graphene.String(required=True)
+        goodreads_uid = graphene.String(required=True)
+
+    author = graphene.Field(Author)
+
+    def mutate(self, info, **args):
+        name = args['author']
+        uid = args['goodreads_uid']
+
+        platform = Platform.get(name='goodreads')
+
+        # Create author.
+        author, _ = AuthorModal.objects.get_or_create(name=name)
+
+        author_platform_join = AuthorPlatformJoinModal(platform=platform, author=author, uid=uid)
+        author_platform_join.save()
+        return CreateAuthorFromGoodreads(author=author)
 
 class CreateAuthor(graphene.Mutation):
     class Arguments:
@@ -485,6 +505,8 @@ class CoreMutations:
     create_book = CreateBook.Field()
     create_edition = CreateEdition.Field()
     create_edition_user_join = CreateEditionUserJoin.Field()
+    create_book_and_edition_from_goodreads = CreateBookAndEditionFromGoodreads.Field()
+    update_state = UpdateState.Field()
     create_membership = CreateMembership.Field()
     create_group = CreateGroup.Field()
     create_group_invite = CreateGroupInvite.Field()
