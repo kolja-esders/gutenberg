@@ -60,12 +60,12 @@ class GroupView extends React.Component {
                   <Table.Body>
 
                     {members.map(m =>
-                      m.node.books &&
-                      m.node.books.edges.map(e =>
+                      m.node.editions &&
+                      m.node.editions.edges.map(e =>
                         <Table.Row key={e.node.id}>
                           <Table.Cell>{m.node.firstName}</Table.Cell>
-                          <Table.Cell>{e.node.book.title}</Table.Cell>
-                          <Table.Cell>{e.node.book.author}</Table.Cell>
+                          <Table.Cell>{e.node.edition.title}</Table.Cell>
+                          <Table.Cell>{e.node.edition.book.author.name}</Table.Cell>
                           <Table.Cell>
                             <Rating disabled rating={e.node.rating} maxRating={5} className={styles.rating}/>
                           </Table.Cell>
@@ -99,15 +99,19 @@ export default createFragmentContainer(withAuth(GroupView), graphql`
               firstName
               lastName
               profileImage
-              books {
+              editions {
                 edges {
                   node {
                     id
                     rating
                     state
-                    book {
+                    edition {
                       title
-                      author
+                      book {
+                        author {
+                          name
+                        }
+                      }
                     }
                   }
                 }
