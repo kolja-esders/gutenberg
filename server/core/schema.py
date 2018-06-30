@@ -110,11 +110,11 @@ class User(DjangoObjectType):
         filter_fields = []
 
     # TODO(kolja): This is currently needed since M2M is still broken in Graphene 2.0.
-    all_edition_user_joins = DjangoFilterConnectionField(EditionUserJoin)
+    editions = DjangoFilterConnectionField(EditionUserJoin)
 
     groups = DjangoFilterConnectionField(Membership)
 
-    def resolve_all_edition_user_joins(self, info):
+    def resolve_editions(self, info):
         return self.editionuserjoin_set.all()
 
     def resolve_groups(self, info):
