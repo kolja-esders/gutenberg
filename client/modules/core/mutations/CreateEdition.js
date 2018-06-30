@@ -2,12 +2,16 @@ import { commitMutation, graphql } from 'react-relay';
 
 const mutation = graphql`
   mutation CreateEditionMutation(
-    $titleInput: String!, $authorInput: String!
+    $titleInput: String!, $bookIdInput: String!
   ) {
-    createEdition(title: $titleInput, author: $authorInput) {
-      book {
+    createEdition(title: $titleInput, bookId: $bookIdInput) {
+      edition {
         title
-        author
+        book {
+          author {
+            name
+          }
+        }
       }
     }
   }
