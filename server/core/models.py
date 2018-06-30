@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.postgres.fields import JSONField
 from custom_user.models import AbstractEmailUser
 from django.utils import timezone
 from django.core.validators import MinLengthValidator
@@ -86,13 +87,36 @@ class EditionPlatformJoin(models.Model):
     edition = models.ForeignKey(Edition)
     platform = models.ForeignKey(Platform)
     uid = models.CharField(max_length=64)
-    rating = models.FloatField()
-    url = models.CharField(max_length=128)
+    rating = models.FloatField(null=True, default=None)
+    data = JSONField(default=None)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = AutoDateTimeField(default=timezone.now)
 
     class Meta:
         unique_together = ('edition', 'platform')
+
+class BookPlatformJoin(models.Model):
+    book = models.ForeignKey(Book)
+    platform = models.ForeignKey(Platform)
+    uid = models.CharField(max_length=64)
+    rating = models.FloatField(null=True, default=None)
+    data = JSONField(default=None)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = ('book', 'platform')
+
+class AuthorPlatformJoin(models.Model):
+    author = models.ForeignKey(Author)
+    platform = models.ForeignKey(Platform)
+    uid = models.CharField(max_length=64)
+    # data = models.JSONField(default=None)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = ('author', 'platform')
 
 class Group(models.Model):
     name = models.CharField(max_length=32, unique=True)
@@ -110,10 +134,9 @@ class CustomUser(AbstractEmailUser):
     last_name = models.CharField(max_length=31, blank=True)
     profile_image = models.CharField(max_length=128, blank=True, default='default.png')
     groups = models.ManyToManyField(Group, through='Membership', symmetrical=False, related_name='members')
-    editions = models.ManyToManyField(Book, through='EditionUserJoin', symmetrical=False, related_name='users')
+    editions = models.ManyToManyField(Edition, through='EditionUserJoin', symmetrical=False, related_name='users')
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = AutoDateTimeField(default=timezone.now)
-
 
 class EditionUserJoin(models.Model):
     edition = models.ForeignKey(Edition)
