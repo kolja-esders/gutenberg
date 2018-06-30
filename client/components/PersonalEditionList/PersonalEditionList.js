@@ -26,12 +26,12 @@ class PersonalEditionList extends React.Component {
     updateRatingMutation(this.props.relay.environment, variables, this.setErrors)
   }
 
-changeReadingState = (data, state) => {
+  changeReadingState = (data, state) => {
     const variables = {
       editionUserJoinId: data,
       state: state
     }
-   updateStateMutation(this.props.relay.environment, variables, this.setErrors)
+    updateStateMutation(this.props.relay.environment, variables, this.setErrors)
   }
 
   setErrors = (errors) => {
@@ -39,7 +39,7 @@ changeReadingState = (data, state) => {
   }
 
   render() {
-    const editionUserJoin = this.props.books.edges;
+    const editionUserJoin = this.props.editions.edges;
 
     return (
       <div className={styles.root}>
@@ -62,8 +62,8 @@ changeReadingState = (data, state) => {
           <Table.Body>
             {editionUserJoin.map(e => {if (e.node.state == this.props.state){ return(
               <Table.Row key={e.node.id}>
-                <Table.Cell>{e.node.book.title}</Table.Cell>
-                <Table.Cell>{e.node.book.author}</Table.Cell>
+                <Table.Cell>{e.node.edition.title}</Table.Cell>
+                <Table.Cell>{e.node.book.author.name}</Table.Cell>
 
                 {this.props.state == "to-read" &&
                   <Table.Cell>
@@ -112,13 +112,17 @@ changeReadingState = (data, state) => {
 export default createFragmentContainer(
   PersonalEditionList,
   graphql`
-  fragment PersonalEditionList_books on EditionUserJoinConnection {
+  fragment PersonalEditionList_editions on EditionUserJoinConnection {
     edges {
       node {
         id
         book {
+          author {
+            name
+          }
+        }
+        edition {
           title
-          author
         }
         rating
         state
