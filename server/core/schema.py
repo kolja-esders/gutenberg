@@ -5,7 +5,7 @@ from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType, ObjectType
 from core.user_helper.jwt_util import get_token_user_id
 from core.user_helper.jwt_schema import TokensInterface
-from .models import Book as BookModal, Author as AuthorModal, Language as LanguageModal, Publisher as PublisherModal,  Membership as MembershipModal, Group as GroupModal, GroupInvite as GroupInviteModal, Genre as GenreModal, Edition as EditionModal, Platform as PlatformModal, EditionPlatformJoin as EditionPlatformJoinModal, EditionUserJoin as EditionUserJoinModal
+from .models import Book as BookModal, Author as AuthorModal, Language as LanguageModal, Publisher as PublisherModal,  Membership as MembershipModal, Group as GroupModal, GroupInvite as GroupInviteModal, Genre as GenreModal, Edition as EditionModal, Platform as PlatformModal, BookPlatformJoin as BookPlatformJoinModal, EditionUserJoin as EditionUserJoinModal, EditionPlatformJoin as EditionPlatformJoinModal
 from .utils import Utils
 from .email import Email, EmailBuilder
 
@@ -63,6 +63,12 @@ class EditionPlatformJoin(DjangoObjectType):
         filter_fields = ['rating', 'uid', 'edition', 'platform']
         interfaces = (graphene.Node, )
 
+class BookPlatformJoin(DjangoObjectType):
+    class Meta:
+        model = BookPlatformJoinModal
+        filter_fields = ['rating', 'uid', 'book', 'platform']
+        interfaces = (graphene.Node, )
+
 class Group(DjangoObjectType):
     class Meta:
         model = GroupModal
@@ -97,16 +103,18 @@ class User(DjangoObjectType):
             'date_joined',
             'profile_image',
             'sent_invites',
-            'received_invites'
+            'received_invites',
+            'editions'
         )
         interfaces = (graphene.Node, TokensInterface)
         filter_fields = []
 
     # TODO(kolja): This is currently needed since M2M is still broken in Graphene 2.0.
-    books = DjangoFilterConnectionField(EditionUserJoin)
+    all_edition_user_joins = DjangoFilterConnectionField(EditionUserJoin)
+
     groups = DjangoFilterConnectionField(Membership)
 
-    def resolve_books(self, info):
+    def resolve_all_edition_user_joins(self, info):
         return self.editionuserjoin_set.all()
 
     def resolve_groups(self, info):
@@ -123,6 +131,9 @@ class CoreQueries:
 
     edition_platform_join = graphene.Node.Field(EditionPlatformJoin)
     all_edition_platform_joins = DjangoFilterConnectionField(EditionPlatformJoin)
+
+    book_platform_join = graphene.Node.Field(BookPlatformJoin)
+    all_book_platform_joins = DjangoFilterConnectionField(BookPlatformJoin)
 
     author = graphene.Node.Field(Author)
     all_authors = DjangoFilterConnectionField(Author)
@@ -186,23 +197,119 @@ class CoreQueries:
         memberships = MembershipModal.objects.all()
         return memberships
 
-
-class CreateEdition(graphene.Mutation):
+class CreateBook(graphene.Mutation):
     class Arguments:
-        title = graphene.String(required=True)
-        author = graphene.String(required=True)
+        author_id = graphene.String(required=True)
+        original_edition_id = graphene.String(required=True)
 
     book = graphene.Field(Book)
 
     def mutate(self, info, **args):
-        title = args['title']
-        author = args['author']
+        author_id = args['author_id']
+        original_edition_id = args['original_edition_id']
+
+        original_edition = EditionModal.objects.get(original_edition_id)
+
         book = BookModal(
-                title = title,
-                author = author
-            )
+            author=author,
+            original_edition=original_edition
+        )
         book.save()
-        return CreateEdition(book=book)
+        return CreateBook(book=book)
+
+class CreateEdition(graphene.Mutation):
+    class Arguments:
+        title = graphene.String(required=True)
+        book_id = graphene.String(required=True)
+
+    edition = graphene.Field(Edition)
+
+    def mutate(self, info, **args):
+        title = args['title']
+        book_id = args['book_id']
+
+        book = BookModal.objects.get(book_id)
+
+        edition = EditionModal(
+            title=title,
+            book=book
+        )
+        edition.save()
+        return CreateEdition(edition=edition)
+
+class CreateBookAndEditionFromGoodreadsAutocomplete(graphene.Mutation):
+    class Arguments:
+        title = graphene.String(required=True)
+        author_id = graphene.String(required=True)
+        goodreads_work_uid = graphene.String(required=True)
+        goodreads_book_uid = graphene.String(required=True)
+
+    book = graphene.Field(Book)
+    edition = graphene.Field(Edition)
+    platform_book_join = graphene.Field(BookPlatformJoin)
+
+    def mutate(self, info, **args):
+        title = args['title']
+        author_uid = args['goodreads_author_uid']
+        book_uid = args['goodreads_book_uid']
+        work_uid = args['goodreads_work_uid']
+
+        platform = Platform.get(name='goodreads')
+        if not BookPlatformJoinModal.objects.filter(uid=work_uid, platform=platform).exists():
+            pass
+
+        if not EditionPlatformJoinModal.objects.filter(uid=book_uid, platform=platform).exists():
+            pass
+
+        author = AuthorModal.objects.get(author_id)
+
+        book = BookModal(
+            author=author
+        )
+
+        edition = EditionModal(
+            title=title,
+            book=book
+        )
+        edition.save()
+        return CreateBookAndEditionFromGoodreadsAutocomplete(edition=edition)
+
+class CreateAuthor(graphene.Mutation):
+    class Arguments:
+        name = graphene.String(required=True)
+
+    author = graphene.Field(Author)
+
+    def mutate(self, info, **args):
+        name = args['author']
+
+        author = AuthorModal(name=name)
+        author.save()
+        return CreateAuthor(author=author)
+
+class CreateEditionUserJoin(graphene.Mutation):
+    class Arguments:
+        user_id = graphene.ID(required=True)
+        book_id = graphene.ID(required=True)
+        state = graphene.String(required=True)
+        rating = graphene.Int(required=True)
+
+    edition_user_join = graphene.Field(EditionUserJoin)
+
+    def mutate(self, info, **args):
+        get_node = graphene.Node.get_node_from_global_id
+        state = args['state']
+        rating = args['rating']
+        user = get_node(info, args['user_id'])
+        book = get_node(info, args['book_id'])
+        edition_user_join = EditionUserJoinModal(
+                user = user,
+                book = book,
+                state = state,
+                rating = rating
+            )
+        edition_user_join.save()
+        return CreateEditionUserJoin(edition_user_join=edition_user_join)
 
 class CreateGroupInvite(graphene.Mutation):
     class Arguments:
@@ -290,31 +397,6 @@ class AcceptGroupInvite(graphene.Mutation):
 
         return AcceptGroupInvite(success=success, reason=reason)
 
-class CreateEditionUserJoin(graphene.Mutation):
-    class Arguments:
-        user_id = graphene.ID(required=True)
-        book_id = graphene.ID(required=True)
-        state = graphene.String(required=True)
-        rating = graphene.Int(required=True)
-
-    edition_user_join = graphene.Field(EditionUserJoin)
-
-    def mutate(self, info, **args):
-        get_node = graphene.Node.get_node_from_global_id
-        state = args['state']
-        rating = args['rating']
-        user = get_node(info, args['user_id'])
-        book = get_node(info, args['book_id'])
-        edition_user_join = EditionUserJoinModal(
-                user = user,
-                book = book,
-                state = state,
-                rating = rating
-            )
-        edition_user_join.save()
-        return CreateEditionUserJoin(edition_user_join=edition_user_join)
-
-
 class UpdateRating(graphene.Mutation):
     class Arguments:
         edition_user_join_id = graphene.ID(required=True)
@@ -400,6 +482,7 @@ class CreateGroup(graphene.Mutation):
         return CreateGroup(group=group)
 
 class CoreMutations:
+    create_book = CreateBook.Field()
     create_edition = CreateEdition.Field()
     create_edition_user_join = CreateEditionUserJoin.Field()
     create_membership = CreateMembership.Field()
