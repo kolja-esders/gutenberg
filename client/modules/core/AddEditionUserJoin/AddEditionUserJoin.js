@@ -52,6 +52,7 @@ class AddEditionUserJoin extends React.Component {
 
     const response = await fetch(queryUrl);
     const responseJson = await response.json();
+    console.log(responseJson)
 
     const editions = new Map();
     for (const x of responseJson) {
@@ -66,7 +67,6 @@ class AddEditionUserJoin extends React.Component {
         bookImage={x.imageUrl}
         bookTitle={x.bookTitleBare}
         bookAuthor={x.author.name}
-        onClick={this.handleDropdownSelection}
       />
     }));
 
@@ -189,7 +189,6 @@ class AddEditionUserJoin extends React.Component {
             <Header as='h1'>New book</Header>
 
           <form className={styles.form}>
-
             <Dropdown
                  id="title"
                  className={styles.nameField}
@@ -200,8 +199,6 @@ class AddEditionUserJoin extends React.Component {
                  onSearchChange={this.handleEditionSearchTextChange}
                  onChange={this.handleEditionChange}
                />
-
-
           <Button.Group className={styles.readingStatus} widths='3' basic>
               <Button type='state'
                 onClick={this.handleStateChange}
