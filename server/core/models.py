@@ -1,24 +1,122 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.postgres.fields import JSONField
 from custom_user.models import AbstractEmailUser
 from django.utils import timezone
+from django.core.validators import MinLengthValidator
 
 class AutoDateTimeField(models.DateTimeField):
     def pre_save(self, model_instance, add):
         return timezone.now()
 
+class Language(models.Model):
+    alpha3 = models.CharField(max_length=3, validators=[MinLengthValidator(4)])
+    name = models.CharField(max_length=32, null=True)
+    english_name = models.CharField(max_length=32, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.english_name
+
+class Author(models.Model):
+    name = models.CharField(max_length=64)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.name
+
+class Publisher(models.Model):
+    name = models.CharField(max_length=64)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.name
+
+class Genre(models.Model):
+    name = models.CharField(max_length=32)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.name
+
+class Edition(models.Model):
+    book = models.ForeignKey('Book', related_name='editions')
+    title = models.CharField(max_length=128)
+    num_edition = models.PositiveSmallIntegerField(null=True)
+    num_pages = models.PositiveSmallIntegerField(null=True)
+    abstract = models.TextField(null=True)
+    cover_image = models.CharField(max_length=128, null=True)
+    language = models.ForeignKey(Language, related_name='editions', null=True, default=None)
+    isbn10 = models.CharField(max_length=13, null=True, unique=True, validators=[MinLengthValidator(13)])
+    isbn13 = models.CharField(max_length=17, null=True, unique=True, validators=[MinLengthValidator(17)])
+    publisher = models.ForeignKey(Publisher, null=True)
+    date_published = models.DateTimeField(null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.title
+
+class Platform(models.Model):
+    name = models.CharField(max_length=32)
+    url = models.CharField(max_length=64)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.name
+
 class Book(models.Model):
-    title = models.CharField(max_length=255)
-    author = models.CharField(max_length=255)
+    author = models.ForeignKey(Author, related_name='books')
+    # TODO(kolja): Figure out a way to make original_edition a one-way-street without a related_name.
+    # Could also remove this foreign key and add is_original to Edition.
+    original_edition = models.OneToOneField(Edition, blank=True, related_name='original_book', null=True, default=None)
+    genres = models.ManyToManyField(Genre, related_name='books')
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = AutoDateTimeField(default=timezone.now)
 
     class Meta:
-        unique_together = ('title', 'author')
+        unique_together = ('author', 'original_edition')
 
-    def __str__(self):
-        return self.title + ' (' + self.author + ')'
+class EditionPlatformJoin(models.Model):
+    edition = models.ForeignKey(Edition)
+    platform = models.ForeignKey(Platform)
+    uid = models.CharField(max_length=64)
+    rating = models.FloatField(null=True, default=None)
+    data = JSONField(null=True, default=None)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = ('edition', 'platform')
+
+class BookPlatformJoin(models.Model):
+    book = models.ForeignKey(Book)
+    platform = models.ForeignKey(Platform)
+    uid = models.CharField(max_length=64)
+    rating = models.FloatField(null=True, default=None)
+    data = JSONField(null=True, default=None)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = ('book', 'platform')
+
+class AuthorPlatformJoin(models.Model):
+    author = models.ForeignKey(Author)
+    platform = models.ForeignKey(Platform)
+    uid = models.CharField(max_length=64)
+    # data = models.JSONField(default=None)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = AutoDateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = ('author', 'platform')
 
 class Group(models.Model):
     name = models.CharField(max_length=32, unique=True)
@@ -36,21 +134,21 @@ class CustomUser(AbstractEmailUser):
     last_name = models.CharField(max_length=31, blank=True)
     profile_image = models.CharField(max_length=128, blank=True, default='default.png')
     groups = models.ManyToManyField(Group, through='Membership', symmetrical=False, related_name='members')
-    books = models.ManyToManyField(Book, through='BookshelfEntry', symmetrical=False, related_name='users')
+    editions = models.ManyToManyField(Edition, through='EditionUserJoin', symmetrical=False, related_name='users')
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = AutoDateTimeField(default=timezone.now)
 
-
-class BookshelfEntry(models.Model):
+class EditionUserJoin(models.Model):
+    edition = models.ForeignKey(Edition)
     user = models.ForeignKey(CustomUser)
     book = models.ForeignKey(Book)
-    state = models.CharField(max_length=31) # to-read, read, ...
+    state = models.CharField(max_length=16)
     rating = models.PositiveSmallIntegerField(null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = AutoDateTimeField(default=timezone.now)
 
     class Meta:
-        unique_together = ('user', 'book')
+        unique_together = ('edition', 'user')
 
 class GroupInvite(models.Model):
     group = models.ForeignKey(Group)

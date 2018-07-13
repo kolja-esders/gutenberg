@@ -2,10 +2,10 @@ import { commitMutation, graphql } from 'react-relay';
 
 const mutation = graphql`
   mutation UpdateStateMutation(
-    $bookshelfEntryId: ID!, $state: String!
+    $editionUserJoinId: ID!, $state: String!
   ) {
-    updateState(bookshelfEntryId: $bookshelfEntryId, state: $state) {
-      bookshelfEntry {
+    updateState(editionUserJoinId: $editionUserJoinId, state: $state) {
+      editionUserJoin {
         id
         state
       }
