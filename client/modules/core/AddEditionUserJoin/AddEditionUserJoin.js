@@ -5,6 +5,7 @@ import { withAuth } from 'modules/auth//utils';
 import { Input, Dropdown, Button, Rating, Grid, Segment, Header } from 'semantic-ui-react';
 import { graphql, createRefetchContainer } from 'react-relay';
 import createBookAndEditionFromGoodreadsMutation from '../mutations/CreateBookAndEditionFromGoodreads';
+import createAuthorFromGoodreadsMutation from '../mutations/CreateAuthorFromGoodreads';
 import createEditionUserJoinMutation from '../mutations/CreateEditionUserJoin';
 import styles from './AddEditionUserJoin.scss';
 import URLSearchParams from 'url-search-params'
@@ -104,17 +105,40 @@ class AddEditionUserJoin extends React.Component {
       return;
     }
     const { environment } = this.props.relay;
+    const { user } = this.props.viewer;
+    const { selectedState } = this.state;
+    const { rating } = this.state.input;
     const edition = this.state.editions.get(this.state.selectedEditionWorkId);
 
-    // TODO: Check (maybe based on platform workId for now) whether book already exists.
-    const variables = {
-      titleInput: edition.bookTitleBare,
-      authorIdInput: '',
-      goodreadsWorkUidInput: edition.workId,
-      goodreadsBookUidInput: edition.bookId
+    // 1. Get/create author
+    const authorVariables = {
+      nameInput: edition.author.name,
+      goodreadsUidInput: edition.author.id
     };
-    createBookAndEditionFromGoodreadsMutation(environment, variables, (error, data) => {
-      console.log(error, data);
+    createAuthorFromGoodreadsMutation(environment, authorVariables, (data, error) => {
+      console.log(data, error);
+
+      // 2. Create edition and book with corresponding platform joins
+      const bookAndEditionVariables = {
+        titleInput: edition.bookTitleBare,
+        authorIdInput: data.createAuthorFromGoodreads.author.id,
+        goodreadsWorkUidInput: edition.workId,
+        goodreadsBookUidInput: edition.bookId
+      };
+      createBookAndEditionFromGoodreadsMutation(environment, bookAndEditionVariables, (data, error) => {
+        console.log(data, error);
+
+        // 3. Add edition to current user
+        const userAndEditionVariables = {
+          userIdInput: user.id,
+          editionIdInput: data.createBookAndEditionFromGoodreads.edition.id,
+          stateInput: selectedState,
+          ratingInput: selectedState === 'read' ? rating : null
+        };
+        createEditionUserJoinMutation(environment, userAndEditionVariables, (data, error) => {
+          console.log(data, error);
+        }, this.setErrors);
+      }, this.setErrors);
     }, this.setErrors);
   }
 
@@ -161,7 +185,7 @@ class AddEditionUserJoin extends React.Component {
 
     //createBookAndEditionFromGoodreads(this.props.relay.environment, variables, this.onCompletedEditionUserJoin, this.setErrors);
 
-    createEditionUserJoinMutation(this.props.relay.environment, variables, this.onCompletedEditionUserJoin, this.setErrors);
+    //createEditionUserJoinMutation(this.props.relay.environment, variables, this.onCompletedEditionUserJoin, this.setErrors);
   }
 
   onCompletedEditionUserJoin = (error, data) => {
@@ -259,36 +283,11 @@ class AddEditionUserJoin extends React.Component {
 
 export default createRefetchContainer(
   withAuth(AddEditionUserJoin),
-  {
-    viewer: graphql`
-      fragment AddEditionUserJoin_viewer on Viewer
-      @argumentDefinitions(
-        title: {type: "String"},
-        author: {type: "String"},
-        input: {type: "String"}
-      ) {
-        ...Page_viewer
-        book(title: $title, author: $author) {
-          id
-        }
-        user {
-          id
-        }
-      }
-    `,
-    user: graphql`
-     fragment AddEditionUserJoin_user on Viewer {
-          user {
-           id
-         }
-       }
-    `,
-  },
   graphql`
-    query AddEditionUserJoinRefetchQuery($title: String!, $author: String!, $input: String!){
-      viewer {
-        ...AddEditionUserJoin_viewer @arguments(title: $title, author: $author, input: $input)
-        ...AddEditionUserJoin_user
+    fragment AddEditionUserJoin_viewer on Viewer {
+      ...Page_viewer
+      user {
+        id
       }
     }
   `,
