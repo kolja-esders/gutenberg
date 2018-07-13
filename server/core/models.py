@@ -47,11 +47,11 @@ class Genre(models.Model):
 class Edition(models.Model):
     book = models.ForeignKey('Book', related_name='editions')
     title = models.CharField(max_length=128)
-    num_edition = models.PositiveSmallIntegerField()
+    num_edition = models.PositiveSmallIntegerField(null=True)
     num_pages = models.PositiveSmallIntegerField(null=True)
     abstract = models.TextField(null=True)
     cover_image = models.CharField(max_length=128, null=True)
-    language = models.ForeignKey(Language, related_name='editions')
+    language = models.ForeignKey(Language, related_name='editions', null=True, default=None)
     isbn10 = models.CharField(max_length=13, null=True, unique=True, validators=[MinLengthValidator(13)])
     isbn13 = models.CharField(max_length=17, null=True, unique=True, validators=[MinLengthValidator(17)])
     publisher = models.ForeignKey(Publisher, null=True)
@@ -88,7 +88,7 @@ class EditionPlatformJoin(models.Model):
     platform = models.ForeignKey(Platform)
     uid = models.CharField(max_length=64)
     rating = models.FloatField(null=True, default=None)
-    data = JSONField(default=None)
+    data = JSONField(null=True, default=None)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = AutoDateTimeField(default=timezone.now)
 
@@ -100,7 +100,7 @@ class BookPlatformJoin(models.Model):
     platform = models.ForeignKey(Platform)
     uid = models.CharField(max_length=64)
     rating = models.FloatField(null=True, default=None)
-    data = JSONField(default=None)
+    data = JSONField(null=True, default=None)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = AutoDateTimeField(default=timezone.now)
 
