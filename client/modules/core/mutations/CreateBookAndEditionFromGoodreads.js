@@ -2,10 +2,11 @@ import { commitMutation, graphql } from 'react-relay';
 
 const mutation = graphql`
   mutation CreateBookAndEditionFromGoodreadsMutation(
-    $titleInput: String!, $authorIdInput: String!, $goodreadsWorkUidInput: String!, $goodreadsBookUidInput: String!
+    $titleInput: String!, $authorIdInput: ID!, $goodreadsWorkUidInput: String!, $goodreadsBookUidInput: String!
   ) {
     createBookAndEditionFromGoodreads(title: $titleInput, authorId: $authorIdInput, goodreadsWorkUid: $goodreadsWorkUidInput, goodreadsBookUid: $goodreadsBookUidInput) {
       edition {
+        id
         title
         book {
           author {
