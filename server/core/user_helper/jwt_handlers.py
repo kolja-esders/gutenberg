@@ -4,12 +4,23 @@ import jwt
 from django.conf import settings
 
 
-def jwt_payload_handler(user):
-    return {
-        'user_id': user.pk,
-        'email': user.email,
-        'exp': datetime.utcnow() + settings.JWT_EXPIRATION_DELTA
-    }
+def jwt_payload_handler(user, is_remembered):
+    payload = {}
+    if is_remembered:
+        payload = {
+            'user_id': user.pk,
+            'email': user.email,
+            'is_remembered': True,
+            'exp': datetime.utcnow() + settings.JWT_EXPIRATION_DELTA_REMEMBERED,
+        }
+    else:
+        payload = {
+            'user_id': user.pk,
+            'email': user.email,
+            'is_remembered': False,
+            'exp': datetime.utcnow() + settings.JWT_EXPIRATION_DELTA,
+        }
+    return payload
 
 
 def jwt_encode_handler(payload):
