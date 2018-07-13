@@ -240,7 +240,7 @@ class CreateEdition(graphene.Mutation):
 class CreateBookAndEditionFromGoodreads(graphene.Mutation):
     class Arguments:
         title = graphene.String(required=True)
-        author_id = graphene.String(required=True)
+        author_id = graphene.ID(required=True)
         goodreads_work_uid = graphene.String(required=True)
         goodreads_book_uid = graphene.String(required=True)
         goodreads_rating = graphene.Float()
@@ -257,22 +257,20 @@ class CreateBookAndEditionFromGoodreads(graphene.Mutation):
         #
         # In case the book already exists with a different edition, we will
         # create a new edition but not change the original_edition of the book.
+        get_node = graphene.Node.get_node_from_global_id
         title = args['title']
-        author_id = args['author_id']
+        author = get_node(info, args['author_id'])
         edition_uid = args['goodreads_book_uid']
         book_uid = args['goodreads_work_uid']
         # rating = args['goodreads_rating'] if 'goodreads_rating' in args else None
 
-        # Get author
-        author = AuthorModal.objects.get(id=author_id)
-
-        platform = Platform.get(name='goodreads')
+        platform = PlatformModal.objects.get(name='goodreads')
         book = None
         book_already_fetched = False
 
         # Try to obtain book if already stored
         try:
-            bpj, _ = BookPlatformJoinModal.objects.filter(uid=book_uid, platform=platform)
+            bpj = BookPlatformJoinModal.objects.get(uid=book_uid, platform=platform)
             book_already_fetched = True
             book = bpj.book
         except BookPlatformJoinModal.DoesNotExist:
@@ -284,6 +282,8 @@ class CreateBookAndEditionFromGoodreads(graphene.Mutation):
             if epj.exists():
                 return CreateBookAndEditionFromGoodreads(edition=epj.first().edition)
         else:
+            # Create book and afterwards bpj
+            book = BookModal.objects.create(author=author)
             BookPlatformJoinModal.objects.create(book=book, uid=book_uid, platform=platform)
 
         edition = EditionModal(
@@ -297,10 +297,7 @@ class CreateBookAndEditionFromGoodreads(graphene.Mutation):
             book.original_edition = edition
             book.save()
 
-        # if not already_fetched:
-
-        # BookPlatformJoin(
-                # )
+        EditionPlatformJoinModal.objects.create(edition=edition, uid=edition_uid,platform=platform)
 
         return CreateBookAndEditionFromGoodreads(edition=edition)
 
@@ -312,16 +309,21 @@ class CreateAuthorFromGoodreads(graphene.Mutation):
     author = graphene.Field(Author)
 
     def mutate(self, info, **args):
-        name = args['author']
+        name = args['name']
         uid = args['goodreads_uid']
 
-        platform = Platform.get(name='goodreads')
+        platform = PlatformModal.objects.get(name='goodreads')
 
-        # Create author.
-        author, _ = AuthorModal.objects.get_or_create(name=name)
+        apj = AuthorPlatformJoinModal.objects.filter(uid=uid, platform=platform)
+        if apj.exists():
+            return CreateAuthorFromGoodreads(author=apj.first().author)
 
-        author_platform_join = AuthorPlatformJoinModal(platform=platform, author=author, uid=uid)
-        author_platform_join.save()
+        # We'll assume at this point that the author doesn't exist at all.
+        # This is reasonable as long as we only fetch data from a single external platform.
+        author = AuthorModal.objects.create(name=name)
+
+        apj = AuthorPlatformJoinModal.objects.create(platform=platform, author=author, uid=uid)
+
         return CreateAuthorFromGoodreads(author=author)
 
 class CreateAuthor(graphene.Mutation):
@@ -340,26 +342,28 @@ class CreateAuthor(graphene.Mutation):
 class CreateEditionUserJoin(graphene.Mutation):
     class Arguments:
         user_id = graphene.ID(required=True)
-        book_id = graphene.ID(required=True)
+        edition_id = graphene.ID(required=True)
         state = graphene.String(required=True)
-        rating = graphene.Int(required=True)
+        rating = graphene.Int(required=False)
 
     edition_user_join = graphene.Field(EditionUserJoin)
 
     def mutate(self, info, **args):
         get_node = graphene.Node.get_node_from_global_id
         state = args['state']
-        rating = args['rating']
+        rating = None
+        if 'rating' in args:
+            rating = args['rating']
         user = get_node(info, args['user_id'])
-        book = get_node(info, args['book_id'])
-        edition_user_join = EditionUserJoinModal(
+        edition = get_node(info, args['edition_id'])
+        euj = EditionUserJoinModal.objects.create(
+                edition = edition,
+                book = edition.book,
                 user = user,
-                book = book,
                 state = state,
                 rating = rating
             )
-        edition_user_join.save()
-        return CreateEditionUserJoin(edition_user_join=edition_user_join)
+        return CreateEditionUserJoin(edition_user_join=euj)
 
 class CreateGroupInvite(graphene.Mutation):
     class Arguments:
@@ -536,6 +540,7 @@ class CoreMutations:
     create_edition = CreateEdition.Field()
     create_edition_user_join = CreateEditionUserJoin.Field()
     create_book_and_edition_from_goodreads = CreateBookAndEditionFromGoodreads.Field()
+    create_author_from_goodreads = CreateAuthorFromGoodreads.Field()
     update_state = UpdateState.Field()
     create_membership = CreateMembership.Field()
     create_group = CreateGroup.Field()
