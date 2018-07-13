@@ -123,7 +123,6 @@ class Auth extends React.Component {
     if (!errors && isLogin) {
       delete input['firstName']
       delete input['lastName']
-      console.log(input)
       LoginUserMutation(relay.environment, this.setErrors.bind(this), postAuthAction, input)
     }
     else if (!errors) {
