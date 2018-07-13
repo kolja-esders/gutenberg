@@ -80,9 +80,6 @@ class PersonalEditionList extends React.Component {
 
                 {this.props.state =="reading" &&
                 <Table.Cell>
-
-                //TODO: Patrick add FinishedReadingModal
-
                 </Table.Cell>
               }
 
