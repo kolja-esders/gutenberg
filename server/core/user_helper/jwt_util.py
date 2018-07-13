@@ -34,8 +34,8 @@ def get_token_user(args, context):
     return user
 
 
-def get_jwt_token(user):
-    payload = jwt_payload_handler(user)
+def get_jwt_token(user, is_remembered):
+    payload = jwt_payload_handler(user, is_remembered)
     # Include original issued at time for a brand new token,
     # to allow token refresh
     if settings.JWT_ALLOW_REFRESH:

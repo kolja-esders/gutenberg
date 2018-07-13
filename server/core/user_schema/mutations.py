@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, get_user_model
-from graphene import relay, Field, String, ObjectType, Union, List
+from graphene import relay, Field, String, Boolean, ObjectType, Union, List
 
 from core.user_helper.jwt_schema import TokensSuccess
 from core.user_helper.jwt_util import get_jwt_token
@@ -32,6 +32,7 @@ class LoginMutation(relay.ClientIDMutation):
     class Input:
         email = String(required=True)
         password = String(required=True)
+        is_remembered = Boolean(required=True)
 
     auth_form_payload = Field(AuthFormUnion)
 
@@ -39,6 +40,8 @@ class LoginMutation(relay.ClientIDMutation):
     def mutate_and_get_payload(cls, root, info, **input):
         email = input.get('email')
         password = input.get('password')
+        is_remembered = input.get('is_remembered')
+
         user_exists = get_user_model().objects.filter(email=email)
         errors = []
         if not user_exists:
@@ -54,7 +57,7 @@ class LoginMutation(relay.ClientIDMutation):
             return LoginMutation(FormErrors(errors))
 
         user = authenticate(username=email, password=password)
-        jwt_token = get_jwt_token(user)
+        jwt_token = get_jwt_token(user, is_remembered)
 
         if user and jwt_token:
             tokens = TokensSuccess(
@@ -82,11 +85,12 @@ class SignupUserMutation(relay.ClientIDMutation):
         password = input.get('password')
         first_name = input.get('first_name')
         last_name = input.get('last_name')
+        is_remembered = False
         user = get_user_model().objects.filter(email=email)
         errors = []
         if not user:
             user = get_user_model().objects.create_user(email=email, password=password, first_name=first_name, last_name=last_name)
-            jwt_token = get_jwt_token(user)
+            jwt_token = get_jwt_token(user, is_remembered)
             token = TokensSuccess(
                 token=jwt_token
             )

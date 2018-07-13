@@ -130,6 +130,7 @@ JWT_VERIFY = True
 JWT_VERIFY_EXPIRATION = True
 JWT_LEEWAY = 0
 JWT_EXPIRATION_DELTA = datetime.timedelta(hours=1)
+JWT_EXPIRATION_DELTA_REMEMBERED = datetime.timedelta(days=30)
 JWT_ALLOW_REFRESH = False
 JWT_REFRESH_EXPIRATION_DELTA = datetime.timedelta(days=7)
 

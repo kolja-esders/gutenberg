@@ -82,7 +82,8 @@ class Auth extends React.Component {
       email: '',
       password: '',
       firstName: '',
-      lastName: ''
+      lastName: '',
+      isRemembered: false,
     }
 
     this.state = {
@@ -93,7 +94,6 @@ class Auth extends React.Component {
     }
   }
 
-
   handleFieldChange(e) {
     const input = this.state.input
     const inputName = e.target.id
@@ -103,6 +103,13 @@ class Auth extends React.Component {
 
   setErrors = (errors) => {
     this.setState({ errors })
+  }
+
+  setRememberMe = (e, d) => {
+    const isChecked = d.checked
+    const input = this.state.input
+    input['isRemembered'] = isChecked
+    this.setState({ input })
   }
 
   submitForm = (form) => {
@@ -119,6 +126,7 @@ class Auth extends React.Component {
       LoginUserMutation(relay.environment, this.setErrors.bind(this), postAuthAction, input)
     }
     else if (!errors) {
+      delete input['isRemembered']
       SignupUserMutation(relay.environment, this.setErrors.bind(this), postAuthAction, input)
     }
     else {
@@ -229,7 +237,7 @@ class Auth extends React.Component {
             { isLogin &&
               <div>
                 <br />
-                <Checkbox className={styles.rememberMe} label='Remember me' />
+                <Checkbox className={styles.rememberMe} onChange={this.setRememberMe} label='Remember me' />
               </div>
             }
           </Form>
