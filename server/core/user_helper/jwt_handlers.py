@@ -10,14 +10,12 @@ def jwt_payload_handler(user, is_remembered):
         payload = {
             'user_id': user.pk,
             'email': user.email,
-            'is_remembered': True,
             'exp': datetime.utcnow() + settings.JWT_EXPIRATION_DELTA_REMEMBERED,
         }
     else:
         payload = {
             'user_id': user.pk,
             'email': user.email,
-            'is_remembered': False,
             'exp': datetime.utcnow() + settings.JWT_EXPIRATION_DELTA,
         }
     return payload
