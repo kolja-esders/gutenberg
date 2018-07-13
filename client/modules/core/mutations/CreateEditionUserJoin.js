@@ -2,10 +2,13 @@ import { commitMutation, graphql } from 'react-relay';
 
 const mutation = graphql`
   mutation CreateEditionUserJoinMutation(
-    $userIdInput: ID!, $bookIdInput: ID!, $stateInput: String!, $ratingInput: Int!
+    $userIdInput: ID!, $editionIdInput: ID!, $stateInput: String!, $ratingInput: Int
   ) {
-    createEditionUserJoin(userId: $userIdInput, bookId: $bookIdInput, state: $stateInput, rating: $ratingInput) {
+    createEditionUserJoin(userId: $userIdInput, editionId: $editionIdInput, state: $stateInput, rating: $ratingInput) {
       editionUserJoin{
+        edition {
+          id
+        }
         book {
           id
         }

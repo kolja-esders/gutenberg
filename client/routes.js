@@ -65,7 +65,6 @@ const AddEditionUserJoinQuery = graphql`
   query routes_AddEditionUserJoin_Query {
     viewer {
       ...AddEditionUserJoin_viewer
-      ...AddEditionUserJoin_user
     }
   }
 `;
