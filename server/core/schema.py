@@ -243,35 +243,65 @@ class CreateBookAndEditionFromGoodreads(graphene.Mutation):
         author_id = graphene.String(required=True)
         goodreads_work_uid = graphene.String(required=True)
         goodreads_book_uid = graphene.String(required=True)
+        goodreads_rating = graphene.Float()
 
     book = graphene.Field(Book)
     edition = graphene.Field(Edition)
     platform_book_join = graphene.Field(BookPlatformJoin)
 
     def mutate(self, info, **args):
+        # Current behavior:
+        #
+        # If we are encountering a new _book_ we will set the original_edition
+        # of the book to the given edition.
+        #
+        # In case the book already exists with a different edition, we will
+        # create a new edition but not change the original_edition of the book.
         title = args['title']
-        author_uid = args['goodreads_author_uid']
-        book_uid = args['goodreads_book_uid']
-        work_uid = args['goodreads_work_uid']
+        author_id = args['author_id']
+        edition_uid = args['goodreads_book_uid']
+        book_uid = args['goodreads_work_uid']
+        # rating = args['goodreads_rating'] if 'goodreads_rating' in args else None
+
+        # Get author
+        author = AuthorModal.objects.get(id=author_id)
 
         platform = Platform.get(name='goodreads')
-        if not BookPlatformJoinModal.objects.filter(uid=work_uid, platform=platform).exists():
+        book = None
+        book_already_fetched = False
+
+        # Try to obtain book if already stored
+        try:
+            bpj, _ = BookPlatformJoinModal.objects.filter(uid=book_uid, platform=platform)
+            book_already_fetched = True
+            book = bpj.book
+        except BookPlatformJoinModal.DoesNotExist:
             pass
 
-        if not EditionPlatformJoinModal.objects.filter(uid=book_uid, platform=platform).exists():
-            pass
-
-        author = AuthorModal.objects.get(author_id)
-
-        book = BookModal(
-            author=author
-        )
+        # We're done if the edition has also been fetched before.
+        if book_already_fetched:
+            epj = EditionPlatformJoinModal.objects.filter(uid=edition_uid, platform=platform)
+            if epj.exists():
+                return CreateBookAndEditionFromGoodreads(edition=epj.first().edition)
+        else:
+            BookPlatformJoinModal.objects.create(book=book, uid=book_uid, platform=platform)
 
         edition = EditionModal(
-            title=title,
-            book=book
+            book=book,
+            title=title
+            # TODO(kolja): Add num_pages
         )
         edition.save()
+
+        if not book.original_edition:
+            book.original_edition = edition
+            book.save()
+
+        # if not already_fetched:
+
+        # BookPlatformJoin(
+                # )
+
         return CreateBookAndEditionFromGoodreads(edition=edition)
 
 class CreateAuthorFromGoodreads(graphene.Mutation):
