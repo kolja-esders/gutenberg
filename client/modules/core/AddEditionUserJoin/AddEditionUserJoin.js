@@ -53,7 +53,6 @@ class AddEditionUserJoin extends React.Component {
 
     const response = await fetch(queryUrl);
     const responseJson = await response.json();
-    console.log(responseJson)
 
     const editions = new Map();
     for (const x of responseJson) {
@@ -110,15 +109,11 @@ class AddEditionUserJoin extends React.Component {
     const { rating } = this.state.input;
     const edition = this.state.editions.get(this.state.selectedEditionWorkId);
 
-    // 1. Get/create author
     const authorVariables = {
       nameInput: edition.author.name,
       goodreadsUidInput: edition.author.id
     };
     createAuthorFromGoodreadsMutation(environment, authorVariables, (data, error) => {
-      console.log(data, error);
-
-      // 2. Create edition and book with corresponding platform joins
       const bookAndEditionVariables = {
         titleInput: edition.bookTitleBare,
         authorIdInput: data.createAuthorFromGoodreads.author.id,
@@ -126,9 +121,6 @@ class AddEditionUserJoin extends React.Component {
         goodreadsBookUidInput: edition.bookId
       };
       createBookAndEditionFromGoodreadsMutation(environment, bookAndEditionVariables, (data, error) => {
-        console.log(data, error);
-
-        // 3. Add edition to current user
         const userAndEditionVariables = {
           userIdInput: user.id,
           editionIdInput: data.createBookAndEditionFromGoodreads.edition.id,
@@ -136,7 +128,9 @@ class AddEditionUserJoin extends React.Component {
           ratingInput: selectedState === 'read' ? rating : null
         };
         createEditionUserJoinMutation(environment, userAndEditionVariables, (data, error) => {
-          console.log(data, error);
+          if (!error) {
+            this.props.router.push('/');
+          }
         }, this.setErrors);
       }, this.setErrors);
     }, this.setErrors);
@@ -173,19 +167,6 @@ class AddEditionUserJoin extends React.Component {
       ratingInput: rating,
       stateInput: state
     };
-
-    //const variables = {
-      //title: user.id,
-      //goodreadsAuthorUid: user.id,
-      //goodreadsBookUid: book.id,
-      //goodreadsWorkUid: rating,
-    //};
-
-    //createAuthorFromGoodreads(this.props.relay.environment, variables, this.onCompletedEditionUserJoin, this.setErrors);
-
-    //createBookAndEditionFromGoodreads(this.props.relay.environment, variables, this.onCompletedEditionUserJoin, this.setErrors);
-
-    //createEditionUserJoinMutation(this.props.relay.environment, variables, this.onCompletedEditionUserJoin, this.setErrors);
   }
 
   onCompletedEditionUserJoin = (error, data) => {
