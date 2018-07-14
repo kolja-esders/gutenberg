@@ -1,4 +1,4 @@
-import { commitMutation, graphql } from 'react-relay';
+/**import { commitMutation, graphql } from 'react-relay';
 
 const mutation = graphql`
   mutation CreateBookRecommendationForFriendMutation(
@@ -41,3 +41,4 @@ export default function CreateBookRecommendationForFriend(environment, variables
     },
   );
 }
+*/

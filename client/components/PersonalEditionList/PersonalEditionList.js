@@ -2,7 +2,7 @@ import React from 'react';
 import { graphql, createFragmentContainer } from 'react-relay';
 import { Table, Rating, Button, Popup, Icon, Modal, Input, Label, Form } from 'semantic-ui-react';
 import styles from './PersonalEditionList.scss';
-//import FinishedReadingModal from 'components/FinishedReadingModal/FinishedReadingModal';
+import FinishedReadingModal from 'components/FinishedReadingModal/FinishedReadingModal';
 import updateRatingMutation from '../../modules/core/mutations/UpdateRating';
 import updateStateMutation from '../../modules/core/mutations/UpdateState';
 
@@ -40,6 +40,7 @@ class PersonalEditionList extends React.Component {
 
   render() {
     const editionUserJoin = this.props.editions.edges;
+
 
     return (
       <div className={styles.root}>
@@ -81,7 +82,7 @@ class PersonalEditionList extends React.Component {
                 {this.props.state =="reading" &&
                 <Table.Cell>
 
-                  <FinishedReadingModal book={e.node.book} rating={e.node.rating} id={e.node.id} userID={this.props.userID}/>
+                  <FinishedReadingModal book={e.node.edition} rating={1} id={e.node.id} userID={e.node.user.id}/>
 
                 </Table.Cell>
               }
@@ -115,6 +116,9 @@ export default createFragmentContainer(
   fragment PersonalEditionList_editions on EditionUserJoinConnection {
     edges {
       node {
+        user{
+          id
+        }
         id
         book {
           author {

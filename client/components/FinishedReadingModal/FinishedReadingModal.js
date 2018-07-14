@@ -151,7 +151,7 @@ render(){
 export default createFragmentContainer(
   FinishedReadingModal,
   graphql`
-    fragment FinishedReadingModal_books on BookshelfEntryConnection {
-    ... MyBookList_books
+    fragment FinishedReadingModal_editions on EditionUserJoinConnection {
+    ... PersonalEditionList_editions
     }
   `);
