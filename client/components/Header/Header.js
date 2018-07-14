@@ -70,8 +70,7 @@ class Header extends React.Component {
                   }
               >
                 <Dropdown.Menu id={styles.dropdownMenu}>
-                  <Dropdown.Item id={styles.nameItem}>{ `${user.firstName} ${user.lastName}` }</Dropdown.Item>
-                  <Dropdown.Item as={Link} to='/settings'>Settings</Dropdown.Item>
+                  <Dropdown.Item as={Link} to='/settings'>Preferences</Dropdown.Item>
                   <Dropdown.Item onClick={() => { logoutViewer(); }}>Log out</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
