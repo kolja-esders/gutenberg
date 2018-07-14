@@ -80,6 +80,9 @@ class PersonalEditionList extends React.Component {
 
                 {this.props.state =="reading" &&
                 <Table.Cell>
+
+                  <FinishedReadingModal book={e.node.book} rating={e.node.rating} id={e.node.id} userID={this.props.userID}/>
+
                 </Table.Cell>
               }
 
