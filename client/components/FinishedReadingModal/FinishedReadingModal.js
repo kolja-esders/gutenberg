@@ -4,7 +4,7 @@ import { Rating, Button, Icon, Modal, Input, Label, Popup } from 'semantic-ui-re
 import styles from './FinishedReadingModal.scss';
 import updateRatingMutation from '../../modules/core/mutations/UpdateRating';
 import updateStateMutation from '../../modules/core/mutations/UpdateState';
-import createBookRecommendationForFriendMutation from '../../modules/core/mutations/CreateBookRecommendationForFriend';
+//import createBookRecommendationForFriendMutation from '../../modules/core/mutations/CreateBookRecommendationForFriend';
 
 class FinishedReadingModal extends React.Component{
 
@@ -52,9 +52,8 @@ onCompletedModal = (state) => {
   input['state'] = state;
   this.setState({ ...this.state, input});
 
-  console.log(this.state.input)
   const variables = {
-    bookshelfEntryId: this.props.id,
+    editionUserJoinId: this.props.id,
     rating: this.state.input.rating
   }
   updateRatingMutation(this.props.relay.environment, variables, this.onCompletedUpdateRatingMutation, this.setErrors)
@@ -63,7 +62,7 @@ onCompletedModal = (state) => {
 onCompletedUpdateRatingMutation = (error, data) => {
 
   const variables = {
-    bookshelfEntryId: this.props.id,
+    editionUserJoinId: this.props.id,
     state: this.state.input.state
   }
  updateStateMutation(this.props.relay.environment, variables, this.onCompletedUpdateStateMutation, this.setErrors)
@@ -73,8 +72,8 @@ onCompletedUpdateStateMutation = (error, data) => {
 
   const variables = {
     hostId: this.props.userID,
-    bookTitle: this.props.book.title,
-    bookAuthor: this.props.book.author,
+    bookTitle: this.props.title,
+    bookAuthor: this.props.author,
     friendEmail: "asd@fdsf.com",
     firstName: "asdsz",
     lastName: "dsfd"
@@ -87,19 +86,21 @@ render(){
 
   return(
     <div>
+      <Popup
+        trigger={
+            <Button icon floated="right" onClick={() => this.openModal()}>
+              <Icon name="check circle" size="large"/>
+            </Button>}
+        content="Mark as read"
+      />
 
-    <Modal size="mini" open={this.state.modalOpen} onClose={this.close}
-      trigger={
-        <Popup
-          trigger={
-              <Button icon floated="right" onClick={() => this.openModal()}>
-                <Icon name="check circle" size="large"/>
-              </Button>}
-          content="Mark as read"
-        />
-      }>
+      <Modal
+        size="mini" open={this.state.modalOpen}
+        onClose={this.close}
+        className={styles.modal}>
+
       <Modal.Header>
-        How did you like {this.props.book.title}?
+        How did you like {this.props.title}?
       </Modal.Header>
       <Modal.Content>
         <div className={styles.ratingModal}>
@@ -113,7 +114,7 @@ render(){
         </div>
         <div>
             <br />
-            Recommend {this.props.book.title} to
+            Recommend {this.props.title} to
             <br />
             {friendEmails.map(e => {if (e != "") { return( <Label>{e}</Label>)}})}
             <br />
@@ -130,8 +131,8 @@ render(){
             icon="plus"
             type="submit"
             onClick={() => this.nextFriend()}/>
-
         </div>
+
       </Modal.Content>
       <Modal.Actions>
         <Button basic onClick={() => this.closeModal()}>

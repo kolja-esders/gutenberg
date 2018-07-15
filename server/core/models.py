@@ -166,15 +166,15 @@ class GroupInvite(models.Model):
     class Meta:
         unique_together = ('email', 'group')
 
-class BookRecommendationForFriend(models.Model):
-    created_by = models.ForeignKey(CustomUser)
-    first_name = models.CharField(max_length=31, blank=True)
-    last_name = models.CharField(max_length=31, blank=True)
-    book_title = models.CharField(max_length=63)
-    book_author = models.CharField(max_length=63)
-    created_at = models.DateTimeField(default=timezone.now)
-    friend_email = models.CharField(max_length=63)
-    email_sent = models.BooleanField(default=False)
+# class BookRecommendationForFriend(models.Model):
+#     created_by = models.ForeignKey(CustomUser)
+#     first_name = models.CharField(max_length=31, blank=True)
+#     last_name = models.CharField(max_length=31, blank=True)
+#     book_title = models.CharField(max_length=63)
+#     book_author = models.CharField(max_length=63)
+#     created_at = models.DateTimeField(default=timezone.now)
+#     friend_email = models.CharField(max_length=63)
+#     email_sent = models.BooleanField(default=False)
 
 class Membership(models.Model):
     user = models.ForeignKey(CustomUser)
