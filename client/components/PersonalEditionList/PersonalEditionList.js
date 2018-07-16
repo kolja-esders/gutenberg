@@ -1,14 +1,14 @@
 import React from 'react';
 import { graphql, createFragmentContainer } from 'react-relay';
 import { Table, Rating, Button, Popup, Icon, Modal, Input, Label, Form } from 'semantic-ui-react';
+
 import styles from './PersonalEditionList.scss';
-//import FinishedReadingModal from 'components/FinishedReadingModal/FinishedReadingModal';
+import FinishedReadingModal from 'components/FinishedReadingModal/FinishedReadingModal';
 import updateRatingMutation from '../../modules/core/mutations/UpdateRating';
 import updateStateMutation from '../../modules/core/mutations/UpdateState';
 
 
 class PersonalEditionList extends React.Component {
-
   state = {input: {rating: 0}, errors: []};
 
   handleRatingChange = (e, data) => {
@@ -61,6 +61,7 @@ class PersonalEditionList extends React.Component {
           </Table.Header>
           <Table.Body>
             {editionUserJoin.map(e => {if (e.node.state == this.props.state){ return(
+
               <Table.Row key={e.node.id}>
                 <Table.Cell>{e.node.edition.title}</Table.Cell>
                 <Table.Cell>{e.node.book.author.name}</Table.Cell>
@@ -80,6 +81,7 @@ class PersonalEditionList extends React.Component {
 
                 {this.props.state =="reading" &&
                 <Table.Cell>
+                  <FinishedReadingModal title={e.node.edition.title} author={e.node.book.author.name} rating={e.node.rating} id={e.node.id} userID={e.node.user.id} editions={this.props.editions}/>
                 </Table.Cell>
               }
 
@@ -110,9 +112,13 @@ export default createFragmentContainer(
   PersonalEditionList,
   graphql`
   fragment PersonalEditionList_editions on EditionUserJoinConnection {
+    ... FinishedReadingModal_editions
     edges {
       node {
         id
+        user{
+          id
+        }
         book {
           author {
             name
