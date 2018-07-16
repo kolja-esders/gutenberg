@@ -4,7 +4,6 @@ import { Rating, Button, Icon, Modal, Input, Label, Popup } from 'semantic-ui-re
 import styles from './FinishedReadingModal.scss';
 import updateRatingMutation from '../../modules/core/mutations/UpdateRating';
 import updateStateMutation from '../../modules/core/mutations/UpdateState';
-//import createBookRecommendationForFriendMutation from '../../modules/core/mutations/CreateBookRecommendationForFriend';
 
 class FinishedReadingModal extends React.Component{
 
@@ -14,29 +13,11 @@ constructor(props){
     input: {rating: 0, state:''},
     errors: [],
     modalOpen: false,
-    friendEmails: [],
-    friendEmail:''
   }
 }
 
 openModal = () =>   this.setState({modalOpen: true})
 closeModal = () => this.setState({modalOpen: false})
-
-addFriend = (error, data) => {
-  var friendEmail = data.value;
-  this.setState({...this.state, friendEmail});
-}
-
-nextFriend = () => {
-  var friendEmails = this.state.friendEmails;
-  var friendEmail = this.state.friendEmail;
-
-  friendEmails[friendEmails.length] = friendEmail;
-  friendEmail = '';
-
-  this.setState({...this.state, friendEmails});
-  this.setState({...this.state, friendEmail});
-}
 
 handleRatingChange = (e, data) => {
   e.preventDefault();
@@ -68,18 +49,6 @@ onCompletedUpdateRatingMutation = (error, data) => {
  updateStateMutation(this.props.relay.environment, variables, this.onCompletedUpdateStateMutation, this.setErrors)
 }
 
-onCompletedUpdateStateMutation = (error, data) => {
-
-  const variables = {
-    hostId: this.props.userID,
-    bookTitle: this.props.title,
-    bookAuthor: this.props.author,
-    friendEmail: "asd@fdsf.com",
-    firstName: "asdsz",
-    lastName: "dsfd"
-  }
-  createBookRecommendationForFriendMutation(this.props.relay.environment, variables, this.closeModal(), this.setErrors)
-}
 
 render(){
   const friendEmails = this.state.friendEmails;
@@ -112,26 +81,7 @@ render(){
             onRate={this.handleRatingChange}
           />
         </div>
-        <div>
-            <br />
-            Recommend {this.props.title} to
-            <br />
-            {friendEmails.map(e => {if (e != "") { return( <Label>{e}</Label>)}})}
-            <br />
 
-          <Input id="friend"
-            icon="at"
-            iconPosition="left"
-            placeholder="email"
-            value={this.state.friendEmail}
-            onChange={this.addFriend}>
-
-          </Input>
-          <Button
-            icon="plus"
-            type="submit"
-            onClick={() => this.nextFriend()}/>
-        </div>
 
       </Modal.Content>
       <Modal.Actions>
