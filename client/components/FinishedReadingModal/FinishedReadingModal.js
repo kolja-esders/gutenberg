@@ -51,7 +51,6 @@ onCompletedUpdateRatingMutation = (error, data) => {
 
 
 render(){
-  const friendEmails = this.state.friendEmails;
 
   return(
     <div>
@@ -103,6 +102,10 @@ export default createFragmentContainer(
   FinishedReadingModal,
   graphql`
     fragment FinishedReadingModal_editions on EditionUserJoinConnection {
-    ... PersonalEditionList_editions
+      edges{
+        node{
+          id
+        }
+      }
     }
   `);

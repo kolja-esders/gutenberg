@@ -81,7 +81,7 @@ class PersonalEditionList extends React.Component {
 
                 {this.props.state =="reading" &&
                 <Table.Cell>
-                  <FinishedReadingModal title={e.node.edition.title} author={e.node.book.author.name} rating={e.node.rating} id={e.node.id} userID={e.node.user.id}/>
+                  <FinishedReadingModal title={e.node.edition.title} author={e.node.book.author.name} rating={e.node.rating} id={e.node.id} userID={e.node.user.id} editions={this.props.editions}/>
                 </Table.Cell>
               }
 
@@ -112,6 +112,7 @@ export default createFragmentContainer(
   PersonalEditionList,
   graphql`
   fragment PersonalEditionList_editions on EditionUserJoinConnection {
+    ... FinishedReadingModal_editions
     edges {
       node {
         id
