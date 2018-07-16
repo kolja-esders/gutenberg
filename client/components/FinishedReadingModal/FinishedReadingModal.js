@@ -85,7 +85,7 @@ render(){
       </Modal.Content>
       <Modal.Actions>
         <Button basic onClick={() => this.closeModal()}>
-          Close
+          Cancel
         </Button>
         <Button positive icon='checkmark'
           content='Done'
