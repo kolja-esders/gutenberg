@@ -1,15 +1,9 @@
 @import "./global.scss";
 
 .root {
-
 }
-.modal{
-  position: fixed;
-  top: 50%;
-  left: 40%;
 
-}
-.ratingModal{
+// Has to be outside of root since it is part of the modal
+.ratingModal {
   text-align: center!important;
-  margin: 0 auto!important;
 }
