@@ -35,14 +35,18 @@ class AddEditionUserJoin extends React.Component {
     errors: [],
     editions: new Map(),
     editionOptions: [],
-    selectedEditionWorkId: ''
+    selectedEditionWorkId: '',
+    lastSearchInput: '',
   }
 
   handleEditionSearchTextChange = async (e, data) => {
     // Trigger first fetch only when there are at least three characters.
+    console.log(data)
     if (data.length < 3) {
       return;
     }
+    const lastSearchInput = data;
+    this.setState({ lastSearchInput: lastSearchInput });
 
     const AUTOCOMPLETE_BASE_URL = 'https://www.goodreads.com/book/auto_complete?';
     const PROXY_URL_PREFIX = 'https://cors-anywhere.herokuapp.com/';
@@ -53,6 +57,10 @@ class AddEditionUserJoin extends React.Component {
 
     const response = await fetch(queryUrl);
     const responseJson = await response.json();
+
+    if (data != this.state.lastSearchInput){
+      return;
+    }
 
     const editions = new Map();
     for (const x of responseJson) {
@@ -69,8 +77,9 @@ class AddEditionUserJoin extends React.Component {
         bookAuthor={x.author.name}
       />
     }));
-
+    console.log(editionOptions)
     this.setState({ ...this.state, editionOptions, editions });
+
   }
 
   handleEditionChange = (_, data) => {
