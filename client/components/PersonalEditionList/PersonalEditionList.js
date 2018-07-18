@@ -63,8 +63,8 @@ class PersonalEditionList extends React.Component {
             {editionUserJoin.map(e => {if (e.node.state == this.props.state){ return(
 
               <Table.Row key={e.node.id} className={styles.row}>
-                <Table.Cell>{e.node.edition.title}</Table.Cell>
-                <Table.Cell>{e.node.book.author.name}</Table.Cell>
+                <Table.Cell><span title={e.node.edition.title}>{e.node.edition.title}</span></Table.Cell>
+                <Table.Cell><span title={e.node.book.author.name}>{e.node.book.author.name}</span></Table.Cell>
 
                 {this.props.state == "to-read" &&
                   <Table.Cell>
