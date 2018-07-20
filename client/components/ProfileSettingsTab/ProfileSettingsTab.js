@@ -45,6 +45,7 @@ class ProfileSettingsTab extends React.Component {
 
   onDrop = (files) => {
     this.setState({ ...this.state, files });
+    console.log(files)
   }
 
   handleChange = (e, { value }) => {
@@ -94,6 +95,7 @@ class ProfileSettingsTab extends React.Component {
       },
     });
     const payload = await response.json();
+    console.log(payload)
 
     // Upload image to S3.
     response = await fetch(payload.url, {
