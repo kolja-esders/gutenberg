@@ -71,14 +71,14 @@ class AddEditionUserJoin extends React.Component {
     .then((response) => response.json())
     .then((json) => {
       let js = []
-      for(let i=0; i<json.length;i++){
+      for(let i = 0; i < json.length; i++){
         js.push({
-         "label":json[i]["bookId"],
-         "value":json[i]["title"]
+         "label": json[i]["bookId"],
+         "value": json[i]["title"]
        })
       }
 
-      return { options: js }
+      return js;
     })
   }
 
