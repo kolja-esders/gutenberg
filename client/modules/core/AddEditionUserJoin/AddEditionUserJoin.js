@@ -70,7 +70,15 @@ class AddEditionUserJoin extends React.Component {
     const response = fetch(queryUrl)
     .then((response) => response.json())
     .then((json) => {
-      return json
+      let js = []
+      for(let i=0; i<json.length;i++){
+        js.push({
+         "label":json[i]["bookId"],
+         "value":json[i]["title"]
+       })
+      }
+
+      return { options: js }
     })
   }
 
@@ -266,8 +274,7 @@ class AddEditionUserJoin extends React.Component {
                defaultOptions
                onInputChange={this.handleSelectInputChange}
                value={this.state.lastSearchInput}
-               valueKey="book_id"
-               labelKey="title"
+
 
                />
 
