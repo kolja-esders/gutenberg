@@ -8,7 +8,9 @@ import createBookAndEditionFromGoodreadsMutation from '../mutations/CreateBookAn
 import createAuthorFromGoodreadsMutation from '../mutations/CreateAuthorFromGoodreads';
 import createEditionUserJoinMutation from '../mutations/CreateEditionUserJoin';
 import styles from './AddEditionUserJoin.scss';
-import URLSearchParams from 'url-search-params'
+import URLSearchParams from 'url-search-params';
+import AsyncSelect from 'react-select/lib/Async';
+
 
 
 const stateOptions = [{ key: 'toread', value: 'toread', text: 'to read' },
@@ -22,6 +24,16 @@ const ratingOptions = [{ key: 1, value: 1, text: '1' },
                         { key: 4, value: 4, text: '4' },
                         { key: 5, value: 5, text: '5' },
 ];
+
+
+const CustomOption = ( commonProps ) => {
+    console.log(commonProps)
+    return(
+
+        <div>test</div>
+    )
+}
+
 
 class AddEditionUserJoin extends React.Component {
   state = {
@@ -39,12 +51,49 @@ class AddEditionUserJoin extends React.Component {
     lastSearchInput: '',
   }
 
-  handleEditionSearchTextChange = async (e, data) => {
+  handleSelectInputChange = (data) => {
+    this.setState({ lastSearchInput: data })
+  }
+
+  getEditions = (input) => {
+    console.log(input)
+    if (!input) {
+			return Promise.resolve({ options: [] });
+		}
+
+    const AUTOCOMPLETE_BASE_URL = 'https://www.goodreads.com/book/auto_complete?';
+    const PROXY_URL_PREFIX = 'https://cors-anywhere.herokuapp.com/';
+    const searchParams = new URLSearchParams('format=json');
+    searchParams.set('q', input);
+
+    const queryUrl = PROXY_URL_PREFIX + AUTOCOMPLETE_BASE_URL + searchParams.toString();
+
+    const response = fetch(queryUrl)
+    .then((response) => response.json())
+    .then((json) => {
+      console.log(json)
+      return { options: json }
+    })
+
+		// return fetch(`https://api.github.com/search/users?q=${input}`)
+		// .then((response) => response.json())
+		// .then((json) => {
+    //   //console.log([json.items])
+    //   console.log([json.items].reduce())
+		// 	return { options: [json.items] };
+		// });
+  }
+
+
+
+  handleEditionSearchTextChange =  async (data) => {
     // Trigger first fetch only when there are at least three characters.
     console.log(data)
-    if (data.length < 3) {
-      return;
-    }
+
+    return(data)
+    // if (data.length < 3) {
+    //   return;
+    // }
     const lastSearchInput = data;
     this.setState({ lastSearchInput: lastSearchInput });
 
@@ -55,12 +104,13 @@ class AddEditionUserJoin extends React.Component {
 
     const queryUrl = PROXY_URL_PREFIX + AUTOCOMPLETE_BASE_URL + searchParams.toString();
 
+
     const response = await fetch(queryUrl);
     const responseJson = await response.json();
 
-    if (data != this.state.lastSearchInput){
-      return;
-    }
+    // if (data != this.state.lastSearchInput){
+    //   return;
+    // }
 
     const editions = new Map();
     for (const x of responseJson) {
@@ -79,6 +129,8 @@ class AddEditionUserJoin extends React.Component {
     }));
     console.log(editionOptions)
     this.setState({ ...this.state, editionOptions, editions });
+
+
 
   }
 
@@ -191,9 +243,27 @@ class AddEditionUserJoin extends React.Component {
   }
 
 
+  renderOption = (option) => {
+    console.log(option)
+		return (
+			<div>test</div>
+		);
+	}
+
+
+
+
   render() {
     const { input, erros } = this.state;
     const title = 'Add Book to Bookshelf';
+
+    var testOptions = [
+      { label: 'Basic customer support', value: 'basic', color: '#E31864' },
+      { label: 'Premium customer support', value: 'premium', color: '#6216A3' },
+      { label: 'Pro customer support', value: 'pro', disabled: true, link: 'fds' },
+    ];
+
+
 
     return (
       <Page viewer={this.props.viewer} title={title}>
@@ -213,6 +283,18 @@ class AddEditionUserJoin extends React.Component {
                  onSearchChange={this.handleEditionSearchTextChange}
                  onChange={this.handleEditionChange}
                />
+
+             <AsyncSelect
+               loadOptions={this.getEditions}
+               cacheOptions
+               defaultOptions
+               onInputChange={this.handleSelectInputChange}
+               value={this.state.lastSearchInput}
+               valueKey="book_id"
+               labelKey="title"
+
+               />
+
           <Button.Group className={styles.readingStatus} widths='3' basic>
               <Button type='state'
                 onClick={this.handleStateChange}
