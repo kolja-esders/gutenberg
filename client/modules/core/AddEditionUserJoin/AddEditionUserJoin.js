@@ -56,10 +56,9 @@ class AddEditionUserJoin extends React.Component {
   }
 
   getEditions = (input) => {
-    console.log(input)
     if (!input) {
-			return Promise.resolve({ options: [] });
-		}
+      return Promise.resolve([]);
+    }
 
     const AUTOCOMPLETE_BASE_URL = 'https://www.goodreads.com/book/auto_complete?';
     const PROXY_URL_PREFIX = 'https://cors-anywhere.herokuapp.com/';
@@ -71,20 +70,9 @@ class AddEditionUserJoin extends React.Component {
     const response = fetch(queryUrl)
     .then((response) => response.json())
     .then((json) => {
-      console.log(json)
-      return { options: json }
+      return json
     })
-
-		// return fetch(`https://api.github.com/search/users?q=${input}`)
-		// .then((response) => response.json())
-		// .then((json) => {
-    //   //console.log([json.items])
-    //   console.log([json.items].reduce())
-		// 	return { options: [json.items] };
-		// });
   }
-
-
 
   handleEditionSearchTextChange =  async (data) => {
     // Trigger first fetch only when there are at least three characters.
@@ -263,8 +251,6 @@ class AddEditionUserJoin extends React.Component {
       { label: 'Pro customer support', value: 'pro', disabled: true, link: 'fds' },
     ];
 
-
-
     return (
       <Page viewer={this.props.viewer} title={title}>
 
@@ -273,18 +259,8 @@ class AddEditionUserJoin extends React.Component {
             <Header as='h1'>New book</Header>
 
           <form className={styles.form}>
-            <Dropdown
-                 id="title"
-                 className={styles.nameField}
-                 options={this.state.editionOptions}
-                 selection
-                 search
-                 placeholder='E.g. "Harry Potter"'
-                 onSearchChange={this.handleEditionSearchTextChange}
-                 onChange={this.handleEditionChange}
-               />
 
-             <AsyncSelect
+            <AsyncSelect
                loadOptions={this.getEditions}
                cacheOptions
                defaultOptions
