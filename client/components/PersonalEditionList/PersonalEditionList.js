@@ -43,11 +43,11 @@ class PersonalEditionList extends React.Component {
 
     return (
       <div className={styles.root}>
-        <Table singleLine className={styles.books}>
+        <Table className={styles.books} fixed singleLine>
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell className={styles.title}>Title</Table.HeaderCell>
-              <Table.HeaderCell className={styles.author}>Author</Table.HeaderCell>
+              <Table.HeaderCell className={styles.title} width={10}>Title</Table.HeaderCell>
+              <Table.HeaderCell className={styles.author} width={4}>Author</Table.HeaderCell>
               {this.props.state == "reading" &&
                 <Table.HeaderCell className={styles.finished}></Table.HeaderCell>
               }
@@ -62,9 +62,9 @@ class PersonalEditionList extends React.Component {
           <Table.Body>
             {editionUserJoin.map(e => {if (e.node.state == this.props.state){ return(
 
-              <Table.Row key={e.node.id}>
-                <Table.Cell>{e.node.edition.title}</Table.Cell>
-                <Table.Cell>{e.node.book.author.name}</Table.Cell>
+              <Table.Row key={e.node.id} className={styles.row}>
+                <Table.Cell><span title={e.node.edition.title}>{e.node.edition.title}</span></Table.Cell>
+                <Table.Cell><span title={e.node.book.author.name}>{e.node.book.author.name}</span></Table.Cell>
 
                 {this.props.state == "to-read" &&
                   <Table.Cell>
