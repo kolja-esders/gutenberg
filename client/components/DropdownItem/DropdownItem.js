@@ -16,13 +16,13 @@ export default class DropdownItem extends React.Component {
   render() {
     return (
       <div onClick={this.props.onClick} className={styles.flexcontainer}>
+        <aside className={styles.picture}>
+            <img size='small' src={this.props.bookImage}/>
+        </aside>
         <main className={styles.main}>
           <h1 className={styles.title}>{this.props.bookTitle}</h1>
           <h3 className={styles.author}>{this.props.bookAuthor}</h3>
         </main>
-        <aside className={styles.picture}>
-            <img size='small' src={this.props.bookImage}/>
-        </aside>
       </div>
     );
   }

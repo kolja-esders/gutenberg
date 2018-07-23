@@ -6,33 +6,39 @@
   flex-wrap: nowrap;
   justify-content: flex-start;
   align-items: center;
-  // height: 50px;
 
+  padding: 8px;
 
-  .main{
-    //display: flex;
-    //flex-direction: column;
-    padding: 15px;
-    // text-align: left;
-    // flex-wrap: wrap;, not as not linebreak is intended
+  &:hover {
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.05);
+  }
 
-    .title{
-      font-size: large;
-      font-style: normal;
-      vertical-align: text-bottom;
+  .main {
+    margin-left: 16px;
+
+    .title, .author {
+      font-family: 'Lato', sans-serif;
       margin: 0;
     }
 
-    .author{
-      font-size: small;
-      font-style: normal;
-      text-align: top;
-      vertical-align: text-top;
-      margin: 0;
+    .title {
+      font-size: 1.3rem;
+      font-weight: 400;
+      width: 300px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .author {
+      font-size: 1rem;
+      font-weight: 400;
     }
   }
 
   .picture {
-    order:-1;
+    //margin-left: 8px;
+    //margin: 8px;
   }
 }
