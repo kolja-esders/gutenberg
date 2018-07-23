@@ -46,8 +46,13 @@ const ratingOptions = [{ key: 1, value: 1, text: '1' },
 const CustomOption = ( commonProps ) => {
     console.log(commonProps)
     return(
-
-        <div>test</div>
+      <div className={styles.option}>
+        <DropdownItem
+          bookImage={commonProps.data.data.imageUrl}
+          bookTitle={commonProps.data.data.title}
+          bookAuthor={commonProps.data.data.author.name}
+        />
+      </div>
     )
 }
 
@@ -89,7 +94,7 @@ class AddEditionUserJoin extends React.Component {
       };
     });
   }
-  
+
   handleEditionChange = () => {
   }
 
@@ -248,6 +253,7 @@ class AddEditionUserJoin extends React.Component {
               loadOptions={this.getAutocompleteSuggestions}
                cacheOptions
                defaultOptions
+               components={{ Option: CustomOption }}
                />
 
           <Button.Group className={styles.readingStatus} widths='3' basic>
