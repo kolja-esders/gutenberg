@@ -11,25 +11,6 @@ import styles from './AddEditionUserJoin.scss';
 import URLSearchParams from 'url-search-params';
 import AsyncSelect from 'react-select/lib/Async';
 
-export const optionLength = [
-  { value: 1, label: 'general' },
-  {
-    value: 2,
-    label:
-      'Evil is the moment when I lack the strength to be true to the Good that compels me.',
-  },
-  {
-    value: 3,
-    label:
-      "It is now an easy matter to spell out the ethic of a truth: 'Do all that you can to persevere in that which exceeds your perseverance. Persevere in the interruption. Seize in your being that which has seized and broken you.",
-  },
-];
-
-// let bigOptions = [];
-// for (let i = 0; i < 10000; i++) {
-// 	bigOptions = bigOptions.concat(colourOptions);
-// }
-
 const stateOptions = [{ key: 'toread', value: 'toread', text: 'to read' },
                         { key: 'read', value: 'read', text: 'read' },
                         { key: 'reading', value: 'reading', text: 'reading' },
@@ -69,7 +50,7 @@ class AddEditionUserJoin extends React.Component {
     errors: [],
     editions: new Map(),
     editionOptions: [],
-    selectedEditionWorkId: '',
+    selectedEdition: '',
     lastSearchInput: '',
   }
 
@@ -95,25 +76,11 @@ class AddEditionUserJoin extends React.Component {
     });
   }
 
-  handleEditionChange = () => {
-  }
-
-    //const editionOptions = responseJson.map(x => ({
-      //key: x.workId,
-      //value: x.workId,
-      //text: x.bookTitleBare,
-      //content: <DropdownItem
-        //bookImage={x.imageUrl}
-        //bookTitle={x.bookTitleBare}
-        //bookAuthor={x.author.name}
-      ///>
-    //}));
-    //console.log(editionOptions)
-    //this.setState({ ...this.state, editionOptions, editions });
-
-
-  handleEditionChange = (_, data) => {
-    this.setState({ ...this.state, selectedEditionWorkId: data.value });
+  handleEditionChange = (selectedOption) => {
+    if (!selectedOption) {
+      return;
+    }
+    this.setState({ ...this.state, selectedEdition: selectedOption.data });
   }
 
   handleStateChange = (e, data) => {
@@ -137,7 +104,7 @@ class AddEditionUserJoin extends React.Component {
 
   handleSubmit = (ev) => {
     ev.preventDefault();
-    if (!this.state.editions.has(this.state.selectedEditionWorkId)) {
+    if (!this.state.selectedEdition) {
       // TODO: Push to errors
       console.log('No edition has been selected');
       return;
@@ -146,7 +113,7 @@ class AddEditionUserJoin extends React.Component {
     const { user } = this.props.viewer;
     const { selectedState } = this.state;
     const { rating } = this.state.input;
-    const edition = this.state.editions.get(this.state.selectedEditionWorkId);
+    const edition = this.state.selectedEdition;
 
     const authorVariables = {
       nameInput: edition.author.name,
@@ -220,24 +187,8 @@ class AddEditionUserJoin extends React.Component {
     return [];
   }
 
-
-  renderOption = (option) => {
-    console.log(option)
-		return (
-			<div>test</div>
-		);
-	}
-
-
-  promiseOptions = inputValue =>
-    new Promise(resolve => {
-      setTimeout(() => {
-        resolve([{label: 'A', value: 'a'}, {label: 'B', value: 'b'}, {label: 'C', value: 'c'}]);
-      }, 1000);
-    });
-
   render() {
-    const { input, erros } = this.state;
+    const { input } = this.state;
     const title = 'Add Book to Bookshelf';
 
     return (
@@ -251,10 +202,11 @@ class AddEditionUserJoin extends React.Component {
 
             <AsyncSelect
               loadOptions={this.getAutocompleteSuggestions}
-               cacheOptions
-               defaultOptions
-               components={{ Option: CustomOption }}
-               />
+              cacheOptions
+              defaultOptions
+              onChange={this.handleEditionChange}
+              components={{ Option: CustomOption }}
+            />
 
           <Button.Group className={styles.readingStatus} widths='3' basic>
               <Button type='state'
