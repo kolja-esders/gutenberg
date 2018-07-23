@@ -1,6 +1,6 @@
 import React from 'react';
 import Page from 'components/Page/Page';
-import DropdownItem from 'components/DropdownItem/DropdownItem'
+import DropdownItem from 'components/DropdownItem/DropdownItem';
 import { withAuth } from 'modules/auth//utils';
 import URLSearchParams from 'url-search-params';
 import { Button, Rating, Segment, Header } from 'semantic-ui-react';
@@ -10,6 +10,15 @@ import createBookAndEditionFromGoodreadsMutation from '../mutations/CreateBookAn
 import createAuthorFromGoodreadsMutation from '../mutations/CreateAuthorFromGoodreads';
 import createEditionUserJoinMutation from '../mutations/CreateEditionUserJoin';
 import styles from './AddEditionUserJoin.scss';
+
+const CustomOption = (commonProps) =>
+  <div className={styles.option}>
+    <DropdownItem
+      bookImage={commonProps.data.data.imageUrl}
+      bookTitle={commonProps.data.data.title}
+      bookAuthor={commonProps.data.data.author.name}
+    />
+  </div>;
 
 class AddEditionUserJoin extends React.Component {
   state = {
@@ -120,6 +129,7 @@ class AddEditionUserJoin extends React.Component {
                 cacheOptions
                 defaultOptions
                 onChange={this.handleEditionChange}
+                components={{ Option: CustomOption }}
               />
 
               <Button.Group className={styles.readingStatus} widths='3' basic>
