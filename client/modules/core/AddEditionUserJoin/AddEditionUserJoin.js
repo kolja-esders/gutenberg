@@ -11,14 +11,26 @@ import createAuthorFromGoodreadsMutation from '../mutations/CreateAuthorFromGood
 import createEditionUserJoinMutation from '../mutations/CreateEditionUserJoin';
 import styles from './AddEditionUserJoin.scss';
 
-const CustomOption = (commonProps) =>
-  <div className={styles.option}>
-    <DropdownItem
-      bookImage={commonProps.data.data.imageUrl}
-      bookTitle={commonProps.data.data.title}
-      bookAuthor={commonProps.data.data.author.name}
-    />
-  </div>;
+const CustomOption = ({ innerRef, innerProps, isDisabled, data }) =>
+  !isDisabled ? (
+    <div
+      id={innerProps.id}
+      ref={innerRef}
+      onClick={innerProps.onClick}
+      onMouseMove={innerProps.onMouseMove}
+      onMouseOver={innerProps.onMouseOver}
+      role={innerProps.role}
+      tabIndex={innerProps.tabIndex}
+    >
+      <div className={styles.option}>
+        <DropdownItem
+          bookImage={data.data.imageUrl}
+          bookTitle={data.data.title}
+          bookAuthor={data.data.author.name}
+        />
+      </div>
+    </div>
+    ) : null;
 
 class AddEditionUserJoin extends React.Component {
   state = {
