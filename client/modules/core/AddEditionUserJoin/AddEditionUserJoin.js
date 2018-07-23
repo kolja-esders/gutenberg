@@ -25,7 +25,6 @@ const ratingOptions = [{ key: 1, value: 1, text: '1' },
 
 
 const CustomOption = ( commonProps ) => {
-    console.log(commonProps)
     return(
       <div className={styles.option}>
         <DropdownItem
@@ -35,6 +34,10 @@ const CustomOption = ( commonProps ) => {
         />
       </div>
     )
+}
+
+const customStyles = {
+  control: styles => ({ ...styles, backgroundColor: 'white' }),
 }
 
 
@@ -201,11 +204,14 @@ class AddEditionUserJoin extends React.Component {
           <form className={styles.form}>
 
             <AsyncSelect
+              className={styles.reactSelect}
+              classNamePrefix={styles.reactSelect}
               loadOptions={this.getAutocompleteSuggestions}
               cacheOptions
               defaultOptions
               onChange={this.handleEditionChange}
               components={{ Option: CustomOption }}
+              styles={customStyles}
             />
 
           <Button.Group className={styles.readingStatus} widths='3' basic>
