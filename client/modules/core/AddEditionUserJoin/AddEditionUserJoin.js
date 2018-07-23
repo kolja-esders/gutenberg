@@ -1,28 +1,15 @@
 import React from 'react';
 import Page from 'components/Page/Page';
-import DropdownItem from 'components/DropdownItem/DropdownItem'
+import DropdownItem from 'components/DropdownItem/DropdownItem';
 import { withAuth } from 'modules/auth//utils';
-import { Input, Dropdown, Button, Rating, Grid, Segment, Header } from 'semantic-ui-react';
+import URLSearchParams from 'url-search-params';
+import { Button, Rating, Segment, Header } from 'semantic-ui-react';
 import { graphql, createRefetchContainer } from 'react-relay';
+import AsyncSelect from 'react-select/lib/Async';
 import createBookAndEditionFromGoodreadsMutation from '../mutations/CreateBookAndEditionFromGoodreads';
 import createAuthorFromGoodreadsMutation from '../mutations/CreateAuthorFromGoodreads';
 import createEditionUserJoinMutation from '../mutations/CreateEditionUserJoin';
 import styles from './AddEditionUserJoin.scss';
-import URLSearchParams from 'url-search-params';
-import AsyncSelect from 'react-select/lib/Async';
-
-const stateOptions = [{ key: 'toread', value: 'toread', text: 'to read' },
-                        { key: 'read', value: 'read', text: 'read' },
-                        { key: 'reading', value: 'reading', text: 'reading' },
-];
-
-const ratingOptions = [{ key: 1, value: 1, text: '1' },
-                        { key: 2, value: 2, text: '2' },
-                        { key: 3, value: 3, text: '3' },
-                        { key: 4, value: 4, text: '4' },
-                        { key: 5, value: 5, text: '5' },
-];
-
 
 const CustomOption = ( commonProps ) => {
     return(
@@ -40,21 +27,12 @@ const customStyles = {
   control: styles => ({ ...styles, backgroundColor: 'white' }),
 }
 
-
 class AddEditionUserJoin extends React.Component {
   state = {
-    input: {
-      title: '',
-      author: '',
-      state: 'to-read',
-      rating: 0
-    },
+    selectedRating: 0,
     selectedState: 'to-read',
-    errors: [],
-    editions: new Map(),
-    editionOptions: [],
     selectedEdition: '',
-    lastSearchInput: '',
+    errors: []
   }
 
   getAutocompleteSuggestions = async (searchVal: string) => {
@@ -79,107 +57,8 @@ class AddEditionUserJoin extends React.Component {
     });
   }
 
-  handleEditionChange = (selectedOption) => {
-    if (!selectedOption) {
-      return;
-    }
-    this.setState({ ...this.state, selectedEdition: selectedOption.data });
-  }
-
-  handleStateChange = (e, data) => {
-    e.preventDefault();
-    const input = this.state.input;
-    const inputName = data.type;
-    input[inputName] = data.id;
-    this.setState({ ...this.state, input, selectedState: data.id });
-  }
-
-  handleRatingChange = (e, data) => {
-    const input = this.state.input;
-    const inputName = data.id;
-    input[inputName] = data.rating;
-    this.setState({ ...this.state, input });
-  }
-
   setErrors = (errors) => {
     this.setState({ ...this.state, errors });
-  }
-
-  handleSubmit = (ev) => {
-    ev.preventDefault();
-    if (!this.state.selectedEdition) {
-      // TODO: Push to errors
-      console.log('No edition has been selected');
-      return;
-    }
-    const { environment } = this.props.relay;
-    const { user } = this.props.viewer;
-    const { selectedState } = this.state;
-    const { rating } = this.state.input;
-    const edition = this.state.selectedEdition;
-
-    const authorVariables = {
-      nameInput: edition.author.name,
-      goodreadsUidInput: edition.author.id
-    };
-    createAuthorFromGoodreadsMutation(environment, authorVariables, (data, error) => {
-      const bookAndEditionVariables = {
-        titleInput: edition.bookTitleBare,
-        authorIdInput: data.createAuthorFromGoodreads.author.id,
-        goodreadsWorkUidInput: edition.workId,
-        goodreadsBookUidInput: edition.bookId
-      };
-      createBookAndEditionFromGoodreadsMutation(environment, bookAndEditionVariables, (data, error) => {
-        const userAndEditionVariables = {
-          userIdInput: user.id,
-          editionIdInput: data.createBookAndEditionFromGoodreads.edition.id,
-          stateInput: selectedState,
-          ratingInput: selectedState === 'read' ? rating : null
-        };
-        createEditionUserJoinMutation(environment, userAndEditionVariables, (data, error) => {
-          if (!error) {
-            this.props.router.push('/');
-          }
-        }, this.setErrors);
-      }, this.setErrors);
-    }, this.setErrors);
-  }
-
-  onCompletedCreateEdition = (error, data) => {
-    const refetchVariables = fragmentVariables => ({
-      title: this.state.input.title,
-      author: this.state.input.author,
-      input: this.state.input.title
-    });
-    this.props.relay.refetch(refetchVariables, null, this.onCompletedRefetch);
-  }
-
-  onCompletedRefetch = (error) => {
-    if (error) {
-      console.error(error);
-      return;
-    }
-
-    let { rating, state } = this.state.input;
-    const { book, user } = this.props.viewer;
-
-    if (state != "read") {
-      rating = 0;
-      const input = this.state.input;
-      input["rating"] = rating;
-      this.setState({ ...this.state, input });
-    }
-
-    const variables = {
-      userIdInput: user.id,
-      bookIdInput: book.id,
-      ratingInput: rating,
-      stateInput: state
-    };
-  }
-
-  onCompletedEditionUserJoin = (error, data) => {
-    this.props.router.push("/")
   }
 
   getErrors(fieldId) {
@@ -190,86 +69,141 @@ class AddEditionUserJoin extends React.Component {
     return [];
   }
 
+  handleSubmit = (ev) => {
+    ev.preventDefault();
+    if (!this.state.selectedEdition) {
+      // TODO: Push to errors
+      return;
+    }
+    const { environment } = this.props.relay;
+    const { user } = this.props.viewer;
+    const { selectedState, selectedRating, selectedEdition } = this.state;
+
+    const authorVariables = {
+      nameInput: selectedEdition.author.name,
+      goodreadsUidInput: selectedEdition.author.id
+    };
+    createAuthorFromGoodreadsMutation(environment, authorVariables, (data, error) => {
+      const bookAndEditionVariables = {
+        titleInput: selectedEdition.bookTitleBare,
+        authorIdInput: data.createAuthorFromGoodreads.author.id,
+        goodreadsWorkUidInput: selectedEdition.workId,
+        goodreadsBookUidInput: selectedEdition.bookId
+      };
+      createBookAndEditionFromGoodreadsMutation(environment, bookAndEditionVariables, (data, error) => {
+        const userAndEditionVariables = {
+          userIdInput: user.id,
+          editionIdInput: data.createBookAndEditionFromGoodreads.edition.id,
+          stateInput: selectedState,
+          ratingInput: selectedState === 'read' ? selectedRating : null
+        };
+        createEditionUserJoinMutation(environment, userAndEditionVariables, (data, error) => {
+          if (!error) {
+            this.props.router.push('/');
+          }
+        }, this.setErrors);
+      }, this.setErrors);
+    }, this.setErrors);
+  }
+
+  handleEditionChange = (selectedOption) => {
+    if (!selectedOption) {
+      return;
+    }
+    this.setState({ ...this.state, selectedEdition: selectedOption.data });
+  }
+
+  handleStateChange = (e, data) => {
+    e.preventDefault();
+    this.setState({ ...this.state, selectedState: data.id });
+  }
+
+  handleRatingChange = (e, data) => {
+    this.setState({ ...this.state, selectedRating: data.rating });
+  }
+
   render() {
-    const { input } = this.state;
     const title = 'Add Book to Bookshelf';
 
     return (
       <Page viewer={this.props.viewer} title={title}>
-
         <div className={styles.container}>
           <Segment padded='very'>
             <Header as='h1'>New book</Header>
+            <form className={styles.form}>
+              <AsyncSelect
+                className={styles.reactSelect}
+                classNamePrefix={styles.reactSelect}
+                loadOptions={this.getAutocompleteSuggestions}
+                cacheOptions
+                defaultOptions
+                onChange={this.handleEditionChange}
+                components={{ Option: CustomOption }}
+                styles={customStyles}
+              />
 
-          <form className={styles.form}>
+              <Button.Group className={styles.readingStatus} widths='3' basic>
+                <Button
+                  type='state'
+                  onClick={this.handleStateChange}
+                  active={this.state.selectedState === 'to-read'}
+                  id='to-read'
+                  className={styles.stateButton}
+                >
+                  <div className={styles.toReadIcon} />
+                  to-read
+                </Button>
 
-            <AsyncSelect
-              className={styles.reactSelect}
-              classNamePrefix={styles.reactSelect}
-              loadOptions={this.getAutocompleteSuggestions}
-              cacheOptions
-              defaultOptions
-              onChange={this.handleEditionChange}
-              components={{ Option: CustomOption }}
-              styles={customStyles}
-            />
+                <Button
+                  type='state'
+                  onClick={this.handleStateChange}
+                  active={this.state.selectedState === 'reading'}
+                  id='reading'
+                  className={styles.stateButton}
+                >
+                  <div className={styles.readingIcon} />
+                  reading
+                </Button>
 
-          <Button.Group className={styles.readingStatus} widths='3' basic>
-              <Button type='state'
-                onClick={this.handleStateChange}
-                active={this.state.selectedState == "to-read"}
-                id="to-read"
-                className={styles.stateButton}>
-                <div className={styles.toReadIcon} />
-                to-read
-              </Button>
+                <Button
+                  type='state'
+                  onClick={this.handleStateChange}
+                  active={this.state.selectedState === 'read'}
+                  id='read'
+                  className={styles.stateButton}
+                >
+                  <div className={styles.readIcon} />
+                  read
+                </Button>
+              </Button.Group>
 
-              <Button type='state'
-                onClick={this.handleStateChange}
-                active={this.state.selectedState == "reading"}
-                id="reading"
-                className={styles.stateButton}>
-                <div className={styles.readingIcon} />
-                reading
-              </Button>
+              <div className={styles.ratingContainer} hidden={this.state.selectedState !== 'read'}>
+                <span>Your rating:</span>
+                <Rating
+                  maxRating={5}
+                  onRate={this.handleRatingChange}
+                  className={styles.rating}
+                  size='huge'
+                  id='rating'
+                />
+              </div>
 
-              <Button type='state'
-                onClick={this.handleStateChange}
-                active={this.state.selectedState == "read"}
-                id="read"
-                className={styles.stateButton}>
-                <div className={styles.readIcon} />
-                read
-              </Button>
-            </Button.Group>
-
-            <div className={styles.ratingContainer} hidden={this.state.selectedState != "read"}>
-              <span>Your rating:</span>
-              <Rating maxRating={5}
-                onRate={this.handleRatingChange}
-                className={styles.rating}
+              <Button
+                color='green'
+                fluid
+                type='submit'
                 size='huge'
-                id = 'rating'/>
-            </div>
-
-           <Button
-             color='green'
-              fluid
-              type='submit'
-              size='huge'
-              onClick = {this.handleSubmit}
-              className='button_submit-add-books-form'
-            >
-              Add book
-            </Button>
-
-          </form>
-        </Segment>
-            </div>
-          </Page>
-        )
-
-      }
+                onClick={this.handleSubmit}
+                className='button_submit-add-books-form'
+              >
+                Add book
+              </Button>
+            </form>
+          </Segment>
+        </div>
+      </Page>
+    );
+  }
 }
 
 export default createRefetchContainer(
