@@ -32,6 +32,10 @@ const CustomOption = ({ innerRef, innerProps, isDisabled, data }) =>
     </div>
     ) : null;
 
+const customStyles = {
+  control: styles => ({ ...styles, backgroundColor: 'white' }),
+}
+
 class AddEditionUserJoin extends React.Component {
   state = {
     selectedRating: 0,
@@ -137,11 +141,14 @@ class AddEditionUserJoin extends React.Component {
             <Header as='h1'>New book</Header>
             <form className={styles.form}>
               <AsyncSelect
+                className={styles.reactSelect}
+                classNamePrefix={styles.reactSelect}
                 loadOptions={this.getAutocompleteSuggestions}
                 cacheOptions
                 defaultOptions
                 onChange={this.handleEditionChange}
                 components={{ Option: CustomOption }}
+                styles={customStyles}
               />
 
               <Button.Group className={styles.readingStatus} widths='3' basic>
