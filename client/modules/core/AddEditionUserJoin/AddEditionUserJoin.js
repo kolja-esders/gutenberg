@@ -11,7 +11,24 @@ import styles from './AddEditionUserJoin.scss';
 import URLSearchParams from 'url-search-params';
 import AsyncSelect from 'react-select/lib/Async';
 
+export const optionLength = [
+  { value: 1, label: 'general' },
+  {
+    value: 2,
+    label:
+      'Evil is the moment when I lack the strength to be true to the Good that compels me.',
+  },
+  {
+    value: 3,
+    label:
+      "It is now an easy matter to spell out the ethic of a truth: 'Do all that you can to persevere in that which exceeds your perseverance. Persevere in the interruption. Seize in your being that which has seized and broken you.",
+  },
+];
 
+// let bigOptions = [];
+// for (let i = 0; i < 10000; i++) {
+// 	bigOptions = bigOptions.concat(colourOptions);
+// }
 
 const stateOptions = [{ key: 'toread', value: 'toread', text: 'to read' },
                         { key: 'read', value: 'read', text: 'read' },
@@ -51,84 +68,44 @@ class AddEditionUserJoin extends React.Component {
     lastSearchInput: '',
   }
 
-  handleSelectInputChange = (data) => {
-    this.setState({ lastSearchInput: data })
-  }
-
-  getEditions = (input) => {
-    if (!input) {
-      return Promise.resolve([]);
+  getAutocompleteSuggestions = async (searchVal: string) => {
+    if (!searchVal) {
+      return null;
     }
 
     const AUTOCOMPLETE_BASE_URL = 'https://www.goodreads.com/book/auto_complete?';
     const PROXY_URL_PREFIX = 'https://cors-anywhere.herokuapp.com/';
     const searchParams = new URLSearchParams('format=json');
-    searchParams.set('q', input);
-
+    searchParams.set('q', searchVal);
     const queryUrl = PROXY_URL_PREFIX + AUTOCOMPLETE_BASE_URL + searchParams.toString();
-
-    const response = fetch(queryUrl)
-    .then((response) => response.json())
-    .then((json) => {
-      let js = []
-      for(let i = 0; i < json.length; i++){
-        js.push({
-         "label": json[i]["bookId"],
-         "value": json[i]["title"]
-       })
-      }
-
-      return js;
-    })
-  }
-
-  handleEditionSearchTextChange =  async (data) => {
-    // Trigger first fetch only when there are at least three characters.
-    console.log(data)
-
-    return(data)
-    // if (data.length < 3) {
-    //   return;
-    // }
-    const lastSearchInput = data;
-    this.setState({ lastSearchInput: lastSearchInput });
-
-    const AUTOCOMPLETE_BASE_URL = 'https://www.goodreads.com/book/auto_complete?';
-    const PROXY_URL_PREFIX = 'https://cors-anywhere.herokuapp.com/';
-    const searchParams = new URLSearchParams('format=json');
-    searchParams.set('q', data);
-
-    const queryUrl = PROXY_URL_PREFIX + AUTOCOMPLETE_BASE_URL + searchParams.toString();
-
 
     const response = await fetch(queryUrl);
-    const responseJson = await response.json();
-
-    // if (data != this.state.lastSearchInput){
-    //   return;
-    // }
-
-    const editions = new Map();
-    for (const x of responseJson) {
-      editions.set(x.workId, x);
-    }
-
-    const editionOptions = responseJson.map(x => ({
-      key: x.workId,
-      value: x.workId,
-      text: x.bookTitleBare,
-      content: <DropdownItem
-        bookImage={x.imageUrl}
-        bookTitle={x.bookTitleBare}
-        bookAuthor={x.author.name}
-      />
-    }));
-    console.log(editionOptions)
-    this.setState({ ...this.state, editionOptions, editions });
-
-
-
+    const json = await response.json();
+    return json.map((d) => {
+      return {
+        value: d.bookId,
+        label: d.title,
+        data: d
+      };
+    });
   }
+  
+  handleEditionChange = () => {
+  }
+
+    //const editionOptions = responseJson.map(x => ({
+      //key: x.workId,
+      //value: x.workId,
+      //text: x.bookTitleBare,
+      //content: <DropdownItem
+        //bookImage={x.imageUrl}
+        //bookTitle={x.bookTitleBare}
+        //bookAuthor={x.author.name}
+      ///>
+    //}));
+    //console.log(editionOptions)
+    //this.setState({ ...this.state, editionOptions, editions });
+
 
   handleEditionChange = (_, data) => {
     this.setState({ ...this.state, selectedEditionWorkId: data.value });
@@ -247,17 +224,16 @@ class AddEditionUserJoin extends React.Component {
 	}
 
 
-
+  promiseOptions = inputValue =>
+    new Promise(resolve => {
+      setTimeout(() => {
+        resolve([{label: 'A', value: 'a'}, {label: 'B', value: 'b'}, {label: 'C', value: 'c'}]);
+      }, 1000);
+    });
 
   render() {
     const { input, erros } = this.state;
     const title = 'Add Book to Bookshelf';
-
-    var testOptions = [
-      { label: 'Basic customer support', value: 'basic', color: '#E31864' },
-      { label: 'Premium customer support', value: 'premium', color: '#6216A3' },
-      { label: 'Pro customer support', value: 'pro', disabled: true, link: 'fds' },
-    ];
 
     return (
       <Page viewer={this.props.viewer} title={title}>
@@ -269,13 +245,9 @@ class AddEditionUserJoin extends React.Component {
           <form className={styles.form}>
 
             <AsyncSelect
-               loadOptions={this.getEditions}
+              loadOptions={this.getAutocompleteSuggestions}
                cacheOptions
                defaultOptions
-               onInputChange={this.handleSelectInputChange}
-               value={this.state.lastSearchInput}
-
-
                />
 
           <Button.Group className={styles.readingStatus} widths='3' basic>
