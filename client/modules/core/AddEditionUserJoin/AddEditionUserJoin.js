@@ -24,8 +24,23 @@ const CustomOption = ( commonProps ) => {
 }
 
 const customStyles = {
-  control: styles => ({ ...styles, backgroundColor: 'white' }),
+  control: (styles, { data, isFocused, isSelected }) => {
+    return{
+      ...styles,
+      backgroundColor: 'white',
+      borderColor: isFocused
+      ? 'rgba(34, 36, 38, 0.15)!important' : 'rgba(34, 36, 38, 0.15)!important',
+    }
+  },
+  indicatorSeparator: styles => ({ ...styles,
+    backgroundColor: 'rgba(34, 36, 38, 0.15)!important'
+  }),
+  placeholder: styles => ({ ...styles,
+    color: 'rgba(0, 0, 0, 0.6)',
+    fontWeight: '300!important'
+  })
 }
+
 
 class AddEditionUserJoin extends React.Component {
   state = {
@@ -124,7 +139,6 @@ class AddEditionUserJoin extends React.Component {
 
   render() {
     const title = 'Add Book to Bookshelf';
-
     return (
       <Page viewer={this.props.viewer} title={title}>
         <div className={styles.container}>
