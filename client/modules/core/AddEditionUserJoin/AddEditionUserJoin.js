@@ -50,7 +50,6 @@ const customStyles = {
   })
 }
 
-
 class AddEditionUserJoin extends React.Component {
   state = {
     selectedRating: 0,
@@ -163,6 +162,9 @@ class AddEditionUserJoin extends React.Component {
                 onChange={this.handleEditionChange}
                 components={{ Option: CustomOption }}
                 styles={customStyles}
+                placeholder='Find books'
+                loadingMessage={({ inputValue }) => "Loading results for '" + inputValue + "'..."}
+                noOptionsMessage={({ inputValue }) => inputValue ? ("No books found for '" + inputValue + "'") : "No books found"}
               />
 
               <Button.Group className={styles.readingStatus} widths='3' basic>
